@@ -6,9 +6,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../shared/helpers/colors/hex_color.dart';
 import '../../../shared/theme/colors/app_colors.dart';
 import '../../screens/group/group_list_screen.dart';
+import '../../screens/group/today_group_list_screen.dart';
 import '../../screens/more/more_screen.dart';
 import '../../screens/student/student_list_screen.dart';
-
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({Key? key}) : super(key: key);
@@ -19,7 +19,7 @@ class BottomNavigation extends StatefulWidget {
 
 class _BottomNavigationState extends State<BottomNavigation> {
   final List<Widget> _tabs = const <Widget>[
-    GroupListScreen(),
+    TodayGroupListScreen(),
     StudentListScreen(),
     Text("Calendar"),
     Text("Availability"),

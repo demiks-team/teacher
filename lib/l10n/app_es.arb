@@ -27,5 +27,6 @@
     "forgotPassword": "Olvidé mi contraseña",
     "password": "Contraseña",
     "email": "Correo electrónico",
-    "login": "Iniciar sesión"
+    "login": "Iniciar sesión",
+    "save": "Ahorrar"
 }

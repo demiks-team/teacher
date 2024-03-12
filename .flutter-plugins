@@ -1,10 +1,10 @@
 # This is a generated file; do not edit or check into version control.
-flutter_secure_storage=C:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\flutter_secure_storage-5.0.2\\
-flutter_secure_storage_linux=C:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\flutter_secure_storage_linux-1.1.0\\
-flutter_secure_storage_macos=C:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\flutter_secure_storage_macos-1.1.0\\
-flutter_secure_storage_web=C:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\flutter_secure_storage_web-1.0.2\\
-flutter_secure_storage_windows=C:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\flutter_secure_storage_windows-1.1.2\\
-google_sign_in=C:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\google_sign_in-5.3.3\\
-google_sign_in_android=C:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\google_sign_in_android-5.2.8\\
-google_sign_in_ios=C:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\google_sign_in_ios-5.3.1\\
-google_sign_in_web=C:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\google_sign_in_web-0.10.1+3\\
+flutter_secure_storage=C:\\Users\\Pouriya\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\flutter_secure_storage-5.1.2\\
+flutter_secure_storage_linux=C:\\Users\\Pouriya\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\flutter_secure_storage_linux-1.2.0\\
+flutter_secure_storage_macos=C:\\Users\\Pouriya\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\flutter_secure_storage_macos-1.1.2\\
+flutter_secure_storage_web=C:\\Users\\Pouriya\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\flutter_secure_storage_web-1.1.2\\
+flutter_secure_storage_windows=C:\\Users\\Pouriya\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\flutter_secure_storage_windows-1.1.3\\
+google_sign_in=C:\\Users\\Pouriya\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\google_sign_in-5.4.4\\
+google_sign_in_android=C:\\Users\\Pouriya\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\google_sign_in_android-6.1.20\\
+google_sign_in_ios=C:\\Users\\Pouriya\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\google_sign_in_ios-5.6.5\\
+google_sign_in_web=C:\\Users\\Pouriya\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\google_sign_in_web-0.10.2+1\\

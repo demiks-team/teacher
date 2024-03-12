@@ -27,5 +27,6 @@
     "forgotPassword": "Forgot my password",
     "password": "Password",
     "email": "Email",
-    "login": "Login"
+    "login": "Login",
+    "save": "Save"
 }

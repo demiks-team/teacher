@@ -27,5 +27,6 @@
     "forgotPassword": "J'ai oublié mon mot de passe",
     "password": "Mot de passe",
     "email": "Courriel",
-    "login": "Se connecter"
+    "login": "Se connecter",
+    "save": "Sauvegarder"
 }
