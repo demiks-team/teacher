@@ -27,12 +27,14 @@ class AttendanceCreationModel {
                 .toList()
             : null,
       );
-  Map<String, dynamic> toJson() => {
-        "groupSessionId": groupSessionId,
-        "notes": notes,
-        if (attendances != null)
-          "attendances": attendances
-        else
-          "attendances": null,
-      };
+  Map<String, dynamic> toJson() {
+    List<Map<String, dynamic>> attendancesJsonList =
+        attendances?.map((attendance) => attendance.toJson()).toList() ?? [];
+
+    return {
+      "groupSessionId": groupSessionId,
+      "notes": notes,
+      'attendances': attendancesJsonList,
+    };
+  }
 }

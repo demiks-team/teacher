@@ -67,7 +67,7 @@ class GroupEnrollmentModel {
         "startDate": startDate,
         "endDate": endDate,
         "estimatedEndDate": estimatedEndDate,
-        "groupEnrollmentStatus": groupEnrollmentStatus,
+        "groupEnrollmentStatus": groupEnrollmentStatus?.index,
         "studentId": studentId,
         "didStudentPass": didStudentPass,
         "canStudentPrintCertificate": canStudentPrintCertificate,

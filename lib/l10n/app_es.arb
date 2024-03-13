@@ -28,5 +28,14 @@
     "password": "Contraseña",
     "email": "Correo electrónico",
     "login": "Iniciar sesión",
+    "studentNote": "Notas para estudiantes",
+    "recordOfWork": "Notas, registro de trabajo, ...",
+    "internalNote": "Notas internas",   
+    "level": "Nivel",
+    "addOtherStudentsToAttendanceList": "¿Quieres agregar otros estudiantes a la lista de asistencia?",   
+    "cancelled": "Cancelado", 
+    "requested": "Solicitado",
+    "missedAttendances": "Asistencias perdidas", 
+    "listOfTodaysClasses": "Lista de las clases de hoy",
     "save": "Ahorrar"
 }

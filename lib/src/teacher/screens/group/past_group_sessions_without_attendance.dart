@@ -12,14 +12,16 @@ import '../../../shared/no_data.dart';
 import '../../../shared/services/group_service.dart';
 import '../../../shared/theme/colors/app_colors.dart';
 
-class TodayGroupListScreen extends StatefulWidget {
-  const TodayGroupListScreen({Key? key}) : super(key: key);
+class PastGroupSessionsWithoutAttendance extends StatefulWidget {
+  const PastGroupSessionsWithoutAttendance({Key? key}) : super(key: key);
 
   @override
-  State<TodayGroupListScreen> createState() => _TodayGroupListScreenState();
+  State<PastGroupSessionsWithoutAttendance> createState() =>
+      _PastGroupSessionsWithoutAttendance();
 }
 
-class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
+class _PastGroupSessionsWithoutAttendance
+    extends State<PastGroupSessionsWithoutAttendance> {
   AttendanceQModel createAttendanceQModel(GroupSessionModel groupSession) {
     var attendanceQModel = AttendanceQModel();
     attendanceQModel.group = groupSession.group;
@@ -31,7 +33,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.listOfTodaysClasses),
+          title: Text(AppLocalizations.of(context)!.missedAttendances),
           automaticallyImplyLeading: false,
         ),
         body: RefreshIndicator(
@@ -98,7 +100,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
   FutureBuilder<List<GroupSessionModel>> _buildBody(BuildContext context) {
     final GroupService groupService = GroupService();
     return FutureBuilder<List<GroupSessionModel>>(
-      future: groupService.getListOfTodaysGroups(),
+      future: groupService.getPastSessionsGroupsWithoutAttendances(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           final List<GroupSessionModel>? classes = snapshot.data;
