@@ -95,6 +95,19 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
     return result;
   }
 
+  String getSessionNumbersString(GroupSessionModel groupSession) {
+    var result = "";
+    if (groupSession.sessionNumber != null &&
+        groupSession.group!.numberOfSessions != null) {
+      result = " (" +
+          groupSession.sessionNumber.toString() +
+          "/" +
+          groupSession.group!.numberOfSessions.toString() +
+          ")";
+    }
+    return result;
+  }
+
   FutureBuilder<List<GroupSessionModel>> _buildBody(BuildContext context) {
     final GroupService groupService = GroupService();
     return FutureBuilder<List<GroupSessionModel>>(
@@ -189,17 +202,8 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
                               padding: const EdgeInsets.only(top: 5, bottom: 5),
                               child: Text(
                                   groupSessions[index].group!.title.toString() +
-                                      " " +
-                                      "(" +
-                                      groupSessions[index]
-                                          .sessionNumber
-                                          .toString() +
-                                      "/" +
-                                      groupSessions[index]
-                                          .group!
-                                          .numberOfSessions
-                                          .toString() +
-                                      ")"),
+                                      getSessionNumbersString(
+                                          groupSessions[index])),
                             ),
                           ]),
                       if (groupSessions[index].sessionStatus ==
