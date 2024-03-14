@@ -27,5 +27,15 @@
     "forgotPassword": "J'ai oublié mon mot de passe",
     "password": "Mot de passe",
     "email": "Courriel",
-    "login": "Se connecter"
+    "login": "Se connecter",
+    "studentNote": "Notes pour les étudiants",   
+    "recordOfWork": "Notes, compte rendu de travail, ...",
+    "internalNote": "Notes internes",
+    "level": "Niveau",
+    "addOtherStudentsToAttendanceList": "Souhaitez-vous ajouter d’autres étudiants à la liste de présence ?",   
+    "cancelled": "Annulé", 
+    "requested": "Demandé",         
+    "missedAttendances": "Participations manquées", 
+    "listOfTodaysClasses": "Liste des cours du jour",
+    "save": "Sauvegarder"
 }

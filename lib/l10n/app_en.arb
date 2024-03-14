@@ -27,5 +27,15 @@
     "forgotPassword": "Forgot my password",
     "password": "Password",
     "email": "Email",
-    "login": "Login"
+    "login": "Login",
+    "studentNote": "Notes for students",
+    "recordOfWork": "Notes, record of work, ...",
+    "internalNote": "Internal notes",
+    "level": "Level", 
+    "addOtherStudentsToAttendanceList": "Do you want to add other students to the attendance list?",
+    "cancelled": "Cancelled",
+    "requested": "Requested",
+    "missedAttendances": "Missed Attendances",
+    "listOfTodaysClasses": "List of today's classes",
+    "save": "Save"
 }

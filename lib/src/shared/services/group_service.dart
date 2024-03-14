@@ -1,7 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:teacher/src/shared/models/group_session_model.dart';
 
 import '../../authentication/helpers/dio/dio_api.dart';
+import '../models/attendance_creation_model.dart';
+import '../models/group_enrollment_model.dart';
 import '../models/group_model.dart';
 
 class GroupService {
@@ -35,6 +40,100 @@ class GroupService {
       return GroupModel.fromJson(decodedList);
     } else {
       throw Exception('Unable to retrieve class.');
+    }
+  }
+
+  Future<List<GroupSessionModel>> getListOfTodaysGroups() async {
+    var response = await DioApi()
+        .dio
+        .get(dotenv.env['api'].toString() + "groups/group/listoftodaysgroups");
+
+    if (response.statusCode == 200) {
+      List decodedList = jsonDecode(json.encode(response.data));
+
+      List<GroupSessionModel> groupSessions = decodedList
+          .map(
+            (dynamic item) => GroupSessionModel.fromJson(item),
+          )
+          .toList();
+      return groupSessions;
+    } else {
+      throw "Unable to retrieve groups.";
+    }
+  }
+
+  Future<List<GroupSessionModel>>
+      getPastSessionsGroupsWithoutAttendances() async {
+    var response = await DioApi().dio.get(dotenv.env['api'].toString() +
+        "groups/group/pastsessionsgroupswithoutattendances");
+
+    if (response.statusCode == 200) {
+      List decodedList = jsonDecode(json.encode(response.data));
+
+      List<GroupSessionModel> groupSessions = decodedList
+          .map(
+            (dynamic item) => GroupSessionModel.fromJson(item),
+          )
+          .toList();
+      return groupSessions;
+    } else {
+      throw "Unable to retrieve groups.";
+    }
+  }
+
+  Future<AttendanceCreationModel> getSessionStudents(int groupSessionId) async {
+    var response = await DioApi().dio.get(dotenv.env['api'].toString() +
+        "groups/sessions/" +
+        groupSessionId.toString() +
+        "/students");
+
+    Map<String, dynamic> decodedList = jsonDecode(json.encode(response.data));
+
+    if (response.statusCode == 200) {
+      return AttendanceCreationModel.fromJson(decodedList);
+    } else {
+      throw Exception('Unable to retrieve sessions.');
+    }
+  }
+
+  Future<List<GroupEnrollmentModel>> getGroupEnrollments(int groupId) async {
+    var response = await DioApi().dio.get(dotenv.env['api'].toString() +
+        "groups/group/enrollments/" +
+        groupId.toString());
+
+    if (response.statusCode == 200) {
+      List decodedList = jsonDecode(json.encode(response.data));
+
+      List<GroupEnrollmentModel> groupEnrollments = decodedList
+          .map(
+            (dynamic item) => GroupEnrollmentModel.fromJson(item),
+          )
+          .toList();
+      return groupEnrollments;
+    } else {
+      throw "Unable to retrieve group enrollments.";
+    }
+  }
+
+  Future<bool> saveAttendance(AttendanceCreationModel attendances) async {
+    try {
+      Response response = await DioApi()
+          .dio
+          .post(dotenv.env['api'].toString() + 'groups/attendance',
+              options: Options(headers: {
+                HttpHeaders.contentTypeHeader: "application/json",
+              }),
+              data: jsonEncode(attendances.toJson()));
+
+      if (response.statusCode == 200) {
+        // Attendance saved successfully
+        return true;
+      } else {
+        // Handle error response
+        throw "Failed to save attendance. Status code: ${response.statusCode}";
+      }
+    } catch (error) {
+      throw "Error saving attendance: $error";
     }
   }
 }
