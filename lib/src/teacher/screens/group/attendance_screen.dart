@@ -426,26 +426,26 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       ],
                     ),
                     if (groupStudentsExceptSessionStudents.isNotEmpty)
-                      for (var groupEnrollment
-                          in groupStudentsExceptSessionStudents)
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.90,
-                            child: Card(
-                                margin: const EdgeInsets.only(top: 30),
-                                child: Container(
-                                    margin: const EdgeInsets.only(
-                                        left: 10, right: 10),
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 5, bottom: 5),
-                                            child: Text(AppLocalizations.of(
-                                                    context)!
-                                                .addOtherStudentsToAttendanceList),
-                                          ),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.90,
+                          child: Card(
+                              margin: const EdgeInsets.only(top: 30),
+                              child: Container(
+                                  margin: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 5, bottom: 5),
+                                          child: Text(AppLocalizations.of(
+                                                  context)!
+                                              .addOtherStudentsToAttendanceList),
+                                        ),
+                                        for (var groupEnrollment
+                                            in groupStudentsExceptSessionStudents)
                                           Row(
                                             children: [
                                               IconButton(
@@ -468,7 +468,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                               ),
                                             ],
                                           )
-                                        ])))),
+                                      ])))),
                     Container(
                       margin: const EdgeInsets.only(top: 10.0, bottom: 10.0),
                       child: Container(
