@@ -190,7 +190,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     });
     await _groupService.saveAttendance(att).then((result) {
       if (result) {
-        Navigator.pop(context);
+        Navigator.pop(context, true);
       } else {
         setState(() {
           isSaving = false;

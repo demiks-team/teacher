@@ -171,17 +171,21 @@ class _PastGroupSessionsWithoutAttendance
         return Card(
             elevation: 4,
             child: ListTile(
-              onTap: () {
+              onTap: () async {
                 if (groupSessions[index].sessionStatus !=
                         GroupSessionStatus.cancelled &&
                     groupSessions[index].sessionStatus !=
                         GroupSessionStatus.requested) {
-                  Navigator.push(
+                  final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (_) => AttendanceScreen(
                               attendanceQModel: createAttendanceQModel(
                                   groupSessions[index]))));
+
+                  if (result == true) {
+                    setState(() {});
+                  }
                 }
               },
               title: Container(
