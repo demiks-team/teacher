@@ -29,6 +29,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   bool completedTasks = false;
   final GroupService _groupService = GroupService();
   final GeneralService _generalService = GeneralService();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   initState() {
@@ -240,259 +241,329 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   ),
                   body: SingleChildScrollView(
                       child: Center(
-                          child: Column(children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                            padding: const EdgeInsets.only(top: 5, bottom: 5),
-                            margin: const EdgeInsets.only(top: 10),
-                            width: MediaQuery.of(context).size.width * 0.90,
-                            child: TextField(
-                              controller: notesController,
-                              maxLines: 5,
-                              decoration: InputDecoration(
-                                labelText:
-                                    AppLocalizations.of(context)!.recordOfWork,
-                                border: const OutlineInputBorder(),
-                              ),
-                            )),
-                        Container(
-                            padding: const EdgeInsets.only(top: 5, bottom: 5),
-                            margin: const EdgeInsets.only(top: 10),
-                            child: ToggleButtons(
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.check,
-                                      color: Colors.blue),
-                                  onPressed: () =>
-                                      onChangedAttendanceStatusAll(0),
+                          child: Form(
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              key: _formKey,
+                              child: Column(children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                        padding: const EdgeInsets.only(
+                                            top: 5, bottom: 5),
+                                        margin: const EdgeInsets.only(top: 10),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.90,
+                                        child: TextFormField(
+                                          controller: notesController,
+                                          maxLines: 5,
+                                          decoration: InputDecoration(
+                                            labelText:
+                                                AppLocalizations.of(context)!
+                                                    .recordOfWork,
+                                            border: const OutlineInputBorder(),
+                                          ),
+                                        )),
+                                    Container(
+                                        padding: const EdgeInsets.only(
+                                            top: 5, bottom: 5),
+                                        margin: const EdgeInsets.only(top: 10),
+                                        child: ToggleButtons(
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(Icons.check,
+                                                  color: Colors.blue),
+                                              onPressed: () =>
+                                                  onChangedAttendanceStatusAll(
+                                                      0),
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.snooze,
+                                                  color: Colors.orange),
+                                              onPressed: () =>
+                                                  onChangedAttendanceStatusAll(
+                                                      1),
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.alarm,
+                                                  color: Colors.orange),
+                                              onPressed: () =>
+                                                  onChangedAttendanceStatusAll(
+                                                      2),
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.block,
+                                                  color: Colors.red),
+                                              onPressed: () =>
+                                                  onChangedAttendanceStatusAll(
+                                                      3),
+                                            ),
+                                          ],
+                                          fillColor: Colors.grey.shade200,
+                                          isSelected: List.generate(
+                                              4,
+                                              (index) =>
+                                                  index == _selectedValue),
+                                          onPressed: (int index) {
+                                            onChangedAttendanceStatusAll(
+                                                _selectedValue);
+                                          },
+                                        )),
+                                    for (int index = 0;
+                                        index <
+                                            attendanceCreation!
+                                                .attendances!.length;
+                                        index++)
+                                      SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.90,
+                                          child: Card(
+                                              margin: const EdgeInsets.only(
+                                                  top: 30),
+                                              child: Container(
+                                                  margin: const EdgeInsets.only(
+                                                      left: 10, right: 10),
+                                                  child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 10,
+                                                                  bottom: 10),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 5,
+                                                                  bottom: 5),
+                                                          child: Text(
+                                                              attendanceCreation!
+                                                                  .attendances![
+                                                                      index]
+                                                                  .groupEnrollment!
+                                                                  .enrollment!
+                                                                  .student!
+                                                                  .nameIdentification
+                                                                  .toString()),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 5,
+                                                                  bottom: 5),
+                                                          child: ToggleButtons(
+                                                            children: [
+                                                              IconButton(
+                                                                icon: const Icon(
+                                                                    Icons.check,
+                                                                    color: Colors
+                                                                        .blue),
+                                                                onPressed: () =>
+                                                                    onChangedAttendanceStatus(
+                                                                        0,
+                                                                        index),
+                                                              ),
+                                                              IconButton(
+                                                                icon: const Icon(
+                                                                    Icons
+                                                                        .snooze,
+                                                                    color: Colors
+                                                                        .orange),
+                                                                onPressed: () =>
+                                                                    onChangedAttendanceStatus(
+                                                                        1,
+                                                                        index),
+                                                              ),
+                                                              IconButton(
+                                                                icon: const Icon(
+                                                                    Icons.alarm,
+                                                                    color: Colors
+                                                                        .orange),
+                                                                onPressed: () =>
+                                                                    onChangedAttendanceStatus(
+                                                                        2,
+                                                                        index),
+                                                              ),
+                                                              IconButton(
+                                                                icon: const Icon(
+                                                                    Icons.block,
+                                                                    color: Colors
+                                                                        .red),
+                                                                onPressed: () =>
+                                                                    onChangedAttendanceStatus(
+                                                                        3,
+                                                                        index),
+                                                              ),
+                                                            ],
+                                                            fillColor: Colors
+                                                                .grey.shade200,
+                                                            isSelected: List.generate(
+                                                                4,
+                                                                (i) =>
+                                                                    selectedStatusValues[
+                                                                        index] ==
+                                                                    i),
+                                                            onPressed: (int i) {
+                                                              onChangedAttendanceStatus(
+                                                                  i, index);
+                                                            },
+                                                          ),
+                                                        ),
+                                                        TextFormField(
+                                                          controller:
+                                                              studentNotesControllers[
+                                                                  index],
+                                                          decoration: InputDecoration(
+                                                              labelText: AppLocalizations
+                                                                      .of(context)!
+                                                                  .studentNote),
+                                                        ),
+                                                        TextFormField(
+                                                          controller:
+                                                              internalNotesControllers[
+                                                                  index],
+                                                          decoration: InputDecoration(
+                                                              labelText: AppLocalizations
+                                                                      .of(context)!
+                                                                  .internalNote),
+                                                        ),
+                                                        Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    bottom:
+                                                                        10.0),
+                                                            child:
+                                                                DropdownButtonFormField<
+                                                                    int>(
+                                                              value: attendanceCreation!
+                                                                  .attendances![
+                                                                      index]
+                                                                  .studentLevelId,
+                                                              items: levels
+                                                                  .map((level) {
+                                                                return DropdownMenuItem<
+                                                                    int>(
+                                                                  value:
+                                                                      level.id,
+                                                                  child: Text(level
+                                                                      .title!
+                                                                      .toString()),
+                                                                );
+                                                              }).toList(),
+                                                              onChanged:
+                                                                  (value) {
+                                                                setState(
+                                                                    () => {
+                                                                          selectedLevelIds[index] =
+                                                                              value
+                                                                        });
+                                                              },
+                                                              decoration: InputDecoration(
+                                                                  labelText:
+                                                                      AppLocalizations.of(
+                                                                              context)!
+                                                                          .level),
+                                                            )),
+                                                      ])))),
+                                  ],
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.snooze,
-                                      color: Colors.orange),
-                                  onPressed: () =>
-                                      onChangedAttendanceStatusAll(1),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.alarm,
-                                      color: Colors.orange),
-                                  onPressed: () =>
-                                      onChangedAttendanceStatusAll(2),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.block,
-                                      color: Colors.red),
-                                  onPressed: () =>
-                                      onChangedAttendanceStatusAll(3),
-                                ),
-                              ],
-                              fillColor: Colors.grey.shade200,
-                              isSelected: List.generate(
-                                  4, (index) => index == _selectedValue),
-                              onPressed: (int index) {
-                                onChangedAttendanceStatusAll(_selectedValue);
-                              },
-                            )),
-                        for (int index = 0;
-                            index < attendanceCreation!.attendances!.length;
-                            index++)
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.90,
-                              child: Card(
-                                  margin: const EdgeInsets.only(top: 30),
+                                if (groupStudentsExceptSessionStudents
+                                    .isNotEmpty)
+                                  SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.90,
+                                      child: Card(
+                                          margin:
+                                              const EdgeInsets.only(top: 30),
+                                          child: Container(
+                                              margin: const EdgeInsets.only(
+                                                  left: 10, right: 10),
+                                              child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 5,
+                                                              bottom: 5),
+                                                      child: Text(AppLocalizations
+                                                              .of(context)!
+                                                          .addOtherStudentsToAttendanceList),
+                                                    ),
+                                                    for (var groupEnrollment
+                                                        in groupStudentsExceptSessionStudents)
+                                                      Row(
+                                                        children: [
+                                                          IconButton(
+                                                              onPressed: () {
+                                                                addStudentToAttendanceList(
+                                                                    groupEnrollment);
+                                                              },
+                                                              icon: const Icon(Icons
+                                                                  .add), // Add icon to the button
+                                                              color: HexColor
+                                                                  .fromHex(AppColors
+                                                                      .primaryColor) // Set icon color to white
+                                                              ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 5,
+                                                                    bottom: 5),
+                                                            child: Text(
+                                                                groupEnrollment
+                                                                    .enrollment!
+                                                                    .student!
+                                                                    .nameIdentification!),
+                                                          ),
+                                                        ],
+                                                      )
+                                                  ])))),
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                      top: 10.0, bottom: 10.0),
                                   child: Container(
                                       margin: const EdgeInsets.only(
-                                          left: 10, right: 10),
-                                      child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: 10, bottom: 10),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 5, bottom: 5),
-                                              child: Text(attendanceCreation!
-                                                  .attendances![index]
-                                                  .groupEnrollment!
-                                                  .enrollment!
-                                                  .student!
-                                                  .nameIdentification
-                                                  .toString()),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 5, bottom: 5),
-                                              child: ToggleButtons(
-                                                children: [
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                        Icons.check,
-                                                        color: Colors.blue),
-                                                    onPressed: () =>
-                                                        onChangedAttendanceStatus(
-                                                            0, index),
-                                                  ),
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                        Icons.snooze,
-                                                        color: Colors.orange),
-                                                    onPressed: () =>
-                                                        onChangedAttendanceStatus(
-                                                            1, index),
-                                                  ),
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                        Icons.alarm,
-                                                        color: Colors.orange),
-                                                    onPressed: () =>
-                                                        onChangedAttendanceStatus(
-                                                            2, index),
-                                                  ),
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                        Icons.block,
-                                                        color: Colors.red),
-                                                    onPressed: () =>
-                                                        onChangedAttendanceStatus(
-                                                            3, index),
-                                                  ),
-                                                ],
-                                                fillColor: Colors.grey.shade200,
-                                                isSelected: List.generate(
-                                                    4,
-                                                    (i) =>
-                                                        selectedStatusValues[
-                                                            index] ==
-                                                        i),
-                                                onPressed: (int i) {
-                                                  onChangedAttendanceStatus(
-                                                      i, index);
-                                                },
-                                              ),
-                                            ),
-                                            TextField(
-                                              controller:
-                                                  studentNotesControllers[
-                                                      index],
-                                              decoration: InputDecoration(
-                                                  labelText:
-                                                      AppLocalizations.of(
-                                                              context)!
-                                                          .studentNote),
-                                            ),
-                                            TextField(
-                                              controller:
-                                                  internalNotesControllers[
-                                                      index],
-                                              decoration: InputDecoration(
-                                                  labelText:
-                                                      AppLocalizations.of(
-                                                              context)!
-                                                          .internalNote),
-                                            ),
-                                            Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 10.0),
-                                                child: DropdownButtonFormField<
-                                                    int>(
-                                                  value: attendanceCreation!
-                                                      .attendances![index]
-                                                      .studentLevelId,
-                                                  items: levels.map((level) {
-                                                    return DropdownMenuItem<
-                                                        int>(
-                                                      value: level.id,
-                                                      child: Text(level.title!
-                                                          .toString()),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (value) {
-                                                    setState(() => {
-                                                          selectedLevelIds[
-                                                              index] = value
-                                                        });
-                                                  },
-                                                  decoration: InputDecoration(
-                                                      labelText:
-                                                          AppLocalizations.of(
-                                                                  context)!
-                                                              .level),
-                                                )),
-                                          ])))),
-                      ],
-                    ),
-                    if (groupStudentsExceptSessionStudents.isNotEmpty)
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.90,
-                          child: Card(
-                              margin: const EdgeInsets.only(top: 30),
-                              child: Container(
-                                  margin: const EdgeInsets.only(
-                                      left: 10, right: 10),
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 5, bottom: 5),
-                                          child: Text(AppLocalizations.of(
-                                                  context)!
-                                              .addOtherStudentsToAttendanceList),
-                                        ),
-                                        for (var groupEnrollment
-                                            in groupStudentsExceptSessionStudents)
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                  onPressed: () {
-                                                    addStudentToAttendanceList(
-                                                        groupEnrollment);
-                                                  },
-                                                  icon: const Icon(Icons
-                                                      .add), // Add icon to the button
-                                                  color: HexColor.fromHex(AppColors
-                                                      .primaryColor) // Set icon color to white
-                                                  ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 5, bottom: 5),
-                                                child: Text(groupEnrollment
-                                                    .enrollment!
-                                                    .student!
-                                                    .nameIdentification!),
-                                              ),
-                                            ],
-                                          )
-                                      ])))),
-                    Container(
-                      margin: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                      child: Container(
-                          margin: const EdgeInsets.only(top: 10, bottom: 10),
-                          child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.50,
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size.fromHeight(60),
-                                      backgroundColor: HexColor.fromHex(
-                                          AppColors.primaryColor),
-                                      padding: const EdgeInsets.all(20)),
-                                  onPressed: isSaving
-                                      ? null
-                                      : () async {
-                                          await submit();
-                                        },
-                                  child: Text(
-                                      AppLocalizations.of(context)!.save,
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20))))),
-                    ),
-                  ]))))));
+                                          top: 10, bottom: 10),
+                                      child: SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.50,
+                                          child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  minimumSize:
+                                                      const Size.fromHeight(60),
+                                                  backgroundColor:
+                                                      HexColor.fromHex(AppColors
+                                                          .primaryColor),
+                                                  padding:
+                                                      const EdgeInsets.all(20)),
+                                              onPressed: isSaving
+                                                  ? null
+                                                  : () async {
+                                                      await submit();
+                                                    },
+                                              child: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .save,
+                                                  style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 20))))),
+                                ),
+                              ])))))));
     } else {
       return Center(
         child: CircularProgressIndicator(
