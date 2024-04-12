@@ -10,7 +10,7 @@ class AuthenticationService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
       scopes: ['email'],
       clientId:
-          "913000033507-oi973jbq04umjmah2esms7hlssaursve.apps.googleusercontent.com");
+          "913000033507-geun2f6l7vbg29udkbi1gmlhhoeph6ld.apps.googleusercontent.com");
 
   Future<String?> login(String email, String password) async {
     var response = await DioApi().dio.post(
