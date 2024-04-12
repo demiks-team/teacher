@@ -1,16 +1,9 @@
-# teacher
+# Introduction to Demiks Teacher
 
-A new Flutter project.
+Demiks Teacher Mobile App is a mobile app interface to Demiks Teacher
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To use this app as a teacherpreneur you can create an account on [Teacher Portal](https://teacher.demiks.com). If you run a school and you'd like to give access to all your teachers, feel free to check out [Demiks Admin](https://admin.demiks.com).
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+[Privacy Policy](https://github.com/demiks-team/teacher/blob/main/pp.md)
