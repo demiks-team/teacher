@@ -6,9 +6,9 @@ import 'src/app.dart';
 
 Future<void> main() async {
   if (kReleaseMode) {
-    await dotenv.load(fileName: "environments/.env.production");
+    await dotenv.load(fileName: "assets/environments/.env.production");
   } else {
-    await dotenv.load(fileName: "environments/.env.development");
+    await dotenv.load(fileName: "assets/environments/.env.development");
   }
 
   runApp(const App());
