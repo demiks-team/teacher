@@ -170,6 +170,7 @@ class _PastGroupSessionsWithoutAttendance
       itemBuilder: (context, index) {
         return Card(
             elevation: 4,
+            color: HexColor.fromHex(AppColors.backgroundColorMintTulip),
             child: ListTile(
               onTap: () async {
                 if (groupSessions[index].sessionStatus !=

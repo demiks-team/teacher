@@ -31,6 +31,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      resizeToAvoidBottomInset: false,
       child: CupertinoTabScaffold(
           tabBar: CupertinoTabBar(
             backgroundColor: HexColor.fromHex('#fafafa'),

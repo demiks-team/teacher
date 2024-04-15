@@ -58,6 +58,17 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
     return result;
   }
 
+  String getGroupTimeString(GroupSessionModel groupSession) {
+    DateTime startDate = DateTime.parse(groupSession.startDate!);
+    DateTime endDate = DateTime.parse(groupSession.endDate!);
+
+    String formattedStartTime = formatDateTime(startDate, 'jm');
+    String formattedEndTime = formatDateTime(endDate, 'jm');
+
+    var result = formattedStartTime + "-" + formattedEndTime;
+    return result;
+  }
+
   String formatDateTime(DateTime dateTime, String format) {
     final formatter = DateFormat(format);
     return formatter.format(dateTime);
@@ -168,6 +179,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
       itemBuilder: (context, index) {
         return Card(
             elevation: 4,
+            color: HexColor.fromHex(AppColors.backgroundColorMintTulip),
             child: ListTile(
               onTap: () {
                 if (groupSessions[index].sessionStatus !=
@@ -186,7 +198,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
                   margin: const EdgeInsets.only(
                       left: 15, top: 25, bottom: 15, right: 15),
                   child: Text(
-                    getGroupDateString(groupSessions[index]),
+                    getGroupTimeString(groupSessions[index]),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 20),
                   )),
