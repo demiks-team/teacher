@@ -29,8 +29,6 @@ class SignOutDialogWidget extends StatelessWidget {
           child: Text(AppLocalizations.of(context)!.yes),
         ),
         TextButton(
-          style: TextButton.styleFrom(
-              backgroundColor: HexColor.fromHex(AppColors.primaryColor)),
           onPressed: () {
             Navigator.of(context, rootNavigator: true).pop();
           },

@@ -274,71 +274,71 @@ class _SignupScreenState extends State<SignupScreen> {
                                                   fontSize: 20))),
                                     ]),
                                   ),
-                                  Container(
-                                      margin: const EdgeInsets.only(
-                                          top: 30, left: 15, right: 15),
-                                      child: Column(children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Expanded(
-                                              child: Center(
-                                                child: Text(
-                                                  AppLocalizations.of(context)!
-                                                      .signUpWithSocialNetworks,
-                                                  style: const TextStyle(
-                                                      fontSize: 20),
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 15),
-                                              child: ElevatedButton.icon(
-                                                icon: Container(
-                                                    margin:
-                                                        const EdgeInsets.all(2),
-                                                    width: 20,
-                                                    height: 20,
-                                                    child: Image.asset(
-                                                        'assets/images/google-login-icon.png')),
-                                                style: ButtonStyle(
-                                                  padding:
-                                                      MaterialStateProperty.all(
-                                                          const EdgeInsets.only(
-                                                              top: 10,
-                                                              bottom: 10,
-                                                              left: 5,
-                                                              right: 5)),
-                                                ),
-                                                label: Text(AppLocalizations.of(
-                                                        context)!
-                                                    .signUpWithGoogle),
-                                                onPressed: () async {
-                                                  var response =
-                                                      await authenticationService
-                                                          .signUpGoogle();
-                                                  if (response != null &&
-                                                      response) {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (_) =>
-                                                                const BottomNavigation()));
-                                                  }
-                                                },
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ])),
+                                  // Container(
+                                  //     margin: const EdgeInsets.only(
+                                  //         top: 30, left: 15, right: 15),
+                                  //     child: Column(children: [
+                                  //       Row(
+                                  //         mainAxisAlignment:
+                                  //             MainAxisAlignment.center,
+                                  //         children: [
+                                  //           Expanded(
+                                  //             child: Center(
+                                  //               child: Text(
+                                  //                 AppLocalizations.of(context)!
+                                  //                     .signUpWithSocialNetworks,
+                                  //                 style: const TextStyle(
+                                  //                     fontSize: 20),
+                                  //               ),
+                                  //             ),
+                                  //           )
+                                  //         ],
+                                  //       ),
+                                  //       Row(
+                                  //         mainAxisAlignment:
+                                  //             MainAxisAlignment.center,
+                                  //         children: [
+                                  //           Container(
+                                  //             margin: const EdgeInsets.only(
+                                  //                 top: 15),
+                                  //             child: ElevatedButton.icon(
+                                  //               icon: Container(
+                                  //                   margin:
+                                  //                       const EdgeInsets.all(2),
+                                  //                   width: 20,
+                                  //                   height: 20,
+                                  //                   child: Image.asset(
+                                  //                       'assets/images/google-login-icon.png')),
+                                  //               style: ButtonStyle(
+                                  //                 padding:
+                                  //                     MaterialStateProperty.all(
+                                  //                         const EdgeInsets.only(
+                                  //                             top: 10,
+                                  //                             bottom: 10,
+                                  //                             left: 5,
+                                  //                             right: 5)),
+                                  //               ),
+                                  //               label: Text(AppLocalizations.of(
+                                  //                       context)!
+                                  //                   .signUpWithGoogle),
+                                  //               onPressed: () async {
+                                  //                 var response =
+                                  //                     await authenticationService
+                                  //                         .signUpGoogle();
+                                  //                 if (response != null &&
+                                  //                     response) {
+                                  //                   Navigator.push(
+                                  //                       context,
+                                  //                       MaterialPageRoute(
+                                  //                           builder: (_) =>
+                                  //                               const BottomNavigation()));
+                                  //                 }
+                                  //               },
+                                  //             ),
+                                  //           )
+                                  //         ],
+                                  //       ),
+                                  //     ])),
                                 ]))),
                   ),
                 ),
@@ -387,7 +387,6 @@ class _SignupScreenState extends State<SignupScreen> {
 }
 
 showAlertDialog(BuildContext context) {
-  
   AlertDialog alert = AlertDialog(
     content: Text(AppLocalizations.of(context)!.passwordComplexity),
   );

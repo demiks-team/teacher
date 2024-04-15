@@ -11,7 +11,7 @@
     "areYouSure": "Are you sure?",
     "cancel": "Cancel",
     "yes": "Yes",
-    "noClass": "There are no classes for you at the moment.",
+    "noClass": "You don't have any classes today",
     "noData": "No Data Available",
     "signUpWithGoogle": "Sign up with Google",
     "signUpWithSocialNetworks": "Sign up with social networks",
@@ -36,6 +36,6 @@
     "cancelled": "Cancelled",
     "requested": "Requested",
     "missedAttendances": "Missed Attendances",
-    "listOfTodaysClasses": "List of today's classes",
+    "listOfTodaysClasses": "Today's Classes",
     "save": "Save"
 }

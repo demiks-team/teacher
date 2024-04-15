@@ -1,8 +1,6 @@
-
 // https://chir.ag/projects/name-that-color/
 
 class AppColors {
-
   // ------------------ Main colors demiks ------------------
   static const primaryColor = '#067a6c';
   static const accentColor = '#faa61a';
@@ -11,5 +9,4 @@ class AppColors {
   static const backgroundColorGray = "#888888";
   static const backgroundColorMineShaft = "#333333";
   // --------------------------------------------------------
-
 }

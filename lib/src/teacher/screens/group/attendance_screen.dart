@@ -322,6 +322,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                   .width *
                                               0.90,
                                           child: Card(
+                                              color: HexColor.fromHex(AppColors
+                                                  .backgroundColorMintTulip),
                                               margin: const EdgeInsets.only(
                                                   top: 30),
                                               child: Container(
@@ -341,7 +343,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .only(
+                                                                  .only(
                                                                   top: 5,
                                                                   bottom: 5),
                                                           child: Text(
@@ -357,7 +359,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .only(
+                                                                  .only(
                                                                   top: 5,
                                                                   bottom: 5),
                                                           child: ToggleButtons(
@@ -439,7 +441,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                         Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     bottom:
                                                                         10.0),
                                                             child:
@@ -519,7 +521,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     top: 5,
                                                                     bottom: 5),
                                                             child: Text(
