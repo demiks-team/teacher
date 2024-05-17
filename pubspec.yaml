@@ -61,6 +61,7 @@ flutter_icons:
   android: true
   ios: true
   image_path: "assets/images/icon.png"
+  remove_alpha_ios: true
 
 # The following section is specific to Flutter.
 flutter:
