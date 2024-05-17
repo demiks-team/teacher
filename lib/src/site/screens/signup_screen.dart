@@ -254,7 +254,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                           style: ElevatedButton.styleFrom(
                                               minimumSize:
                                                   const Size.fromHeight(60),
-                                              primary: HexColor.fromHex(
+                                              backgroundColor: HexColor.fromHex(
                                                   AppColors.primaryColor),
                                               padding:
                                                   const EdgeInsets.all(20)),

@@ -464,11 +464,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                               }).toList(),
                                                               onChanged:
                                                                   (value) {
-                                                                setState(
-                                                                    () => {
-                                                                          selectedLevelIds[index] =
-                                                                              value
-                                                                        });
+                                                                setState(() =>
+                                                                    selectedLevelIds[
+                                                                            index] =
+                                                                        value);
                                                               },
                                                               decoration: InputDecoration(
                                                                   labelText:
