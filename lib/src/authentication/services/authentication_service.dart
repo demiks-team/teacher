@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:teacher/src/authentication/models/social_login_model.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:teacher/src/authentication/models/social_login_model.dart';
 
 import '../../shared/secure_storage.dart';
 import '../helpers/dio/dio_api.dart';
 
 class AuthenticationService {
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-      scopes: ['email'],
-      clientId:
-          "913000033507-geun2f6l7vbg29udkbi1gmlhhoeph6ld.apps.googleusercontent.com");
+  // final GoogleSignIn _googleSignIn = GoogleSignIn(
+  //     scopes: ['email'],
+  //     clientId:
+  //         "913000033507-geun2f6l7vbg29udkbi1gmlhhoeph6ld.apps.googleusercontent.com");
 
   Future<String?> login(String email, String password) async {
     var response = await DioApi().dio.post(
@@ -46,89 +46,89 @@ class AuthenticationService {
     }
   }
 
-  Future<bool?> signInGoogle() async {
-    bool loginSuccess = false;
+  // Future<bool?> signInGoogle() async {
+  //   bool loginSuccess = false;
 
-    var result = await _googleSignIn.signIn();
-    SocialLoginModel socialLoginModel = SocialLoginModel();
-    socialLoginModel.id = result!.id;
-    socialLoginModel.image = result.photoUrl;
-    socialLoginModel.name = result.displayName;
-    socialLoginModel.email = result.email;
-    socialLoginModel.provider = "GOOGLE";
+  //   var result = await _googleSignIn.signIn();
+  //   SocialLoginModel socialLoginModel = SocialLoginModel();
+  //   socialLoginModel.id = result!.id;
+  //   socialLoginModel.image = result.photoUrl;
+  //   socialLoginModel.name = result.displayName;
+  //   socialLoginModel.email = result.email;
+  //   socialLoginModel.provider = "GOOGLE";
 
-    await result.authentication.then((value) {
-      socialLoginModel.idToken = value.idToken;
-      socialLoginModel.token = value.accessToken;
-    });
-    try {
-      var response = await DioApi().dio.post(
-            dotenv.env['api'].toString() + "security/sociallogin",
-            data: socialLoginModel.toJson(),
-          );
+  //   await result.authentication.then((value) {
+  //     socialLoginModel.idToken = value.idToken;
+  //     socialLoginModel.token = value.accessToken;
+  //   });
+  //   try {
+  //     var response = await DioApi().dio.post(
+  //           dotenv.env['api'].toString() + "security/sociallogin",
+  //           data: socialLoginModel.toJson(),
+  //         );
 
-      if (response.statusCode == 200 && response.data != null) {
-        await SecureStorage.setCurrentUser(
-            json.encode(response.data).toString());
-        loginSuccess = true;
-        return true;
-      }
-    } catch (e) {
-      loginSuccess = false;
-    }
+  //     if (response.statusCode == 200 && response.data != null) {
+  //       await SecureStorage.setCurrentUser(
+  //           json.encode(response.data).toString());
+  //       loginSuccess = true;
+  //       return true;
+  //     }
+  //   } catch (e) {
+  //     loginSuccess = false;
+  //   }
 
-    if (!loginSuccess) {
-      try {
-        var response = await DioApi().dio.post(
-              dotenv.env['api'].toString() + "security/socialsignup",
-              data: socialLoginModel.toJson(),
-            );
+  //   if (!loginSuccess) {
+  //     try {
+  //       var response = await DioApi().dio.post(
+  //             dotenv.env['api'].toString() + "security/socialsignup",
+  //             data: socialLoginModel.toJson(),
+  //           );
 
-        if (response.statusCode == 200 && response.data != null) {
-          await SecureStorage.setCurrentUser(
-              json.encode(response.data).toString());
-          loginSuccess = true;
-          return true;
-        }
-      } catch (e) {
-        return false;
-      }
-    }
-    return false;
-  }
+  //       if (response.statusCode == 200 && response.data != null) {
+  //         await SecureStorage.setCurrentUser(
+  //             json.encode(response.data).toString());
+  //         loginSuccess = true;
+  //         return true;
+  //       }
+  //     } catch (e) {
+  //       return false;
+  //     }
+  //   }
+  //   return false;
+  // }
 
-  Future<bool?> signUpGoogle() async {
-    try {
-      var result = await _googleSignIn.signIn();
-      SocialLoginModel socialLoginModel = SocialLoginModel();
-      socialLoginModel.id = result!.id;
-      socialLoginModel.image = result.photoUrl;
-      socialLoginModel.name = result.displayName;
-      socialLoginModel.email = result.email;
-      socialLoginModel.provider = "GOOGLE";
+  // Future<bool?> signUpGoogle() async {
+  //   try {
+  //     var result = await _googleSignIn.signIn();
+  //     SocialLoginModel socialLoginModel = SocialLoginModel();
+  //     socialLoginModel.id = result!.id;
+  //     socialLoginModel.image = result.photoUrl;
+  //     socialLoginModel.name = result.displayName;
+  //     socialLoginModel.email = result.email;
+  //     socialLoginModel.provider = "GOOGLE";
 
-      await result.authentication.then((value) {
-        socialLoginModel.idToken = value.idToken;
-        socialLoginModel.token = value.accessToken;
-      });
+  //     await result.authentication.then((value) {
+  //       socialLoginModel.idToken = value.idToken;
+  //       socialLoginModel.token = value.accessToken;
+  //     });
 
-      var response = await DioApi().dio.post(
-            dotenv.env['api'].toString() + "security/socialsignup",
-            data: socialLoginModel.toJson(),
-          );
+  //     var response = await DioApi().dio.post(
+  //           dotenv.env['api'].toString() + "security/socialsignup",
+  //           data: socialLoginModel.toJson(),
+  //         );
 
-      if (response.statusCode == 200 && response.data != null) {
-        await SecureStorage.setCurrentUser(
-            json.encode(response.data).toString());
-        return true;
-      }
-      return false;
-    } catch (e) {
-      throw Exception('Unable to signup.');
-    }
-  }
+  //     if (response.statusCode == 200 && response.data != null) {
+  //       await SecureStorage.setCurrentUser(
+  //           json.encode(response.data).toString());
+  //       return true;
+  //     }
+  //     return false;
+  //   } catch (e) {
+  //     throw Exception('Unable to signup.');
+  //   }
+  // }
 
-  void signOutGoogle() {
-    _googleSignIn.disconnect();
-  }
+  // void signOutGoogle() {
+  //   _googleSignIn.disconnect();
+  // }
 }
