@@ -45,22 +45,9 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
         ));
   }
 
-  String getGroupDateString(GroupSessionModel groupSession) {
-    DateTime startDate = DateTime.parse(groupSession.startDate!);
-    DateTime endDate = DateTime.parse(groupSession.endDate!);
-
-    String formattedStartDate = formatDateTime(startDate, 'yyyy-MM-dd');
-    String formattedStartTime = formatDateTime(startDate, 'jm');
-    String formattedEndTime = formatDateTime(endDate, 'jm');
-
-    var result =
-        formattedStartDate + ", " + formattedStartTime + "-" + formattedEndTime;
-    return result;
-  }
-
   String getGroupTimeString(GroupSessionModel groupSession) {
-    DateTime startDate = DateTime.parse(groupSession.startDate!);
-    DateTime endDate = DateTime.parse(groupSession.endDate!);
+    DateTime startDate = DateTime.parse(groupSession.startDate!).toLocal();
+    DateTime endDate = DateTime.parse(groupSession.endDate!).toLocal();
 
     String formattedStartTime = formatDateTime(startDate, 'jm');
     String formattedEndTime = formatDateTime(endDate, 'jm');
@@ -231,6 +218,31 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
                                 child: Text(getSessionStatusString(
                                     groupSessions[index], context)),
                               ),
+                            ]),
+                      if (groupSessions[index].group?.contact != null)
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                  child: Container(
+                                      padding: const EdgeInsets.only(
+                                          top: 5, bottom: 5),
+                                      child: Text(groupSessions[index]
+                                          .group!
+                                          .contact!
+                                          .fullName!))),
+                            ]),
+                      if (groupSessions[index].group?.address != null)
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                  child: Container(
+                                      padding: const EdgeInsets.only(
+                                          top: 5, bottom: 5),
+                                      child: Text(groupSessions[index]
+                                          .group!
+                                          .address!))),
                             ]),
                       if (groupSessions[index].teacherNotes != null ||
                           groupSessions[index].privateNote != null ||

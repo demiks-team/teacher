@@ -48,8 +48,8 @@ class _PastGroupSessionsWithoutAttendance
   }
 
   String getGroupDateString(GroupSessionModel groupSession) {
-    DateTime startDate = DateTime.parse(groupSession.startDate!);
-    DateTime endDate = DateTime.parse(groupSession.endDate!);
+    DateTime startDate = DateTime.parse(groupSession.startDate!).toLocal();
+    DateTime endDate = DateTime.parse(groupSession.endDate!).toLocal();
 
     String formattedStartDate = formatDateTime(startDate, 'yyyy-MM-dd');
     String formattedStartTime = formatDateTime(startDate, 'jm');
