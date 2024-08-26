@@ -357,7 +357,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                           ),
                                         )),
                                     if (attendanceCreation!
-                                        .attendances!.isNotEmpty)
+                                            .attendances!.length >
+                                        1)
                                       Column(children: [
                                         Container(
                                             padding: const EdgeInsets.only(
