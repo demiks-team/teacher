@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:teacher/src/shared/models/attendance_creation_model.dart';
@@ -42,8 +44,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   }
 
   AttendanceCreationModel? attendanceCreation;
+  AttendanceCreationModel? mainAttendanceCreation;
   List<GroupEnrollmentModel> groupStudentsExceptSessionStudents = [];
   List<LevelModel> levels = [];
+  List<LevelModel> dropdownLevels = [];
 
   List<int?> selectedLevelIds = [];
 
@@ -59,6 +63,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     await getAttendanceCreation.then((result) {
       setState(() {
         attendanceCreation = result;
+
+        var cloneJson = jsonEncode(result.toJson());
+        var clone = AttendanceCreationModel.fromJson(jsonDecode(cloneJson));
+        mainAttendanceCreation = clone;
+
         initializedTheForm();
       });
     });
@@ -91,6 +100,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     await getLevels.then((result) {
       setState(() {
         levels = result;
+
+        LevelModel newLevel = LevelModel(id: 0);
+        newLevel.title = "---";
+        dropdownLevels.add(newLevel);
+        dropdownLevels.addAll(levels);
       });
     });
   }
@@ -143,6 +157,81 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         index++) {
       onChangedAttendanceStatus(value, index);
     }
+  }
+
+  void onChangedAttendanceLevel(int value, int index) {
+    setState(() {
+      if (selectedLevelIds.length > index) {
+        selectedLevelIds[index] = value;
+      } else {
+        selectedLevelIds.add(value);
+      }
+    });
+  }
+
+  void onChangedAttendanceLevelAll(int? value) {
+    setState(() {
+      _selectedLevelValue = value;
+      changeAllLevels(value);
+    });
+  }
+
+  void changeAllLevels(int? selectedLevel) {
+    if (selectedLevel == 0) {
+      selectedLevel = null;
+    }
+    for (int i = 0; i <= mainAttendanceCreation!.attendances!.length - 1; i++) {
+      int? currentLevelId =
+          mainAttendanceCreation!.attendances![i].studentLevelId;
+
+      if (currentLevelId != null && selectedLevel == null) {
+        continue;
+      }
+
+      int? result = selectedLevel;
+      if (selectedLevel != null &&
+          selectedLevel > 0 &&
+          currentLevelId != null &&
+          currentLevelId > 0) {
+        List<LevelModel> allowedLevels =
+            getAllowedLevelsForStudent(currentLevelId);
+
+        if (!allowedLevels.any((level) => level.id == selectedLevel)) {
+          result = currentLevelId;
+        }
+      }
+
+      if (currentLevelId != null &&
+          mainAttendanceCreation!.attendances![i].studentLevelId != null) {
+        if (mainAttendanceCreation!.attendances![i].studentLevelId != null) {
+          LevelModel? oldLevel = levels.firstWhere((l) =>
+              l.id == mainAttendanceCreation!.attendances![i].studentLevelId);
+          LevelModel? newLevel =
+              levels.firstWhere((l) => l.id == currentLevelId);
+
+          if (oldLevel.displayOrder == null ||
+              (oldLevel.displayOrder! <= newLevel.displayOrder!)) {
+            selectedLevelIds[i] = result;
+            attendanceCreation!.attendances![i].studentLevelId = result;
+          }
+        }
+      } else {
+        selectedLevelIds[i] = result;
+        attendanceCreation!.attendances![i].studentLevelId = result;
+      }
+    }
+  }
+
+  List<LevelModel> getAllowedLevelsForStudent(int? currentLevelId) {
+    if (currentLevelId != null) {
+      LevelModel? level =
+          dropdownLevels.firstWhere((l) => l.id == currentLevelId);
+      return levels
+          .where((l) =>
+              l.displayOrder == null || l.displayOrder! >= level.displayOrder!)
+          .toList();
+    }
+    return dropdownLevels;
   }
 
   bool isSaving = false;
@@ -202,6 +291,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   List<int> selectedStatusValues = [];
   int _selectedValue = 0;
+  int? _selectedLevelValue;
 
   List<TextEditingController> studentNotesControllers = [];
   List<TextEditingController> internalNotesControllers = [];
@@ -266,51 +356,85 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                             border: const OutlineInputBorder(),
                                           ),
                                         )),
-                                    Container(
-                                        padding: const EdgeInsets.only(
-                                            top: 5, bottom: 5),
-                                        margin: const EdgeInsets.only(top: 10),
-                                        child: ToggleButtons(
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.check,
-                                                  color: Colors.blue),
-                                              onPressed: () =>
-                                                  onChangedAttendanceStatusAll(
-                                                      0),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(Icons.snooze,
-                                                  color: Colors.orange),
-                                              onPressed: () =>
-                                                  onChangedAttendanceStatusAll(
-                                                      1),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(Icons.alarm,
-                                                  color: Colors.orange),
-                                              onPressed: () =>
-                                                  onChangedAttendanceStatusAll(
-                                                      2),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(Icons.block,
-                                                  color: Colors.red),
-                                              onPressed: () =>
-                                                  onChangedAttendanceStatusAll(
-                                                      3),
-                                            ),
-                                          ],
-                                          fillColor: Colors.grey.shade200,
-                                          isSelected: List.generate(
-                                              4,
-                                              (index) =>
-                                                  index == _selectedValue),
-                                          onPressed: (int index) {
-                                            onChangedAttendanceStatusAll(
-                                                _selectedValue);
-                                          },
-                                        )),
+                                    if (attendanceCreation!
+                                        .attendances!.isNotEmpty)
+                                      Column(children: [
+                                        Container(
+                                            padding: const EdgeInsets.only(
+                                                top: 5, bottom: 5),
+                                            margin:
+                                                const EdgeInsets.only(top: 10),
+                                            child: ToggleButtons(
+                                              children: [
+                                                IconButton(
+                                                  icon: const Icon(Icons.check,
+                                                      color: Colors.blue),
+                                                  onPressed: () =>
+                                                      onChangedAttendanceStatusAll(
+                                                          0),
+                                                ),
+                                                IconButton(
+                                                  icon: const Icon(Icons.snooze,
+                                                      color: Colors.orange),
+                                                  onPressed: () =>
+                                                      onChangedAttendanceStatusAll(
+                                                          1),
+                                                ),
+                                                IconButton(
+                                                  icon: const Icon(Icons.alarm,
+                                                      color: Colors.orange),
+                                                  onPressed: () =>
+                                                      onChangedAttendanceStatusAll(
+                                                          2),
+                                                ),
+                                                IconButton(
+                                                  icon: const Icon(Icons.block,
+                                                      color: Colors.red),
+                                                  onPressed: () =>
+                                                      onChangedAttendanceStatusAll(
+                                                          3),
+                                                ),
+                                              ],
+                                              fillColor: Colors.grey.shade200,
+                                              isSelected: List.generate(
+                                                  4,
+                                                  (index) =>
+                                                      index == _selectedValue),
+                                              onPressed: (int index) {
+                                                onChangedAttendanceStatusAll(
+                                                    _selectedValue);
+                                              },
+                                            )),
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.90,
+                                            margin: const EdgeInsets.only(
+                                                bottom: 5),
+                                            child: DropdownButtonFormField<int>(
+                                              isExpanded: false,
+                                              value: _selectedLevelValue,
+                                              items:
+                                                  dropdownLevels.map((level) {
+                                                return DropdownMenuItem<int>(
+                                                  value: level.id,
+                                                  child: Text(
+                                                      level.title!.toString()),
+                                                );
+                                              }).toList(),
+                                              onChanged: (value) {
+                                                setState(() =>
+                                                    onChangedAttendanceLevelAll(
+                                                        value));
+                                              },
+                                              decoration: InputDecoration(
+                                                  labelText:
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .level),
+                                            ))
+                                      ]),
                                     for (int index = 0;
                                         index <
                                             attendanceCreation!
@@ -451,7 +575,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                                   .attendances![
                                                                       index]
                                                                   .studentLevelId,
-                                                              items: levels
+                                                              items: getAllowedLevelsForStudent(mainAttendanceCreation!
+                                                                      .attendances![
+                                                                          index]
+                                                                      .studentLevelId)
                                                                   .map((level) {
                                                                 return DropdownMenuItem<
                                                                     int>(
