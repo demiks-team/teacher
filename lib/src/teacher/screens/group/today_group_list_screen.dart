@@ -197,8 +197,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
                       Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5, bottom: 5),
+                            Expanded(
                               child: Text(
                                   groupSessions[index].group!.title.toString() +
                                       getSessionNumbersString(

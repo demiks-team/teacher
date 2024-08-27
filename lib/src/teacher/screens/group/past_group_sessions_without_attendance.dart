@@ -205,8 +205,8 @@ class _PastGroupSessionsWithoutAttendance
                       Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5, bottom: 5),
+                            Expanded(
+                              // padding: const EdgeInsets.only(top: 5, bottom: 5),
                               child: Text(
                                   groupSessions[index].group!.title.toString() +
                                       getSessionNumbersString(
