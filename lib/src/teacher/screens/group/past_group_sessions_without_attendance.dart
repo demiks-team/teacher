@@ -48,8 +48,8 @@ class _PastGroupSessionsWithoutAttendance
   }
 
   String getGroupDateString(GroupSessionModel groupSession) {
-    DateTime startDate = DateTime.parse(groupSession.startDate!);
-    DateTime endDate = DateTime.parse(groupSession.endDate!);
+    DateTime startDate = DateTime.parse(groupSession.startDate!).toLocal();
+    DateTime endDate = DateTime.parse(groupSession.endDate!).toLocal();
 
     String formattedStartDate = formatDateTime(startDate, 'yyyy-MM-dd');
     String formattedStartTime = formatDateTime(startDate, 'jm');
@@ -205,8 +205,8 @@ class _PastGroupSessionsWithoutAttendance
                       Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5, bottom: 5),
+                            Expanded(
+                              // padding: const EdgeInsets.only(top: 5, bottom: 5),
                               child: Text(
                                   groupSessions[index].group!.title.toString() +
                                       getSessionNumbersString(
