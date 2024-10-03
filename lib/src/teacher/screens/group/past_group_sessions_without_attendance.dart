@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:teacher/src/shared/models/attendance_settings_model.dart';
 import 'package:teacher/src/shared/models/enums.dart';
+import 'package:teacher/src/shared/services/school_service.dart';
 import 'package:teacher/src/teacher/screens/group/attendance_screen.dart';
 
 import '../../../shared/helpers/colors/hex_color.dart';
@@ -21,7 +23,12 @@ class PastGroupSessionsWithoutAttendance extends StatefulWidget {
 }
 
 class _PastGroupSessionsWithoutAttendance
-    extends State<PastGroupSessionsWithoutAttendance> {
+    extends State<PastGroupSessionsWithoutAttendance>
+    with AutomaticKeepAliveClientMixin {
+  AttendanceSettingsModel? attendanceSettings;
+  final SchoolService schoolService = SchoolService();
+  bool completedTasks = false;
+
   AttendanceQModel createAttendanceQModel(GroupSessionModel groupSession) {
     var attendanceQModel = AttendanceQModel();
     attendanceQModel.group = groupSession.group;
@@ -30,7 +37,51 @@ class _PastGroupSessionsWithoutAttendance
   }
 
   @override
+  initState() {
+    Future.delayed(Duration.zero, () async {
+      await initializeTheData();
+      completedTasks = true;
+    });
+
+    super.initState();
+  }
+
+  initializeTheData() async {
+    await getAttendanceSettings();
+  }
+
+  getAttendanceSettings() async {
+    var attendanceSettingsFuture = schoolService.getAttendanceSettings();
+    await attendanceSettingsFuture.then((a) {
+      setState(() {
+        attendanceSettings = a;
+      });
+    });
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  bool canRecordAttendance(GroupSessionModel groupSession) {
+    if (attendanceSettings != null) {
+      if (attendanceSettings!.blockAttendanceNumberOfHours! > 0) {
+        final now = DateTime.now();
+        final startThreshold = DateTime.parse(groupSession.startDate!).subtract(
+            Duration(hours: attendanceSettings!.blockAttendanceNumberOfHours!));
+        final endThreshold = DateTime.parse(groupSession.endDate!).add(
+            Duration(hours: attendanceSettings!.blockAttendanceNumberOfHours!));
+
+        if (now.isBefore(startThreshold) || now.isAfter(endThreshold)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.missedAttendances),
@@ -110,6 +161,24 @@ class _PastGroupSessionsWithoutAttendance
     return result;
   }
 
+  canOpenAttendanceScreen(GroupSessionModel groupSession) {
+    var result = false;
+    if ((groupSession.sessionStatus != GroupSessionStatus.cancelled &&
+            groupSession.sessionStatus != GroupSessionStatus.requested) &&
+        canRecordAttendance(groupSession)) {
+      result = true;
+    }
+    return result;
+  }
+
+  getColorCard(GroupSessionModel groupSession) {
+    if (canOpenAttendanceScreen(groupSession)) {
+      return HexColor.fromHex(AppColors.backgroundColorMintTulip);
+    } else {
+      return HexColor.fromHex(AppColors.backgroundColorAlto);
+    }
+  }
+
   FutureBuilder<List<GroupSessionModel>> _buildBody(BuildContext context) {
     final GroupService groupService = GroupService();
     return FutureBuilder<List<GroupSessionModel>>(
@@ -170,13 +239,10 @@ class _PastGroupSessionsWithoutAttendance
       itemBuilder: (context, index) {
         return Card(
             elevation: 4,
-            color: HexColor.fromHex(AppColors.backgroundColorMintTulip),
+            color: getColorCard(groupSessions[index]),
             child: ListTile(
               onTap: () async {
-                if (groupSessions[index].sessionStatus !=
-                        GroupSessionStatus.cancelled &&
-                    groupSessions[index].sessionStatus !=
-                        GroupSessionStatus.requested) {
+                if (canOpenAttendanceScreen(groupSessions[index])) {
                   final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
