@@ -63,15 +63,19 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
 
   bool canRecordAttendance(GroupSessionModel groupSession) {
     if (attendanceSettings != null) {
-      if (attendanceSettings!.blockAttendanceNumberOfHours! > 0) {
-        final now = DateTime.now();
-        final startThreshold = DateTime.parse(groupSession.startDate!).subtract(
-            Duration(hours: attendanceSettings!.blockAttendanceNumberOfHours!));
-        final endThreshold = DateTime.parse(groupSession.endDate!).add(
-            Duration(hours: attendanceSettings!.blockAttendanceNumberOfHours!));
+      if (attendanceSettings!.blockAttendanceNumberOfHours != null) {
+        if (attendanceSettings!.blockAttendanceNumberOfHours! > 0) {
+          final now = DateTime.now();
+          final startThreshold = DateTime.parse(groupSession.startDate!)
+              .subtract(Duration(
+                  hours: attendanceSettings!.blockAttendanceNumberOfHours!));
+          final endThreshold = DateTime.parse(groupSession.endDate!).add(
+              Duration(
+                  hours: attendanceSettings!.blockAttendanceNumberOfHours!));
 
-        if (now.isBefore(startThreshold) || now.isAfter(endThreshold)) {
-          return false;
+          if (now.isBefore(startThreshold) || now.isAfter(endThreshold)) {
+            return false;
+          }
         }
       }
     }
@@ -262,78 +266,78 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
                       const EdgeInsets.only(left: 15, right: 15, bottom: 15),
                   child: Column(
                     children: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Text(groupSessions[index]
-                                      .groupSession!
-                                      .group!
-                                      .title
-                                      .toString() +
-                                  getSessionNumbersString(
-                                      groupSessions[index].groupSession!)),
-                            ),
-                          ]),
-                      if (groupSessions[index].groupSession!.sessionStatus ==
-                              GroupSessionStatus.cancelled ||
-                          groupSessions[index].groupSession!.sessionStatus ==
-                              GroupSessionStatus.requested)
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 5, bottom: 5),
-                                child: Text(getSessionStatusString(
-                                    groupSessions[index].groupSession!,
-                                    context)),
-                              ),
-                            ]),
-                      if (groupSessions[index].groupSession!.group?.contact !=
-                          null)
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                  child: Container(
-                                      padding: const EdgeInsets.only(
-                                          top: 5, bottom: 5),
-                                      child: Text(groupSessions[index]
-                                          .groupSession!
-                                          .group!
-                                          .contact!
-                                          .fullName!))),
-                            ]),
-                      if (groupSessions[index].groupSession!.group?.address !=
-                          null)
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                  child: Container(
-                                      padding: const EdgeInsets.only(
-                                          top: 5, bottom: 5),
-                                      child: Text(groupSessions[index]
-                                          .groupSession!
-                                          .group!
-                                          .address!))),
-                            ]),
-                      if (groupSessions[index].groupSession!.teacherNotes !=
-                              null ||
-                          groupSessions[index].groupSession!.privateNote !=
-                              null ||
-                          groupSessions[index].groupSession!.note != null)
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 5, bottom: 5),
-                                child: Text(getNoteString(
-                                    groupSessions[index].groupSession!)),
-                              ),
-                            ]),
+                      // Row(
+                      //     mainAxisAlignment: MainAxisAlignment.start,
+                      //     children: [
+                      //       Expanded(
+                      //         child: Text(groupSessions[index]
+                      //                 .groupSession!
+                      //                 .group!
+                      //                 .title
+                      //                 .toString() +
+                      //             getSessionNumbersString(
+                      //                 groupSessions[index].groupSession!)),
+                      //       ),
+                      //     ]),
+                      // if (groupSessions[index].groupSession!.sessionStatus ==
+                      //         GroupSessionStatus.cancelled ||
+                      //     groupSessions[index].groupSession!.sessionStatus ==
+                      //         GroupSessionStatus.requested)
+                      //   Row(
+                      //       mainAxisAlignment: MainAxisAlignment.start,
+                      //       children: [
+                      //         Padding(
+                      //           padding:
+                      //               const EdgeInsets.only(top: 5, bottom: 5),
+                      //           child: Text(getSessionStatusString(
+                      //               groupSessions[index].groupSession!,
+                      //               context)),
+                      //         ),
+                      //       ]),
+                      // if (groupSessions[index].groupSession!.group?.contact !=
+                      //     null)
+                      //   Row(
+                      //       mainAxisAlignment: MainAxisAlignment.start,
+                      //       children: [
+                      //         Expanded(
+                      //             child: Container(
+                      //                 padding: const EdgeInsets.only(
+                      //                     top: 5, bottom: 5),
+                      //                 child: Text(groupSessions[index]
+                      //                     .groupSession!
+                      //                     .group!
+                      //                     .contact!
+                      //                     .fullName!))),
+                      //       ]),
+                      // if (groupSessions[index].groupSession!.group?.address !=
+                      //     null)
+                      //   Row(
+                      //       mainAxisAlignment: MainAxisAlignment.start,
+                      //       children: [
+                      //         Expanded(
+                      //             child: Container(
+                      //                 padding: const EdgeInsets.only(
+                      //                     top: 5, bottom: 5),
+                      //                 child: Text(groupSessions[index]
+                      //                     .groupSession!
+                      //                     .group!
+                      //                     .address!))),
+                      //       ]),
+                      // if (groupSessions[index].groupSession!.teacherNotes !=
+                      //         null ||
+                      //     groupSessions[index].groupSession!.privateNote !=
+                      //         null ||
+                      //     groupSessions[index].groupSession!.note != null)
+                      //   Row(
+                      //       mainAxisAlignment: MainAxisAlignment.start,
+                      //       children: [
+                      //         Padding(
+                      //           padding:
+                      //               const EdgeInsets.only(top: 5, bottom: 5),
+                      //           child: Text(getNoteString(
+                      //               groupSessions[index].groupSession!)),
+                      //         ),
+                      //       ]),
                     ],
                   )),
             ));
