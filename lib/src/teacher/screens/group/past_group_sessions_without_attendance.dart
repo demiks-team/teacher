@@ -64,15 +64,19 @@ class _PastGroupSessionsWithoutAttendance
 
   bool canRecordAttendance(GroupSessionModel groupSession) {
     if (attendanceSettings != null) {
-      if (attendanceSettings!.blockAttendanceNumberOfHours! > 0) {
-        final now = DateTime.now();
-        final startThreshold = DateTime.parse(groupSession.startDate!).subtract(
-            Duration(hours: attendanceSettings!.blockAttendanceNumberOfHours!));
-        final endThreshold = DateTime.parse(groupSession.endDate!).add(
-            Duration(hours: attendanceSettings!.blockAttendanceNumberOfHours!));
+      if (attendanceSettings!.blockAttendanceNumberOfHours != null) {
+        if (attendanceSettings!.blockAttendanceNumberOfHours! > 0) {
+          final now = DateTime.now();
+          final startThreshold = DateTime.parse(groupSession.startDate!)
+              .subtract(Duration(
+                  hours: attendanceSettings!.blockAttendanceNumberOfHours!));
+          final endThreshold = DateTime.parse(groupSession.endDate!).add(
+              Duration(
+                  hours: attendanceSettings!.blockAttendanceNumberOfHours!));
 
-        if (now.isBefore(startThreshold) || now.isAfter(endThreshold)) {
-          return false;
+          if (now.isBefore(startThreshold) || now.isAfter(endThreshold)) {
+            return false;
+          }
         }
       }
     }
