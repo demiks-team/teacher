@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:teacher/src/shared/models/dashboard_group_model.dart';
 import 'package:teacher/src/shared/models/group_session_model.dart';
 
 import '../../authentication/helpers/dio/dio_api.dart';
@@ -43,20 +44,19 @@ class GroupService {
     }
   }
 
-  Future<List<GroupSessionModel>> getListOfTodaysGroups() async {
+  Future<List<DashboardGroupModel>> getListOfTodaysGroups() async {
     var response = await DioApi()
         .dio
         .get(dotenv.env['api'].toString() + "groups/group/listoftodaysgroups");
 
     if (response.statusCode == 200) {
       List decodedList = jsonDecode(json.encode(response.data));
-
-      List<GroupSessionModel> groupSessions = decodedList
+      List<DashboardGroupModel> dashboardSessionList = decodedList
           .map(
-            (dynamic item) => GroupSessionModel.fromJson(item),
+            (dynamic item) => DashboardGroupModel.fromJson(item),
           )
           .toList();
-      return groupSessions;
+      return dashboardSessionList;
     } else {
       throw "Unable to retrieve groups.";
     }

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:teacher/src/shared/models/attendance_settings_model.dart';
+import 'package:teacher/src/shared/models/dashboard_group_model.dart';
 import 'package:teacher/src/shared/models/enums.dart';
+import 'package:teacher/src/shared/services/school_service.dart';
 import 'package:teacher/src/teacher/screens/group/attendance_screen.dart';
 
 import '../../../shared/helpers/colors/hex_color.dart';
@@ -19,7 +22,12 @@ class TodayGroupListScreen extends StatefulWidget {
   State<TodayGroupListScreen> createState() => _TodayGroupListScreenState();
 }
 
-class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
+class _TodayGroupListScreenState extends State<TodayGroupListScreen>
+    with AutomaticKeepAliveClientMixin {
+  AttendanceSettingsModel? attendanceSettings;
+  final SchoolService schoolService = SchoolService();
+  bool completedTasks = false;
+
   AttendanceQModel createAttendanceQModel(GroupSessionModel groupSession) {
     var attendanceQModel = AttendanceQModel();
     attendanceQModel.group = groupSession.group;
@@ -28,7 +36,73 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
   }
 
   @override
+  initState() {
+    Future.delayed(Duration.zero, () async {
+      await initializeTheData();
+      completedTasks = true;
+    });
+
+    super.initState();
+  }
+
+  initializeTheData() async {
+    await getAttendanceSettings();
+  }
+
+  getAttendanceSettings() async {
+    var attendanceSettingsFuture = schoolService.getAttendanceSettings();
+    await attendanceSettingsFuture.then((a) {
+      setState(() {
+        attendanceSettings = a;
+      });
+    });
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  bool canRecordAttendance(GroupSessionModel groupSession) {
+    if (attendanceSettings != null) {
+      if (attendanceSettings!.blockAttendanceNumberOfHours != null) {
+        if (attendanceSettings!.blockAttendanceNumberOfHours! > 0) {
+          final now = DateTime.now();
+          final startThreshold = DateTime.parse(groupSession.startDate!)
+              .subtract(Duration(
+                  hours: attendanceSettings!.blockAttendanceNumberOfHours!));
+          final endThreshold = DateTime.parse(groupSession.endDate!).add(
+              Duration(
+                  hours: attendanceSettings!.blockAttendanceNumberOfHours!));
+
+          if (now.isBefore(startThreshold) || now.isAfter(endThreshold)) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  canOpenAttendanceScreen(GroupSessionModel groupSession) {
+    var result = false;
+    if ((groupSession.sessionStatus != GroupSessionStatus.cancelled &&
+            groupSession.sessionStatus != GroupSessionStatus.requested) &&
+        canRecordAttendance(groupSession)) {
+      result = true;
+    }
+    return result;
+  }
+
+  getColorCard(GroupSessionModel groupSession) {
+    if (canOpenAttendanceScreen(groupSession)) {
+      return HexColor.fromHex(AppColors.backgroundColorMintTulip);
+    } else {
+      return HexColor.fromHex(AppColors.backgroundColorAlto);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.listOfTodaysClasses),
@@ -106,13 +180,13 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
     return result;
   }
 
-  FutureBuilder<List<GroupSessionModel>> _buildBody(BuildContext context) {
+  FutureBuilder<List<DashboardGroupModel>> _buildBody(BuildContext context) {
     final GroupService groupService = GroupService();
-    return FutureBuilder<List<GroupSessionModel>>(
+    return FutureBuilder<List<DashboardGroupModel>>(
       future: groupService.getListOfTodaysGroups(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          final List<GroupSessionModel>? classes = snapshot.data;
+          final List<DashboardGroupModel>? classes = snapshot.data;
           if (classes != null) {
             if (classes.isNotEmpty) {
               return _buildClasses(context, classes);
@@ -159,33 +233,31 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
   }
 
   ListView _buildClasses(
-      BuildContext context, List<GroupSessionModel>? groupSessions) {
+      BuildContext context, List<DashboardGroupModel>? groupSessions) {
     return ListView.builder(
       itemCount: groupSessions!.length,
       padding: const EdgeInsets.only(top: 25, left: 35, right: 35, bottom: 25),
       itemBuilder: (context, index) {
         return Card(
             elevation: 4,
-            color: HexColor.fromHex(AppColors.backgroundColorMintTulip),
+            color: getColorCard(groupSessions[index].groupSession!),
             child: ListTile(
               onTap: () {
-                if (groupSessions[index].sessionStatus !=
-                        GroupSessionStatus.cancelled &&
-                    groupSessions[index].sessionStatus !=
-                        GroupSessionStatus.requested) {
+                if (canOpenAttendanceScreen(
+                    groupSessions[index].groupSession!)) {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (_) => AttendanceScreen(
                               attendanceQModel: createAttendanceQModel(
-                                  groupSessions[index]))));
+                                  groupSessions[index].groupSession!))));
                 }
               },
               title: Container(
                   margin: const EdgeInsets.only(
                       left: 15, top: 25, bottom: 15, right: 15),
                   child: Text(
-                    getGroupTimeString(groupSessions[index]),
+                    getGroupTimeString(groupSessions[index].groupSession!),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 20),
                   )),
@@ -198,15 +270,18 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Expanded(
-                              child: Text(
-                                  groupSessions[index].group!.title.toString() +
-                                      getSessionNumbersString(
-                                          groupSessions[index])),
+                              child: Text(groupSessions[index]
+                                      .groupSession!
+                                      .group!
+                                      .title
+                                      .toString() +
+                                  getSessionNumbersString(
+                                      groupSessions[index].groupSession!)),
                             ),
                           ]),
-                      if (groupSessions[index].sessionStatus ==
+                      if (groupSessions[index].groupSession!.sessionStatus ==
                               GroupSessionStatus.cancelled ||
-                          groupSessions[index].sessionStatus ==
+                          groupSessions[index].groupSession!.sessionStatus ==
                               GroupSessionStatus.requested)
                         Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -215,10 +290,12 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
                                 padding:
                                     const EdgeInsets.only(top: 5, bottom: 5),
                                 child: Text(getSessionStatusString(
-                                    groupSessions[index], context)),
+                                    groupSessions[index].groupSession!,
+                                    context)),
                               ),
                             ]),
-                      if (groupSessions[index].group?.contact != null)
+                      if (groupSessions[index].groupSession!.group?.contact !=
+                          null)
                         Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -227,11 +304,13 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
                                       padding: const EdgeInsets.only(
                                           top: 5, bottom: 5),
                                       child: Text(groupSessions[index]
+                                          .groupSession!
                                           .group!
                                           .contact!
                                           .fullName!))),
                             ]),
-                      if (groupSessions[index].group?.address != null)
+                      if (groupSessions[index].groupSession!.group?.address !=
+                          null)
                         Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -240,20 +319,23 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen> {
                                       padding: const EdgeInsets.only(
                                           top: 5, bottom: 5),
                                       child: Text(groupSessions[index]
+                                          .groupSession!
                                           .group!
                                           .address!))),
                             ]),
-                      if (groupSessions[index].teacherNotes != null ||
-                          groupSessions[index].privateNote != null ||
-                          groupSessions[index].note != null)
+                      if (groupSessions[index].groupSession!.teacherNotes !=
+                              null ||
+                          groupSessions[index].groupSession!.privateNote !=
+                              null ||
+                          groupSessions[index].groupSession!.note != null)
                         Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Padding(
                                 padding:
                                     const EdgeInsets.only(top: 5, bottom: 5),
-                                child:
-                                    Text(getNoteString(groupSessions[index])),
+                                child: Text(getNoteString(
+                                    groupSessions[index].groupSession!)),
                               ),
                             ]),
                     ],
