@@ -8,7 +8,7 @@ class GeneralService {
   Future<List<LevelModel>> getSchoolLevels() async {
     var response = await DioApi()
         .dio
-        .get(dotenv.env['api'].toString() + "general/schoolLevels");
+        .get(dotenv.env['api'].toString() + "general/school-levels");
 
     if (response.statusCode == 200) {
       List decodedList = jsonDecode(json.encode(response.data));

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:teacher/src/infrastructure/notification.dart';
 // import 'package:google_sign_in/google_sign_in.dart';
 // import 'package:teacher/src/authentication/models/social_login_model.dart';
 
@@ -13,14 +14,20 @@ class AuthenticationService {
   //         "913000033507-geun2f6l7vbg29udkbi1gmlhhoeph6ld.apps.googleusercontent.com");
 
   Future<String?> login(String email, String password) async {
-    var response = await DioApi().dio.post(
-          dotenv.env['api'].toString() + "security/login",
-          data: json.encode({"email": email, "password": password}),
-        );
-    if (response.statusCode == 200 && response.data != null) {
-      await SecureStorage.setCurrentUser(json.encode(response.data).toString());
+    try {
+      var response = await DioApi().dio.post(
+            dotenv.env['api'].toString() + "security/login",
+            data: json.encode({"email": email, "password": password}),
+          );
+      if (response.statusCode == 200 && response.data != null) {
+        await SecureStorage.setCurrentUser(
+            json.encode(response.data).toString());
+      }
+      return json.encode(response.data).toString();
+    } catch (e) {
+      NotificationService notificationService = NotificationService();
+      notificationService.showError(e.toString());
     }
-    return json.encode(response.data).toString();
   }
 
   Future<String?> signUp(String email, String password) async {
