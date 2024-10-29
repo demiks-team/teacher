@@ -18,8 +18,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-
-   bool? isUserLoggedIn;
+  bool? isUserLoggedIn;
 
   @override
   void initState() {
@@ -39,18 +38,18 @@ class _AppState extends State<App> {
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: const<LocalizationsDelegate<dynamic>> [
+      localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const<Locale> [
+      supportedLocales: const <Locale>[
         Locale('en', ''),
         Locale('es', ''),
         Locale('fr', ''),
@@ -58,10 +57,7 @@ class _AppState extends State<App> {
       theme:
           ThemeData(primarySwatch: buildMaterialColor(const Color(0xffffffff))),
       home: isUserLoggedIn == null
-          ? Center(
-              child: CircularProgressIndicator(
-                  strokeWidth: 2.0,
-                  color: HexColor.fromHex(AppColors.accentColor)))
+          ? const LoginScreen()
           : isUserLoggedIn!
               ? const BottomNavigation()
               : const LoginScreen(),
@@ -69,4 +65,3 @@ class _AppState extends State<App> {
     );
   }
 }
-

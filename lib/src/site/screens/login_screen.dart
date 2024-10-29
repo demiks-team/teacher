@@ -59,6 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
       var response = await authenticationService
           .login(_userEmail, _password)
           .whenComplete(() => setState(() {
+                _passwordController.text = "";
                 submitted = false;
               }));
 
@@ -86,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Center(
                       child: Container(
                           margin: const EdgeInsets.only(
-                              left: 2, right: 2, bottom: 0, top: 25),
+                              left: 2, right: 2, bottom: 0, top: 100),
                           width: 150,
                           height: 50,
                           child: Image.asset('assets/images/logo.png')),
