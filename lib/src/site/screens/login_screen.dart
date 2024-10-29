@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:teacher/src/infrastructure/notification.dart';
 
 import 'package:teacher/src/shared/helpers/colors/hex_color.dart';
 import 'package:teacher/src/shared/theme/colors/app_colors.dart';
@@ -27,6 +28,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool submitted = false;
 
+  NotificationService notificationService = NotificationService();
+
   @override
   void initState() {
     super.initState();
@@ -45,8 +48,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _submitSignin() async {
-    final bool? isValid = _formKey.currentState?.validate();
-    if (isValid == true) {
+    // final bool? isValid = _formKey.currentState?.validate();
+    // if (isValid == true) {
+
+    try {
       setState(() {
         submitted = true;
       });
@@ -61,7 +66,10 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.push(context,
             MaterialPageRoute(builder: (_) => const BottomNavigation()));
       }
+    } catch (e) {
+      notificationService.showError(e.toString());
     }
+    // }
   }
 
   @override
