@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:teacher/src/shared/helpers/general_helpers.dart';
 import 'package:teacher/src/shared/models/attendance_settings_model.dart';
 import 'package:teacher/src/shared/models/enums.dart';
 import 'package:teacher/src/shared/services/school_service.dart';
@@ -159,7 +160,7 @@ class _PastGroupSessionsWithoutAttendance
       result = " (" +
           groupSession.sessionNumber.toString() +
           "/" +
-          groupSession.group!.numberOfSessions.toString() +
+          GeneralHelpers.formatNumber(groupSession.group!.numberOfSessions!) +
           ")";
     }
     return result;
@@ -188,7 +189,8 @@ class _PastGroupSessionsWithoutAttendance
     return FutureBuilder<List<GroupSessionModel>>(
       future: groupService.getPastSessionsGroupsWithoutAttendances(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            completedTasks == true) {
           final List<GroupSessionModel>? classes = snapshot.data;
           if (classes != null) {
             if (classes.isNotEmpty) {
