@@ -63,11 +63,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     await getAttendanceCreation.then((result) {
       setState(() {
         attendanceCreation = result;
-
         var cloneJson = jsonEncode(result.toJson());
         var clone = AttendanceCreationModel.fromJson(jsonDecode(cloneJson));
         mainAttendanceCreation = clone;
-
         initializedTheForm();
       });
     });
@@ -100,7 +98,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     await getLevels.then((result) {
       setState(() {
         levels = result;
-
         LevelModel newLevel = LevelModel(id: 0);
         newLevel.title = "---";
         dropdownLevels.add(newLevel);

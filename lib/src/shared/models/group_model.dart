@@ -40,7 +40,7 @@ class GroupModel {
   RoomModel? room;
   int? contactId;
   ContactModel? contact;
-  int? numberOfSessions;
+  double? numberOfSessions;
   String? address;
   factory GroupModel.fromJson(Map<String, dynamic> json) => GroupModel(
       id: json["id"],

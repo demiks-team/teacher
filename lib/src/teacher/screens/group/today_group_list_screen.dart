@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:teacher/src/shared/helpers/general_helpers.dart';
 import 'package:teacher/src/shared/models/attendance_settings_model.dart';
 import 'package:teacher/src/shared/models/dashboard_group_model.dart';
 import 'package:teacher/src/shared/models/enums.dart';
@@ -174,7 +175,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
       result = " (" +
           groupSession.sessionNumber.toString() +
           "/" +
-          groupSession.group!.numberOfSessions.toString() +
+          GeneralHelpers.formatNumber(groupSession.group!.numberOfSessions!) +
           ")";
     }
     return result;
@@ -185,7 +186,8 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
     return FutureBuilder<List<DashboardGroupModel>>(
       future: groupService.getListOfTodaysGroups(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            completedTasks == true) {
           final List<DashboardGroupModel>? classes = snapshot.data;
           if (classes != null) {
             if (classes.isNotEmpty) {
