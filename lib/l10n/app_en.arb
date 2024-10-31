@@ -15,7 +15,7 @@
     "noData": "No Data Available",
     "signUpWithGoogle": "Sign up with Google",
     "signUpWithSocialNetworks": "Sign up with social networks",
-    "createAnAccount": "Or Create A New Account",
+    "createAnAccount": "Create A New Account",
     "generalError": "There was a problem. We logged the technical details for further investigation.",
     "passwordComplexity": "Passwords must be at least 8 characters and contain at 3 of the following: upper case (A-Z), lower case (a-z), number (0-9) and special character (e.g. !@#$%^&*)",
     "authFailed": "Wrong username or password.",

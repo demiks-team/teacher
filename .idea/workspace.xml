@@ -5,7 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9041fc24-c1e7-4b0c-abaf-3fc9056cb218" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/debug/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/debug/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/profile/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/profile/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/android/local.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/l10n/app_en.arb" beforeDir="false" afterPath="$PROJECT_DIR$/lib/l10n/app_en.arb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/l10n/app_es.arb" beforeDir="false" afterPath="$PROJECT_DIR$/lib/l10n/app_es.arb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/l10n/app_fr.arb" beforeDir="false" afterPath="$PROJECT_DIR$/lib/l10n/app_fr.arb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/authentication/services/authentication_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/authentication/services/authentication_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/site/screens/login_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/site/screens/login_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/site/screens/signup_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/site/screens/signup_screen.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +64,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "vers",
+    "git-widget-placeholder": "main",
     "last_opened_file_path": "C:/Demiks/teacher",
     "project.structure.last.edited": "SDKs",
     "project.structure.proportion": "0.0",

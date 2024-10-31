@@ -187,6 +187,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
       future: groupService.getListOfTodaysGroups(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.hasData &&
             completedTasks == true) {
           final List<DashboardGroupModel>? classes = snapshot.data;
           if (classes != null) {

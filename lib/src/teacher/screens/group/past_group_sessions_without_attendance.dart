@@ -190,6 +190,7 @@ class _PastGroupSessionsWithoutAttendance
       future: groupService.getPastSessionsGroupsWithoutAttendances(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.hasData &&
             completedTasks == true) {
           final List<GroupSessionModel>? classes = snapshot.data;
           if (classes != null) {
