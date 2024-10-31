@@ -116,24 +116,19 @@ class GroupService {
   }
 
   Future<bool> saveAttendance(AttendanceCreationModel attendances) async {
-    try {
-      Response response = await DioApi()
-          .dio
-          .post(dotenv.env['api'].toString() + 'groups/attendance',
-              options: Options(headers: {
-                HttpHeaders.contentTypeHeader: "application/json",
-              }),
-              data: jsonEncode(attendances.toJson()));
+    Response response = await DioApi()
+        .dio
+        .post(dotenv.env['api'].toString() + 'groups/attendance',
+            options: Options(headers: {
+              HttpHeaders.contentTypeHeader: "application/json",
+            }),
+            data: jsonEncode(attendances.toJson()));
 
-      if (response.statusCode == 200) {
-        // Attendance saved successfully
-        return true;
-      } else {
-        // Handle error response
-        throw "Failed to save attendance. Status code: ${response.statusCode}";
-      }
-    } catch (error) {
-      throw "Error saving attendance: $error";
+    if (response.statusCode == 200) {
+      // Attendance saved successfully
+      return true;
+    } else {
+      return false;
     }
   }
 }

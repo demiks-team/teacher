@@ -6,7 +6,6 @@ import 'package:teacher/src/infrastructure/notification.dart';
 import 'package:teacher/src/shared/helpers/navigation_service/navigation_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../../shared/helpers/navigation_service/navigation_service.dart';
 import '../../../shared/secure_storage.dart';
 import '../../../site/screens/login_screen.dart';
 import '../../services/authentication_service.dart';
@@ -24,13 +23,15 @@ class ErrorsInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     switch (err.type) {
-      case DioErrorType.connectTimeout:
-      case DioErrorType.sendTimeout:
-      case DioErrorType.receiveTimeout:
+      case DioExceptionType.badResponse:
+      case DioExceptionType.badCertificate:
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
       //   throw DeadlineExceededException(err.requestOptions);
-      case DioErrorType.response:
+      case DioExceptionType.connectionError:
         switch (err.response?.statusCode) {
           case 400:
             Map<dynamic, dynamic>? decodedList;
@@ -88,9 +89,9 @@ class ErrorsInterceptor extends Interceptor {
                 .next(InternalServerErrorException(err.requestOptions));
         }
         break;
-      case DioErrorType.cancel:
+      case DioExceptionType.cancel:
         break;
-      case DioErrorType.other:
+      case DioExceptionType.unknown:
         print('Other workssss');
       // throw NoInternetConnectionException(err.requestOptions);
     }
@@ -99,7 +100,7 @@ class ErrorsInterceptor extends Interceptor {
   }
 }
 
-class UnauthorizedException extends DioError {
+class UnauthorizedException extends DioException {
   UnauthorizedException(RequestOptions r) : super(requestOptions: r);
 
   @override
@@ -108,7 +109,7 @@ class UnauthorizedException extends DioError {
   }
 }
 
-class BadRequestException extends DioError {
+class BadRequestException extends DioException {
   BadRequestException(RequestOptions r) : super(requestOptions: r);
 
   @override
@@ -117,7 +118,7 @@ class BadRequestException extends DioError {
   }
 }
 
-class InternalServerErrorException extends DioError {
+class InternalServerErrorException extends DioException {
   InternalServerErrorException(RequestOptions r) : super(requestOptions: r);
 
   @override

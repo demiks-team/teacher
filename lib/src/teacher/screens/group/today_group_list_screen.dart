@@ -26,7 +26,9 @@ class TodayGroupListScreen extends StatefulWidget {
 class _TodayGroupListScreenState extends State<TodayGroupListScreen>
     with AutomaticKeepAliveClientMixin {
   AttendanceSettingsModel? attendanceSettings;
+  List<DashboardGroupModel>? classList;
   final SchoolService schoolService = SchoolService();
+  final GroupService groupService = GroupService();
   bool completedTasks = false;
 
   AttendanceQModel createAttendanceQModel(GroupSessionModel groupSession) {
@@ -48,6 +50,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
 
   initializeTheData() async {
     await getAttendanceSettings();
+    await getClasses();
   }
 
   getAttendanceSettings() async {
@@ -55,6 +58,15 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
     await attendanceSettingsFuture.then((a) {
       setState(() {
         attendanceSettings = a;
+      });
+    });
+  }
+
+  getClasses() async {
+    var classesFuture = groupService.getListOfTodaysGroups();
+    await classesFuture.then((a) {
+      setState(() {
+        classList = a;
       });
     });
   }
@@ -114,9 +126,17 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
           backgroundColor: Theme.of(context).primaryColor,
           triggerMode: RefreshIndicatorTriggerMode.anywhere,
           onRefresh: () async {
-            setState(() {});
+            setState(() {
+              completedTasks = false;
+            });
+            await getClasses();
+            setState(() {
+              completedTasks = true;
+            });
           },
-          child: _buildBody(context),
+          child: completedTasks
+              ? _buildBody(context)
+              : GeneralHelpers.getCircularProgressIndicator(),
         ));
   }
 
@@ -181,58 +201,40 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
     return result;
   }
 
-  FutureBuilder<List<DashboardGroupModel>> _buildBody(BuildContext context) {
-    final GroupService groupService = GroupService();
-    return FutureBuilder<List<DashboardGroupModel>>(
-      future: groupService.getListOfTodaysGroups(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.hasData &&
-            completedTasks == true) {
-          final List<DashboardGroupModel>? classes = snapshot.data;
-          if (classes != null) {
-            if (classes.isNotEmpty) {
-              return _buildClasses(context, classes);
-            } else {
-              return RefreshIndicator(
-                child: Stack(
-                  children: <Widget>[
-                    Center(
-                      child: Text(AppLocalizations.of(context)!.noClass),
-                    ),
-                    ListView()
-                  ],
-                ),
-                onRefresh: () async {
-                  setState(() {});
-                },
-              );
-            }
-          } else {
-            return RefreshIndicator(
-              child: Stack(
-                children: <Widget>[
-                  const Center(
-                    child: NoData(),
-                  ),
-                  ListView()
-                ],
+  Widget _buildBody(BuildContext context) {
+    if (classList != null) {
+      if (classList!.isNotEmpty) {
+        return _buildClasses(context, classList);
+      } else {
+        return RefreshIndicator(
+          child: Stack(
+            children: <Widget>[
+              Center(
+                child: Text(AppLocalizations.of(context)!.noClass),
               ),
-              onRefresh: () async {
-                setState(() {});
-              },
-            );
-          }
-        } else {
-          return Center(
-            child: CircularProgressIndicator(
-              strokeWidth: 2.0,
-              color: HexColor.fromHex(AppColors.accentColor),
+              ListView()
+            ],
+          ),
+          onRefresh: () async {
+            setState(() {});
+          },
+        );
+      }
+    } else {
+      return RefreshIndicator(
+        child: Stack(
+          children: <Widget>[
+            const Center(
+              child: NoData(),
             ),
-          );
-        }
-      },
-    );
+            ListView()
+          ],
+        ),
+        onRefresh: () async {
+          setState(() {});
+        },
+      );
+    }
   }
 
   ListView _buildClasses(
