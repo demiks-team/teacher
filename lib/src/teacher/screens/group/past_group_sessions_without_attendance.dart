@@ -27,7 +27,9 @@ class _PastGroupSessionsWithoutAttendance
     extends State<PastGroupSessionsWithoutAttendance>
     with AutomaticKeepAliveClientMixin {
   AttendanceSettingsModel? attendanceSettings;
+  List<GroupSessionModel>? groupSessionList;
   final SchoolService schoolService = SchoolService();
+  final GroupService groupService = GroupService();
   bool completedTasks = false;
 
   AttendanceQModel createAttendanceQModel(GroupSessionModel groupSession) {
@@ -49,6 +51,7 @@ class _PastGroupSessionsWithoutAttendance
 
   initializeTheData() async {
     await getAttendanceSettings();
+    await getClasses();
   }
 
   getAttendanceSettings() async {
@@ -56,6 +59,15 @@ class _PastGroupSessionsWithoutAttendance
     await attendanceSettingsFuture.then((a) {
       setState(() {
         attendanceSettings = a;
+      });
+    });
+  }
+
+  getClasses() async {
+    var classesFuture = groupService.getPastSessionsGroupsWithoutAttendances();
+    await classesFuture.then((a) {
+      setState(() {
+        groupSessionList = a;
       });
     });
   }
@@ -97,9 +109,17 @@ class _PastGroupSessionsWithoutAttendance
           backgroundColor: Theme.of(context).primaryColor,
           triggerMode: RefreshIndicatorTriggerMode.anywhere,
           onRefresh: () async {
-            setState(() {});
+            setState(() {
+              completedTasks = false;
+            });
+            await getClasses();
+            setState(() {
+              completedTasks = true;
+            });
           },
-          child: _buildBody(context),
+          child: completedTasks
+              ? _buildBody(context)
+              : GeneralHelpers.getCircularProgressIndicator(),
         ));
   }
 
@@ -184,58 +204,40 @@ class _PastGroupSessionsWithoutAttendance
     }
   }
 
-  FutureBuilder<List<GroupSessionModel>> _buildBody(BuildContext context) {
-    final GroupService groupService = GroupService();
-    return FutureBuilder<List<GroupSessionModel>>(
-      future: groupService.getPastSessionsGroupsWithoutAttendances(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.hasData &&
-            completedTasks == true) {
-          final List<GroupSessionModel>? classes = snapshot.data;
-          if (classes != null) {
-            if (classes.isNotEmpty) {
-              return _buildClasses(context, classes);
-            } else {
-              return RefreshIndicator(
-                child: Stack(
-                  children: <Widget>[
-                    Center(
-                      child: Text(AppLocalizations.of(context)!.noClass),
-                    ),
-                    ListView()
-                  ],
-                ),
-                onRefresh: () async {
-                  setState(() {});
-                },
-              );
-            }
-          } else {
-            return RefreshIndicator(
-              child: Stack(
-                children: <Widget>[
-                  const Center(
-                    child: NoData(),
-                  ),
-                  ListView()
-                ],
+  Widget _buildBody(BuildContext context) {
+    if (groupSessionList != null) {
+      if (groupSessionList!.isNotEmpty) {
+        return _buildClasses(context, groupSessionList);
+      } else {
+        return RefreshIndicator(
+          child: Stack(
+            children: <Widget>[
+              Center(
+                child: Text(AppLocalizations.of(context)!.noClass),
               ),
-              onRefresh: () async {
-                setState(() {});
-              },
-            );
-          }
-        } else {
-          return Center(
-            child: CircularProgressIndicator(
-              strokeWidth: 2.0,
-              color: HexColor.fromHex(AppColors.accentColor),
+              ListView()
+            ],
+          ),
+          onRefresh: () async {
+            setState(() {});
+          },
+        );
+      }
+    } else {
+      return RefreshIndicator(
+        child: Stack(
+          children: <Widget>[
+            const Center(
+              child: NoData(),
             ),
-          );
-        }
-      },
-    );
+            ListView()
+          ],
+        ),
+        onRefresh: () async {
+          setState(() {});
+        },
+      );
+    }
   }
 
   ListView _buildClasses(
