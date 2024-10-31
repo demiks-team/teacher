@@ -40,7 +40,8 @@ class _GroupListScreenState extends State<GroupListScreen> {
     return FutureBuilder<List<GroupModel>>(
       future: groupService.getGroups(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.hasData) {
           final List<GroupModel>? classes = snapshot.data;
           if (classes != null) {
             if (classes.isNotEmpty) {

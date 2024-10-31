@@ -234,22 +234,22 @@ class _SignupScreenState extends State<SignupScreen> {
                                         },
                                         onChanged: (value) => _password = value,
                                       ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Container(
-                                            margin: const EdgeInsets.only(
-                                                top: 0, bottom: 20),
-                                            child: Text(
-                                              AppLocalizations.of(context)!
-                                                  .forgotPassword,
-                                              style:
-                                                  const TextStyle(fontSize: 10),
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                                      // Row(
+                                      //   mainAxisAlignment:
+                                      //       MainAxisAlignment.end,
+                                      //   children: [
+                                      //     Container(
+                                      //       margin: const EdgeInsets.only(
+                                      //           top: 0, bottom: 20),
+                                      //       child: Text(
+                                      //         AppLocalizations.of(context)!
+                                      //             .forgotPassword,
+                                      //         style:
+                                      //             const TextStyle(fontSize: 10),
+                                      //       ),
+                                      //     )
+                                      //   ],
+                                      // ),
                                       ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                               minimumSize:

@@ -39,7 +39,8 @@ class _StudentListScreenState extends State<StudentListScreen> {
     return FutureBuilder<List<StudentModel>>(
       future: studentService.getStudents(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.hasData) {
           final List<StudentModel>? students = snapshot.data;
           if (students != null) {
             if (students.isNotEmpty) {

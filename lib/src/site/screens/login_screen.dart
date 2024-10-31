@@ -58,16 +58,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
       var response = await authenticationService
           .login(_userEmail, _password)
-          .whenComplete(() => setState(() {
-                _passwordController.text = "";
-                submitted = false;
-              }));
+          .whenComplete(() {
+        _passwordController.text = "";
+        setState(() {
+          submitted = false;
+        });
+      });
 
       if (response != null) {
         Navigator.push(context,
             MaterialPageRoute(builder: (_) => const BottomNavigation()));
       }
     } catch (e) {
+      setState(() {
+        submitted = false;
+      });
       notificationService.showError(e.toString());
     }
     // }
@@ -222,22 +227,22 @@ class _LoginScreenState extends State<LoginScreen> {
                                         },
                                         onChanged: (value) => _password = value,
                                       ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Container(
-                                            margin: const EdgeInsets.only(
-                                                top: 0, bottom: 20),
-                                            child: Text(
-                                              AppLocalizations.of(context)!
-                                                  .forgotPassword,
-                                              style:
-                                                  const TextStyle(fontSize: 10),
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                                      // Row(
+                                      //   mainAxisAlignment:
+                                      //       MainAxisAlignment.end,
+                                      //   children: [
+                                      //     Container(
+                                      //       margin: const EdgeInsets.only(
+                                      //           top: 0, bottom: 20),
+                                      //       child: Text(
+                                      //         AppLocalizations.of(context)!
+                                      //             .forgotPassword,
+                                      //         style:
+                                      //             const TextStyle(fontSize: 10),
+                                      //       ),
+                                      //     )
+                                      //   ],
+                                      // ),
                                       ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                               minimumSize:

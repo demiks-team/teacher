@@ -15,7 +15,7 @@
     "noData": "Datos no disponibles",
     "signUpWithGoogle": "Registrarse con Google",
     "signUpWithSocialNetworks": "Registrarse con redes sociales",
-    "createAnAccount": "O crea una nueva cuenta",
+    "createAnAccount": "Crea una nueva cuenta",
     "generalError": "Había un problema. Registramos los detalles técnicos para una mayor investigación.",
     "passwordComplexity": "Las contraseñas deben tener al menos 8 caracteres y contener al menos 3 de los siguientes: mayúsculas (A-Z), minúsculas (a-z), números (0-9) y caracteres especiales (por ejemplo,!@#$%^&*)",
     "authFailed": "Nombre de usuario o contraseña incorrectos.",
