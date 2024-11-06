@@ -78,10 +78,11 @@ class ErrorsInterceptor extends Interceptor {
                   .push(MaterialPageRoute(builder: (_) => const LoginScreen()));
               return handler.next(UnauthorizedException(err.requestOptions));
             }
-          // case 404:
-          //   throw NotFoundException(err.requestOptions);
-          // case 409:
-          //   throw ConflictException(err.requestOptions);
+          case 498:
+            SecureStorage.removeCurrentUser();
+            Navigator.of(currentContext, rootNavigator: true)
+                .push(MaterialPageRoute(builder: (_) => const LoginScreen()));
+            return;
           case 500:
             notificationService
                 .showError(AppLocalizations.of(currentContext)!.generalError);
