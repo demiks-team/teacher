@@ -37,5 +37,7 @@
     "requested": "Demandé",         
     "missedAttendances": "Participations manquées", 
     "listOfTodaysClasses": "Liste des cours du jour",
+    "tempRegistrationPath": "Veuillez d'abord envisager de créer un compte sur Demiks Admin.",
+    "duplicateEmail": "Un autre élément avec le même email existe déjà.",    
     "save": "Sauvegarder"
 }

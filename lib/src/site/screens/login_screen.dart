@@ -50,7 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void _submitSignin() async {
     // final bool? isValid = _formKey.currentState?.validate();
     // if (isValid == true) {
-    // try {
     setState(() {
       submitted = true;
     });
@@ -58,23 +57,20 @@ class _LoginScreenState extends State<LoginScreen> {
     var response = await authenticationService
         .login(_userEmail, _password)
         .whenComplete(() {
-      _passwordController.text = "";
       setState(() {
         submitted = false;
       });
+    }).onError((error, stackTrace) {
+      setState(() {
+        submitted = false;
+      });
+      return;
     });
 
     if (response != null) {
       Navigator.push(
           context, MaterialPageRoute(builder: (_) => const BottomNavigation()));
     }
-    // } catch (e) {
-    //   setState(() {
-    //     submitted = false;
-    //   });
-    //   notificationService.showError(e.toString());
-    // }
-    // }
   }
 
   @override

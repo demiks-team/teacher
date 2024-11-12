@@ -51,6 +51,15 @@ class ErrorsInterceptor extends Interceptor {
                   notificationService.showError(
                       AppLocalizations.of(currentContext)!.passwordComplexity);
                   break;
+                case 'tempRegistrationPath':
+                  notificationService.showError(
+                      AppLocalizations.of(currentContext)!
+                          .tempRegistrationPath);
+                  break;
+                case 'duplicateEmail':
+                  notificationService.showError(
+                      AppLocalizations.of(currentContext)!.duplicateEmail);
+                  break;
                 default:
                   notificationService.showError(
                       AppLocalizations.of(currentContext)!.generalError);
