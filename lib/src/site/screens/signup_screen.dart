@@ -52,7 +52,13 @@ class _SignupScreenState extends State<SignupScreen> {
           .signUp(_userEmail, _password)
           .whenComplete(() => setState(() {
                 submitted = false;
-              }));
+              }))
+          .onError((error, stackTrace) {
+        setState(() {
+          submitted = false;
+        });
+        return;
+      });
       if (response != null) {
         Navigator.push(context,
             MaterialPageRoute(builder: (_) => const BottomNavigation()));
