@@ -6,6 +6,7 @@ import 'course_model.dart';
 import 'room_model.dart';
 import 'school_model.dart';
 import 'teacher_model.dart';
+import 'enums.dart';
 
 List<GroupModel> groupFromJson(String str) =>
     List<GroupModel>.from(json.decode(str).map((x) => GroupModel.fromJson(x)));
@@ -27,7 +28,8 @@ class GroupModel {
       this.contactId,
       this.contact,
       this.numberOfSessions,
-      this.address});
+      this.address,
+      this.classDurationType});
   int id;
   String? title;
   int? schoolId;
@@ -42,42 +44,50 @@ class GroupModel {
   ContactModel? contact;
   double? numberOfSessions;
   String? address;
+  ClassDurationType? classDurationType;
+
   factory GroupModel.fromJson(Map<String, dynamic> json) => GroupModel(
-      id: json["id"],
-      title: json["title"],
-      schoolId: json["schoolId"],
-      school:
-          json["school"] != null ? SchoolModel.fromJson(json["school"]) : null,
-      teacherId: json["teacherId"],
-      teacher: json["teacher"] != null
-          ? TeacherModel.fromJson(json["teacher"])
-          : null,
-      courseId: json["programId"],
-      course: json["program"] != null
-          ? CourseModel.fromJson(json["program"])
-          : null,
-      roomId: json["roomId"],
-      room: json["room"] != null ? RoomModel.fromJson(json["room"]) : null,
-      contactId: json["contactId"],
-      contact: json["contact"] != null
-          ? ContactModel.fromJson(json["contact"])
-          : null,
-      numberOfSessions: json["numberOfSessions"],
-      address: json["address"]);
+        id: json["id"],
+        title: json["title"],
+        schoolId: json["schoolId"],
+        school: json["school"] != null
+            ? SchoolModel.fromJson(json["school"])
+            : null,
+        teacherId: json["teacherId"],
+        teacher: json["teacher"] != null
+            ? TeacherModel.fromJson(json["teacher"])
+            : null,
+        courseId: json["programId"],
+        course: json["program"] != null
+            ? CourseModel.fromJson(json["program"])
+            : null,
+        roomId: json["roomId"],
+        room: json["room"] != null ? RoomModel.fromJson(json["room"]) : null,
+        contactId: json["contactId"],
+        contact: json["contact"] != null
+            ? ContactModel.fromJson(json["contact"])
+            : null,
+        numberOfSessions: json["numberOfSessions"],
+        address: json["address"],
+        classDurationType: json["classDurationType"] != null
+            ? ClassDurationType.values[json["classDurationType"]]
+            : null,
+      );
   Map<String, dynamic> toJson() => {
         "id": id,
         "title": title,
         "schoolId": schoolId,
-        "school": school != null ? school!.toJson() : null,
+        "school": school?.toJson(),
         "teacherId": teacherId,
-        "teacher": teacher != null ? teacher!.toJson() : null,
+        "teacher": teacher?.toJson(),
         "programId": courseId,
-        "program": course != null ? course!.toJson() : null,
+        "program": course?.toJson(),
         "roomId": roomId,
-        "room": room != null ? room!.toJson() : null,
+        "room": room?.toJson(),
         "contactId": contactId,
         "contact": contact?.toJson(),
         "numberOfSessions": numberOfSessions,
         "address": address,
+        "classDurationType": classDurationType,
       };
 }

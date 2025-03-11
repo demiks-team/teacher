@@ -39,5 +39,6 @@
     "listOfTodaysClasses": "Today's Classes",
     "tempRegistrationPath": "Please consider creating an account on Demiks Admin first.",
     "duplicateEmail": "Another item with the same email already exists.",
+    "breakTimeMinutesBreak": "value minutes break",
     "save": "Save"
 }

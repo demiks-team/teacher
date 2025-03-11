@@ -30,6 +30,7 @@ class GroupSessionModel {
     this.vcReferenceCode,
     this.slug,
     this.meetingId,
+    this.breakTimeInMinutes,
   });
   int id;
   int? groupId;
@@ -49,6 +50,7 @@ class GroupSessionModel {
   String? vcReferenceCode;
   String? slug;
   int? meetingId;
+  int? breakTimeInMinutes;
 
   factory GroupSessionModel.fromJson(Map<String, dynamic> json) =>
       GroupSessionModel(
@@ -73,11 +75,12 @@ class GroupSessionModel {
         vcReferenceCode: json["vcReferenceCode"],
         slug: json["slug"],
         meetingId: json["meetingId"],
+        breakTimeInMinutes: json["breakTimeInMinutes"],
       );
   Map<String, dynamic> toJson() => {
         "id": id,
         "groupId": groupId,
-        "group": group != null ? group!.toJson() : null,
+        "group": group?.toJson(),
         "startDate": startDate,
         "endDate": endDate,
         "sessionStatus": sessionStatus,
@@ -92,6 +95,7 @@ class GroupSessionModel {
         "note": note,
         "vcReferenceCode": vcReferenceCode,
         "slug": slug,
-        "meetingId": meetingId
+        "meetingId": meetingId,
+        "breakTimeInMinutes": breakTimeInMinutes
       };
 }
