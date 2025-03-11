@@ -192,11 +192,25 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
     var result = "";
     if (groupSession.sessionNumber != null &&
         groupSession.group!.numberOfSessions != null) {
-      result = " (" +
-          groupSession.sessionNumber.toString() +
-          "/" +
-          GeneralHelpers.formatNumber(groupSession.group!.numberOfSessions!) +
-          ")";
+      result = " (";
+      result += groupSession.sessionNumber.toString();
+      if (groupSession.group!.classDurationType !=
+          ClassDurationType.rollingClass) {
+        result += "/" +
+            GeneralHelpers.formatNumber(groupSession.group!.numberOfSessions!);
+      }
+      result += ")";
+    }
+    return result;
+  }
+
+  String getBreakTimeString(GroupSessionModel groupSession) {
+    var result = "";
+    if (groupSession.breakTimeInMinutes != null &&
+        groupSession.breakTimeInMinutes! > 0) {
+      result = AppLocalizations.of(context)!.breakTimeMinutesBreak.replaceAll(
+              'value', groupSession.breakTimeInMinutes!.toString()) +
+          "\n";
     }
     return result;
   }
@@ -260,17 +274,37 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
               },
               title: Container(
                   margin: const EdgeInsets.only(
-                      left: 15, top: 25, bottom: 15, right: 15),
+                      left: 15, top: 25, bottom: 10, right: 15),
                   child: Text(
                     getGroupTimeString(groupSessions[index].groupSession!),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 20),
                   )),
               subtitle: Container(
-                  margin:
-                      const EdgeInsets.only(left: 15, right: 15, bottom: 15),
+                  margin: const EdgeInsets.only(left: 15, right: 15),
                   child: Column(
                     children: [
+                      if (groupSessions[index]
+                                  .groupSession!
+                                  .breakTimeInMinutes !=
+                              null &&
+                          groupSessions[index]
+                                  .groupSession!
+                                  .breakTimeInMinutes! >
+                              0)
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  getBreakTimeString(
+                                      groupSessions[index].groupSession!),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                ),
+                              ),
+                            ]),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [

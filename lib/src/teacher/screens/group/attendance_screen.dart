@@ -223,9 +223,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     if (currentLevelId != null) {
       LevelModel? level =
           dropdownLevels.firstWhere((l) => l.id == currentLevelId);
+      var levelDisplayOrder = level.displayOrder ?? 0;
       return levels
           .where((l) =>
-              l.displayOrder == null || l.displayOrder! >= level.displayOrder!)
+              l.displayOrder == null || l.displayOrder! >= levelDisplayOrder)
           .toList();
     }
     return dropdownLevels;

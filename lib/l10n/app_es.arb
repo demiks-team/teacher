@@ -38,6 +38,7 @@
     "missedAttendances": "Asistencias perdidas", 
     "listOfTodaysClasses": "Lista de las clases de hoy",
     "tempRegistrationPath": "Considere primero crear una cuenta en Demiks Admin.",
-    "duplicateEmail": "Ya existe otro elemento con el mismo correo electrónico.",    
+    "duplicateEmail": "Ya existe otro elemento con el mismo correo electrónico.",
+    "breakTimeMinutesBreak": "value minutos de descanso",
     "save": "Ahorrar"
 }

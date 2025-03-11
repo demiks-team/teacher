@@ -39,6 +39,17 @@ class _PastGroupSessionsWithoutAttendance
     return attendanceQModel;
   }
 
+  String getBreakTimeString(GroupSessionModel groupSession) {
+    var result = "";
+    if (groupSession.breakTimeInMinutes != null &&
+        groupSession.breakTimeInMinutes! > 0) {
+      result = AppLocalizations.of(context)!.breakTimeMinutesBreak.replaceAll(
+              'value', groupSession.breakTimeInMinutes!.toString()) +
+          "\n";
+    }
+    return result;
+  }
+
   @override
   initState() {
     Future.delayed(Duration.zero, () async {
@@ -177,11 +188,14 @@ class _PastGroupSessionsWithoutAttendance
     var result = "";
     if (groupSession.sessionNumber != null &&
         groupSession.group!.numberOfSessions != null) {
-      result = " (" +
-          groupSession.sessionNumber.toString() +
-          "/" +
-          GeneralHelpers.formatNumber(groupSession.group!.numberOfSessions!) +
-          ")";
+      result = " (";
+      result += groupSession.sessionNumber.toString();
+      if (groupSession.group!.classDurationType !=
+          ClassDurationType.rollingClass) {
+        result += "/" +
+            GeneralHelpers.formatNumber(groupSession.group!.numberOfSessions!);
+      }
+      result += ")";
     }
     return result;
   }
@@ -277,6 +291,20 @@ class _PastGroupSessionsWithoutAttendance
                       const EdgeInsets.only(left: 15, right: 15, bottom: 15),
                   child: Column(
                     children: [
+                      if (groupSessions[index].breakTimeInMinutes != null &&
+                          groupSessions[index].breakTimeInMinutes! > 0)
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  getBreakTimeString(groupSessions[index]),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                ),
+                              ),
+                            ]),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
