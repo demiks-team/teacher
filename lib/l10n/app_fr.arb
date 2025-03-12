@@ -39,6 +39,6 @@
     "listOfTodaysClasses": "Liste des cours du jour",
     "tempRegistrationPath": "Veuillez d'abord envisager de créer un compte sur Demiks Admin.",
     "duplicateEmail": "Un autre élément avec le même email existe déjà.",    
-    "breakTimeMinutesBreak": "Pause",
+    "breakTimeMinutesBreak": "value minutes break",
     "save": "Sauvegarder"
 }
