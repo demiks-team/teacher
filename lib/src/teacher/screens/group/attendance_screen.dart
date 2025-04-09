@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:teacher/src/shared/models/attendance_creation_model.dart';
 import 'package:teacher/src/shared/models/attendance_model.dart';
+import 'package:teacher/src/shared/models/chapter_model.dart';
 import 'package:teacher/src/shared/models/group_enrollment_model.dart';
+import 'package:teacher/src/shared/services/book_service.dart';
 
 import '../../../shared/helpers/colors/hex_color.dart';
 import '../../../shared/helpers/colors/material_color.dart';
@@ -31,6 +33,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   bool completedTasks = false;
   final GroupService _groupService = GroupService();
   final GeneralService _generalService = GeneralService();
+  final BookService _bookService = BookService();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -51,10 +54,19 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   List<int?> selectedLevelIds = [];
 
+  List<ChapterModel> chapters = [];
+  List<ChapterModel> dropdownChapters = [];
+
   initializeTheData() async {
     await getSessionStudents();
     await getGroupEnrollments();
     await getSchoolLevels();
+
+    if (widget.attendanceQModel.group!.bookId != null) {
+      if (widget.attendanceQModel.group!.bookId! > 0) {
+        await getChapters();
+      }
+    }
   }
 
   getSessionStudents() async {
@@ -102,6 +114,30 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         newLevel.title = "---";
         dropdownLevels.add(newLevel);
         dropdownLevels.addAll(levels);
+      });
+    });
+  }
+
+  bool hasAnyChapter = false;
+  getChapters() async {
+    Future<List<ChapterModel>> getChapters =
+        _bookService.getChapters(this.widget.attendanceQModel.group!.bookId!);
+    await getChapters.then((result) {
+      setState(() {
+        chapters = result;
+        ChapterModel newChapter = ChapterModel(id: 0);
+        newChapter.title = "---";
+        dropdownChapters.add(newChapter);
+        dropdownChapters.addAll(chapters);
+        if (chapters.isNotEmpty) {
+          hasAnyChapter = true;
+        }
+        if (widget.attendanceQModel.groupSession!.chapterId != null) {
+          if (widget.attendanceQModel.groupSession!.chapterId! > 0) {
+            _selectedChapterValue =
+                widget.attendanceQModel.groupSession!.chapterId;
+          }
+        }
       });
     });
   }
@@ -238,6 +274,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     var att = AttendanceCreationModel();
     att.attendances = [];
     att.groupSessionId = widget.attendanceQModel.groupSession!.id;
+    att.chapterId = _selectedChapterValue;
 
     att.notes = notesController!.value.text;
 
@@ -278,12 +315,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     });
     await _groupService.saveAttendance(att).then((result) {
       if (result) {
-        Navigator.pop(context, true);
+        // Navigator.pop(context, true);
       } else {
         setState(() {
           isSaving = false;
         });
       }
+      Navigator.pop(context, true);
     });
   }
 
@@ -294,6 +332,33 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   List<TextEditingController> studentNotesControllers = [];
   List<TextEditingController> internalNotesControllers = [];
   TextEditingController? notesController;
+
+  int? _selectedChapterValue;
+  void onChangedAttendanceChapterAll(int? value) {
+    setState(() {
+      _selectedChapterValue = value;
+      changeAllChapters(value);
+    });
+  }
+
+  void changeAllChapters(int? value) {
+    if (value != null) {
+      if (value > 0) {
+        var chapter = chapters.firstWhere((c) => c.id == value);
+        if (chapter.levelId != null) {
+          if (chapter.levelId! > 0) {
+            var level = levels.firstWhere((l) => l.id == chapter.levelId);
+            for (var index = 0;
+                index < attendanceCreation!.attendances!.length;
+                index++) {
+              selectedLevelIds[index] = level.id;
+              attendanceCreation!.attendances![index].studentLevelId = level.id;
+            }
+          }
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -354,6 +419,35 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                             border: const OutlineInputBorder(),
                                           ),
                                         )),
+                                    if (hasAnyChapter)
+                                      Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.90,
+                                          margin:
+                                              const EdgeInsets.only(bottom: 10),
+                                          child: DropdownButtonFormField<int>(
+                                            isExpanded: false,
+                                            value: _selectedChapterValue,
+                                            items:
+                                                dropdownChapters.map((chapter) {
+                                              return DropdownMenuItem<int>(
+                                                value: chapter.id,
+                                                child: Text(
+                                                    chapter.title!.toString()),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) {
+                                              setState(() =>
+                                                  onChangedAttendanceChapterAll(
+                                                      value));
+                                            },
+                                            decoration: InputDecoration(
+                                                labelText: AppLocalizations.of(
+                                                        context)!
+                                                    .chapters),
+                                          )),
                                     if (attendanceCreation!
                                             .attendances!.length >
                                         1)
