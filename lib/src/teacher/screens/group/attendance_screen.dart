@@ -125,7 +125,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     await getChapters.then((result) {
       setState(() {
         chapters = result;
-        ChapterModel newChapter = ChapterModel(id: 0);
+        ChapterModel newChapter = ChapterModel(id: null);
         newChapter.title = "---";
         dropdownChapters.add(newChapter);
         dropdownChapters.addAll(chapters);

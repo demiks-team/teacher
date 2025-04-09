@@ -9,7 +9,7 @@ String dataToJson(List<ChapterModel> data) =>
 
 class ChapterModel {
   ChapterModel({
-    required this.id,
+    this.id,
     this.title,
     this.displayOrder,
     this.bookId,
@@ -17,7 +17,7 @@ class ChapterModel {
     this.levelId,
   });
 
-  int id;
+  int? id;
   String? title;
   int? displayOrder;
   int? bookId;
