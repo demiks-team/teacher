@@ -268,6 +268,17 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     return dropdownLevels;
   }
 
+  String getBookhint() {
+    var result = "";
+    if (widget.attendanceQModel.group!.book != null) {
+      result = AppLocalizations.of(context)!.bookNameAttendanceHint.replaceAll(
+              'bookName',
+              widget.attendanceQModel.group!.book!.title.toString()) +
+          "\n";
+    }
+    return result;
+  }
+
   bool isSaving = false;
 
   submit() async {
@@ -420,34 +431,53 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                           ),
                                         )),
                                     if (hasAnyChapter)
-                                      Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.90,
-                                          margin:
-                                              const EdgeInsets.only(bottom: 10),
-                                          child: DropdownButtonFormField<int>(
-                                            isExpanded: false,
-                                            value: _selectedChapterValue,
-                                            items:
-                                                dropdownChapters.map((chapter) {
-                                              return DropdownMenuItem<int>(
-                                                value: chapter.id,
-                                                child: Text(
-                                                    chapter.title!.toString()),
-                                              );
-                                            }).toList(),
-                                            onChanged: (value) {
-                                              setState(() =>
-                                                  onChangedAttendanceChapterAll(
-                                                      value));
-                                            },
-                                            decoration: InputDecoration(
-                                                labelText: AppLocalizations.of(
-                                                        context)!
-                                                    .chapters),
-                                          )),
+                                      Column(
+                                        children: [
+                                          Container(
+                                            child: Text(getBookhint()),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.90,
+                                            margin: EdgeInsets.only(
+                                                bottom: 2,
+                                                top: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.05),
+                                          ),
+                                          Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.90,
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 10),
+                                              child:
+                                                  DropdownButtonFormField<int>(
+                                                isExpanded: false,
+                                                value: _selectedChapterValue,
+                                                items: dropdownChapters
+                                                    .map((chapter) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: chapter.id,
+                                                    child: Text(chapter.title!
+                                                        .toString()),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (value) {
+                                                  setState(() =>
+                                                      onChangedAttendanceChapterAll(
+                                                          value));
+                                                },
+                                                decoration: InputDecoration(
+                                                    labelText:
+                                                        AppLocalizations.of(
+                                                                context)!
+                                                            .chapters),
+                                              )),
+                                        ],
+                                      ),
                                     if (attendanceCreation!
                                             .attendances!.length >
                                         1)

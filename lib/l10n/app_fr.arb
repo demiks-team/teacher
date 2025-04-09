@@ -41,5 +41,6 @@
     "duplicateEmail": "Un autre élément avec le même email existe déjà.",    
     "breakTimeMinutesBreak": "value minutes de pause",
     "chapter": "Chapitres",    
+    "bookNameAttendanceHint": "Sur quel chapitre de bookName avez-vous travaillé aujourd'hui ?",
     "save": "Sauvegarder"
 }
