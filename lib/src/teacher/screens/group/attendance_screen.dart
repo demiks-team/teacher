@@ -91,7 +91,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           .add(TextEditingController(text: element.notesForStudent));
       internalNotesControllers
           .add(TextEditingController(text: element.internalNotes));
-      selectedLevelIds.add(element.studentLevelId);
+      selectedLevelIds.add(element.levelId);
     }
   }
 
@@ -156,14 +156,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       attendance.groupEnrollment = groupEnrollment;
       attendance.groupSessionId = widget.attendanceQModel.groupSession!.id;
       attendance.status = AttendanceStatus.absent.index;
-      attendance.studentLevelId = groupEnrollment.enrollment?.student?.levelId;
+      attendance.levelId = groupEnrollment.enrollment?.student?.levelId;
 
       selectedStatusValues.add(AttendanceStatus.absent.index);
       studentNotesControllers
           .add(TextEditingController(text: attendance.notesForStudent));
       internalNotesControllers
           .add(TextEditingController(text: attendance.internalNotes));
-      selectedLevelIds.add(attendance.studentLevelId);
+      selectedLevelIds.add(attendance.levelId);
 
       attendanceCreation!.attendances!.add(attendance);
       groupStudentsExceptSessionStudents
@@ -214,8 +214,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       selectedLevel = null;
     }
     for (int i = 0; i <= mainAttendanceCreation!.attendances!.length - 1; i++) {
-      int? currentLevelId =
-          mainAttendanceCreation!.attendances![i].studentLevelId;
+      int? currentLevelId = mainAttendanceCreation!.attendances![i].levelId;
 
       if (currentLevelId != null && selectedLevel == null) {
         continue;
@@ -235,22 +234,22 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       }
 
       if (currentLevelId != null &&
-          mainAttendanceCreation!.attendances![i].studentLevelId != null) {
-        if (mainAttendanceCreation!.attendances![i].studentLevelId != null) {
-          LevelModel? oldLevel = levels.firstWhere((l) =>
-              l.id == mainAttendanceCreation!.attendances![i].studentLevelId);
+          mainAttendanceCreation!.attendances![i].levelId != null) {
+        if (mainAttendanceCreation!.attendances![i].levelId != null) {
+          LevelModel? oldLevel = levels.firstWhere(
+              (l) => l.id == mainAttendanceCreation!.attendances![i].levelId);
           LevelModel? newLevel =
               levels.firstWhere((l) => l.id == currentLevelId);
 
           if (oldLevel.displayOrder == null ||
               (oldLevel.displayOrder! <= newLevel.displayOrder!)) {
             selectedLevelIds[i] = result;
-            attendanceCreation!.attendances![i].studentLevelId = result;
+            attendanceCreation!.attendances![i].levelId = result;
           }
         }
       } else {
         selectedLevelIds[i] = result;
-        attendanceCreation!.attendances![i].studentLevelId = result;
+        attendanceCreation!.attendances![i].levelId = result;
       }
     }
   }
@@ -317,7 +316,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
       attendance.groupSessionId = widget.attendanceQModel.groupSession!.id;
 
-      attendance.studentLevelId = selectedLevelIds[index];
+      attendance.levelId = selectedLevelIds[index];
       att.attendances!.add(attendance);
     }
 
@@ -363,7 +362,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 index < attendanceCreation!.attendances!.length;
                 index++) {
               selectedLevelIds[index] = level.id;
-              attendanceCreation!.attendances![index].studentLevelId = level.id;
+              attendanceCreation!.attendances![index].levelId = level.id;
             }
           }
         }
@@ -697,11 +696,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                               value: attendanceCreation!
                                                                   .attendances![
                                                                       index]
-                                                                  .studentLevelId,
+                                                                  .levelId,
                                                               items: getAllowedLevelsForStudent(mainAttendanceCreation!
                                                                       .attendances![
                                                                           index]
-                                                                      .studentLevelId)
+                                                                      .levelId)
                                                                   .map((level) {
                                                                 return DropdownMenuItem<
                                                                     int>(
