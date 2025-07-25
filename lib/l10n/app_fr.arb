@@ -40,5 +40,12 @@
     "tempRegistrationPath": "Veuillez d'abord envisager de créer un compte sur Demiks Admin.",
     "duplicateEmail": "Un autre élément avec le même email existe déjà.",    
     "breakTimeMinutesBreak": "value minutes de pause",
+    "verificationCode": "Code de vérification",
+    "verificationCodeDescription": "Veuillez vérifier votre courrier électronique et saisir le code ici",
+    "verificationDoesNotMatch": "Ce code ne correspond pas. Veuillez réessayer.",
+    "continueCapital": "Continuer",
+    "beforeEmailValidation": "Veuillez saisir votre adresse électronique pour créer un compte.",     
+    "verificationCodeExpired": "Votre code de vérification a expiré. Veuillez recommencer la procédure.",    
+    "validationError": "Les données fournies pour cette opération ne sont pas valides ou sont incomplètes.",
     "save": "Sauvegarder"
 }

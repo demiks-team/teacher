@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:teacher/src/authentication/models/confirm_identity_verification_model.dart';
+import 'package:teacher/src/authentication/models/identity_verification_model.dart';
+import 'package:teacher/src/authentication/models/login_model.dart';
 // import 'package:google_sign_in/google_sign_in.dart';
 // import 'package:teacher/src/authentication/models/social_login_model.dart';
 
@@ -12,22 +15,45 @@ class AuthenticationService {
   //     clientId:
   //         "913000033507-geun2f6l7vbg29udkbi1gmlhhoeph6ld.apps.googleusercontent.com");
 
-  Future<String?> login(String email, String password) async {
+  Future<ConfirmIdentityVerificationModel?> login(
+      String email, String password) async {
     var response = await DioApi().dio.post(
           dotenv.env['api'].toString() + "security/login",
           data: json.encode(
               {"email": email, "password": password, "studentLanguage": 1}),
         );
-    if (response.statusCode == 200 && response.data != null) {
-      await SecureStorage.setCurrentUser(json.encode(response.data).toString());
+
+    Map<String, dynamic> decodedList = jsonDecode(json.encode(response.data));
+
+    if (response.statusCode == 200) {
+      return ConfirmIdentityVerificationModel.fromJson(decodedList);
+    } else {
+      throw Exception('Unable to login.');
     }
-    return json.encode(response.data).toString();
+    // if (response.statusCode == 200 && response.data != null) {
+    //   await SecureStorage.setCurrentUser(json.encode(response.data).toString());
+    // }
+    // return json.encode(response.data).toString();
   }
 
-  Future<String?> signUp(String email, String password) async {
+  Future<bool> verifyLoginIdentifier(LoginModel loginModel) async {
     var response = await DioApi().dio.post(
-          dotenv.env['api'].toString() + "security/signup",
-          data: json.encode({"email": email, "password": password}),
+          dotenv.env['api'].toString() + "security/login/verify-code",
+          data: jsonEncode(loginModel.toJson()),
+        );
+
+    if (response.statusCode == 200 && response.data != null) {
+      await SecureStorage.setCurrentUser(json.encode(response.data).toString());
+      return true;
+    }
+    return false;
+  }
+
+  Future<String?> signUp(LoginModel loginModel) async {
+    print(loginModel);
+    var response = await DioApi().dio.post(
+          dotenv.env['api'].toString() + "security/sign-up",
+          data: jsonEncode(loginModel.toJson()),
         );
     if (response.statusCode == 200 && response.data != null) {
       await SecureStorage.setCurrentUser(json.encode(response.data).toString());
@@ -44,6 +70,46 @@ class AuthenticationService {
       await SecureStorage.setCurrentUser(json.encode(response.data).toString());
     } else {
       SecureStorage.removeCurrentUser();
+    }
+  }
+
+  Future<ConfirmIdentityVerificationModel> sendVerificationMessage(
+      IdentityVerificationModel identityVerification) async {
+    var response = await DioApi().dio.post(
+          dotenv.env['api'].toString() +
+              "security/sign-up/verification-code/send",
+          data: json.encode(identityVerification.toJson()),
+        );
+
+    Map<String, dynamic> decodedList = jsonDecode(json.encode(response.data));
+
+    if (response.statusCode == 200) {
+      return ConfirmIdentityVerificationModel.fromJson(decodedList);
+    } else {
+      throw Exception('Unable to retrieve verification info.');
+    }
+
+    // if (response.statusCode == 200 && response.data != null) {
+    //   await SecureStorage.setCurrentUser(json.encode(response.data).toString());
+    //   return true;
+    // }
+    // return false;
+  }
+
+  Future<bool> verifySignupIdentifier(String identifier, String code) async {
+    var response = await DioApi().dio.get(
+          dotenv.env['api'].toString() +
+              'security/sign-up/identifier/' +
+              identifier +
+              '/code/' +
+              code +
+              '/verify'
+        );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
     }
   }
 
