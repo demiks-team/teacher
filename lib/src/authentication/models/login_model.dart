@@ -10,6 +10,7 @@ class LoginModel {
   LoginModel({
     this.email,
     this.password,
+    this.tempToken,
     this.studentLanguage,
     this.code,
     this.localTimeZone,
@@ -17,6 +18,7 @@ class LoginModel {
 
   String? email;
   String? password;
+  String? tempToken;
   String? studentLanguage;
   String? code;
   String? localTimeZone;
@@ -25,6 +27,7 @@ class LoginModel {
       LoginModel(
         email: json["email"],
         password: json["password"],
+        tempToken: json["tempToken"],
         studentLanguage: json["studentLanguage"],
         code: json["code"],
         localTimeZone: json["localTimeZone"],
@@ -32,6 +35,7 @@ class LoginModel {
   Map<String, dynamic> toJson() => {
         "email": email,
         "password": password,
+        "tempToken": tempToken,
         "studentLanguage": studentLanguage,
         "code": code,
         "localTimeZone": localTimeZone,

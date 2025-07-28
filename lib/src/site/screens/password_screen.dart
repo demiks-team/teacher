@@ -93,7 +93,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
               MaterialPageRoute(
                   builder: (_) => VerifyScreen(
                         identifier: _userEmail,
-                        password: _password,
+                        tempToken: response.tempToken,
                         requestType: VerificationRequestType.login,
                       )));
         }

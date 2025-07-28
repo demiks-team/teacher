@@ -13,20 +13,23 @@ String confirmIdentityVerificationToJson(
 
 class ConfirmIdentityVerificationModel {
   ConfirmIdentityVerificationModel(
-      {this.createdOn, this.verificationResultType});
+      {this.createdOn, this.verificationResultType, this.tempToken});
   String? createdOn;
+  String? tempToken;
   VerificationResultType? verificationResultType;
 
   factory ConfirmIdentityVerificationModel.fromJson(
           Map<String, dynamic> json) =>
       ConfirmIdentityVerificationModel(
         createdOn: json["createdOn"],
+        tempToken: json["tempToken"],
         verificationResultType: json["verificationResultType"] != null
             ? VerificationResultType.values[json["verificationResultType"]]
             : null,
       );
   Map<String, dynamic> toJson() => {
         "createdOn": createdOn,
+        "tempToken": tempToken,
         "verificationResultType": verificationResultType
       };
 }

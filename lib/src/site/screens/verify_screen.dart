@@ -13,14 +13,14 @@ import 'package:teacher/src/teacher/shared-widgets/menu/bottom_navigation.dart';
 
 class VerifyScreen extends StatefulWidget {
   final String identifier;
-  final String? password;
+  final String? tempToken;
   final VerificationRequestType requestType;
   final VerificationResultType? verificationResultType;
 
   const VerifyScreen(
       {Key? key,
       required this.identifier,
-      this.password,
+      this.tempToken,
       required this.requestType,
       this.verificationResultType})
       : super(key: key);
@@ -93,7 +93,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 onCompleted: (pin) async {
                   var loginModel = LoginModel();
                   loginModel.email = widget.identifier;
-                  loginModel.password = widget.password;
+                  loginModel.tempToken = widget.tempToken;
                   loginModel.code = pin;
 
                   if (widget.requestType == VerificationRequestType.login) {
