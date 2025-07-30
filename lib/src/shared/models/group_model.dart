@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:teacher/src/shared/models/book_model.dart';
 import 'package:teacher/src/shared/models/contact-model.dart';
 
 import 'course_model.dart';
@@ -29,7 +30,9 @@ class GroupModel {
       this.contact,
       this.numberOfSessions,
       this.address,
-      this.classDurationType});
+      this.classDurationType,
+      this.bookId,
+      this.book});
   int id;
   String? title;
   int? schoolId;
@@ -45,6 +48,8 @@ class GroupModel {
   double? numberOfSessions;
   String? address;
   ClassDurationType? classDurationType;
+  int? bookId;
+  BookModel? book;
 
   factory GroupModel.fromJson(Map<String, dynamic> json) => GroupModel(
         id: json["id"],
@@ -72,6 +77,8 @@ class GroupModel {
         classDurationType: json["classDurationType"] != null
             ? ClassDurationType.values[json["classDurationType"]]
             : null,
+        bookId: json["bookId"],
+        book: json["book"] != null ? BookModel.fromJson(json["book"]) : null,
       );
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -89,5 +96,7 @@ class GroupModel {
         "numberOfSessions": numberOfSessions,
         "address": address,
         "classDurationType": classDurationType,
+        "bookId": bookId,
+        "book": book?.toJson(),
       };
 }

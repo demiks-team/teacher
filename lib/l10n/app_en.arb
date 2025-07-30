@@ -40,5 +40,7 @@
     "tempRegistrationPath": "Please consider creating an account on Demiks Admin first.",
     "duplicateEmail": "Another item with the same email already exists.",
     "breakTimeMinutesBreak": "value minutes break",
+    "chapters": "Chapters",
+    "bookNameAttendanceHint": "Which chapter of bookName did you work on today?",
     "save": "Save"
 }
