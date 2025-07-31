@@ -31,6 +31,7 @@ class GroupSessionModel {
     this.slug,
     this.meetingId,
     this.breakTimeInMinutes,
+    this.chapterId,
   });
   int id;
   int? groupId;
@@ -51,6 +52,7 @@ class GroupSessionModel {
   String? slug;
   int? meetingId;
   int? breakTimeInMinutes;
+  int? chapterId;
 
   factory GroupSessionModel.fromJson(Map<String, dynamic> json) =>
       GroupSessionModel(
@@ -76,6 +78,7 @@ class GroupSessionModel {
         slug: json["slug"],
         meetingId: json["meetingId"],
         breakTimeInMinutes: json["breakTimeInMinutes"],
+        chapterId: json["chapterId"],
       );
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -96,6 +99,7 @@ class GroupSessionModel {
         "vcReferenceCode": vcReferenceCode,
         "slug": slug,
         "meetingId": meetingId,
-        "breakTimeInMinutes": breakTimeInMinutes
+        "breakTimeInMinutes": breakTimeInMinutes,
+        "chapterId": chapterId,
       };
 }

@@ -47,5 +47,7 @@
     "beforeEmailValidation": "Veuillez saisir votre adresse électronique pour créer un compte.",     
     "verificationCodeExpired": "Votre code de vérification a expiré. Veuillez recommencer la procédure.",    
     "validationError": "Les données fournies pour cette opération ne sont pas valides ou sont incomplètes.",
+    "chapter": "Chapitres",    
+    "bookNameAttendanceHint": "Sur quel chapitre de bookName avez-vous travaillé aujourd'hui ?",
     "save": "Sauvegarder"
 }

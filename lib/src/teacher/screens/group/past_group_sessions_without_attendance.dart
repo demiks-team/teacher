@@ -61,6 +61,7 @@ class _PastGroupSessionsWithoutAttendance
   }
 
   initializeTheData() async {
+    completedTasks = false;
     await getAttendanceSettings();
     await getClasses();
   }
@@ -266,15 +267,17 @@ class _PastGroupSessionsWithoutAttendance
             child: ListTile(
               onTap: () async {
                 if (canOpenAttendanceScreen(groupSessions[index])) {
-                  final result = await Navigator.push(
+                  var result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (_) => AttendanceScreen(
                               attendanceQModel: createAttendanceQModel(
                                   groupSessions[index]))));
-
                   if (result == true) {
-                    setState(() {});
+                    Future.delayed(Duration.zero, () async {
+                      await initializeTheData();
+                      completedTasks = true;
+                    });
                   }
                 }
               },

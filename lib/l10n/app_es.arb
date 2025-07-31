@@ -47,5 +47,7 @@
     "beforeEmailValidation": "Introduzca su correo electrónico para crear una cuenta.",
     "verificationCodeExpired": "Su código de verificación ha caducado. Por favor, inicie el proceso de nuevo.",    
     "validationError": "Los datos proporcionados para esta operación no son válidos o están incompletos.",
+    "chapters": "Capítulos",
+    "bookNameAttendanceHint": "¿En qué capítulo de bookName has trabajado hoy?",
     "save": "Ahorrar"
 }

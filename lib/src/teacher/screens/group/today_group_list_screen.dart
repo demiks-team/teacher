@@ -49,6 +49,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
   }
 
   initializeTheData() async {
+    completedTasks = false;
     await getAttendanceSettings();
     await getClasses();
   }
@@ -261,15 +262,21 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
             elevation: 4,
             color: getColorCard(groupSessions[index].groupSession!),
             child: ListTile(
-              onTap: () {
+              onTap: () async {
                 if (canOpenAttendanceScreen(
                     groupSessions[index].groupSession!)) {
-                  Navigator.push(
+                  var result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (_) => AttendanceScreen(
                               attendanceQModel: createAttendanceQModel(
                                   groupSessions[index].groupSession!))));
+                  if (result == true) {
+                    Future.delayed(Duration.zero, () async {
+                      await initializeTheData();
+                      completedTasks = true;
+                    });
+                  }
                 }
               },
               title: Container(
