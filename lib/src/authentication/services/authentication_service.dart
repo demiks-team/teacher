@@ -50,7 +50,6 @@ class AuthenticationService {
   }
 
   Future<String?> signUp(LoginModel loginModel) async {
-    print(loginModel);
     var response = await DioApi().dio.post(
           dotenv.env['api'].toString() + "security/sign-up",
           data: jsonEncode(loginModel.toJson()),
