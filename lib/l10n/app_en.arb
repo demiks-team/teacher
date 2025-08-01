@@ -49,5 +49,6 @@
     "validationError": "The data provided for this operation is not valid or it is incomplete.",
     "chapters": "Chapters",
     "bookNameAttendanceHint": "Which chapter of bookName did you work on today?",
+    "noUserFound": "No user found with this email. Please sign up first.",
     "save": "Save"
 }

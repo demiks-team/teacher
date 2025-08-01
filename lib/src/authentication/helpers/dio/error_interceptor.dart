@@ -74,7 +74,12 @@ class ErrorsInterceptor extends Interceptor {
                   notificationService.showError(
                       AppLocalizations.of(currentContext)!
                           .validationError);
-                  break;                  
+                  break; 
+                case 'noUserFound':
+                  notificationService.showError(
+                      AppLocalizations.of(currentContext)!
+                          .noUserFound);
+                  break;                                    
                 default:
                   notificationService.showError(
                       AppLocalizations.of(currentContext)!.generalError);

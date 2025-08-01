@@ -49,5 +49,6 @@
     "validationError": "Los datos proporcionados para esta operación no son válidos o están incompletos.",
     "chapters": "Capítulos",
     "bookNameAttendanceHint": "¿En qué capítulo de bookName has trabajado hoy?",
+    "noUserFound": "No se ha encontrado ningún usuario con este correo electrónico. Por favor, regístrese primero.",
     "save": "Ahorrar"
 }
