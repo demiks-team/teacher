@@ -45,7 +45,7 @@ class AttendanceModel {
         "id": id,
         "groupEnrollmentId": groupEnrollmentId,
         "groupEnrollment":
-            groupEnrollment != null ? groupEnrollment!.toJson() : null,
+            groupEnrollment?.toJson(),
         "groupSessionId": groupSessionId,
         "status": status,
         "internalNotes": internalNotes,

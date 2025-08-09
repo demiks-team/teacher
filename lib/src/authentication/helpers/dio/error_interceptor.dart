@@ -60,6 +60,26 @@ class ErrorsInterceptor extends Interceptor {
                   notificationService.showError(
                       AppLocalizations.of(currentContext)!.duplicateEmail);
                   break;
+                case 'verificationDoesNotMatch':
+                  notificationService.showError(
+                      AppLocalizations.of(currentContext)!
+                          .verificationDoesNotMatch);
+                  break;
+                case 'verificationCodeExpired':
+                  notificationService.showError(
+                      AppLocalizations.of(currentContext)!
+                          .verificationCodeExpired);
+                  break;
+                case 'validationError':
+                  notificationService.showError(
+                      AppLocalizations.of(currentContext)!
+                          .validationError);
+                  break; 
+                case 'noUserFound':
+                  notificationService.showError(
+                      AppLocalizations.of(currentContext)!
+                          .noUserFound);
+                  break;                                    
                 default:
                   notificationService.showError(
                       AppLocalizations.of(currentContext)!.generalError);

@@ -40,7 +40,15 @@
     "tempRegistrationPath": "Please consider creating an account on Demiks Admin first.",
     "duplicateEmail": "Another item with the same email already exists.",
     "breakTimeMinutesBreak": "value minutes break",
+    "verificationCode": "Verification Code",
+    "verificationCodeDescription": "Please check your email and enter the code here",
+    "verificationDoesNotMatch": "This code does not match. Please try again.",
+    "continueCapital": "Continue",
+    "beforeEmailValidation": "Please enter your email to create an account.",  
+    "verificationCodeExpired": "Your verification code has expired. Please start the process again.",  
+    "validationError": "The data provided for this operation is not valid or it is incomplete.",
     "chapters": "Chapters",
     "bookNameAttendanceHint": "Which chapter of bookName did you work on today?",
+    "noUserFound": "No user found with this email. Please sign up first.",
     "save": "Save"
 }

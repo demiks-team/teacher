@@ -173,9 +173,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   void onChangedAttendanceStatus(int value, int index) {
     setState(() {
-      if (selectedStatusValues.length > index) {
+      if (index < selectedStatusValues.length) {
         selectedStatusValues[index] = value;
-      } else {
+      } else if (index == selectedStatusValues.length) {
         selectedStatusValues.add(value);
       }
     });
@@ -184,19 +184,24 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   void onChangedAttendanceStatusAll(int value) {
     setState(() {
       _selectedValue = value;
+
+      if (selectedStatusValues.length !=
+          attendanceCreation!.attendances!.length) {
+        selectedStatusValues =
+            List.filled(attendanceCreation!.attendances!.length, value);
+      } else {
+        for (int i = 0; i < selectedStatusValues.length; i++) {
+          selectedStatusValues[i] = value;
+        }
+      }
     });
-    for (var index = 0;
-        index < attendanceCreation!.attendances!.length;
-        index++) {
-      onChangedAttendanceStatus(value, index);
-    }
   }
 
   void onChangedAttendanceLevel(int value, int index) {
     setState(() {
-      if (selectedLevelIds.length > index) {
+      if (index < selectedLevelIds.length) {
         selectedLevelIds[index] = value;
-      } else {
+      } else if (index == selectedLevelIds.length) {
         selectedLevelIds.add(value);
       }
     });
@@ -205,6 +210,16 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   void onChangedAttendanceLevelAll(int? value) {
     setState(() {
       _selectedLevelValue = value;
+
+      if (selectedLevelIds.length != attendanceCreation!.attendances!.length) {
+        selectedLevelIds =
+            List.filled(attendanceCreation!.attendances!.length, value);
+      } else {
+        for (int i = 0; i < selectedLevelIds.length; i++) {
+          selectedLevelIds[i] = value;
+        }
+      }
+
       changeAllLevels(value);
     });
   }
@@ -243,13 +258,17 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
           if (oldLevel.displayOrder == null ||
               (oldLevel.displayOrder! <= newLevel.displayOrder!)) {
-            selectedLevelIds[i] = result;
-            attendanceCreation!.attendances![i].levelId = result;
+            if (i < selectedLevelIds.length) {
+              selectedLevelIds[i] = result;
+              attendanceCreation!.attendances![i].levelId = result;
+            }
           }
         }
       } else {
-        selectedLevelIds[i] = result;
-        attendanceCreation!.attendances![i].levelId = result;
+        if (i < selectedLevelIds.length) {
+          selectedLevelIds[i] = result;
+          attendanceCreation!.attendances![i].levelId = result;
+        }
       }
     }
   }
@@ -300,7 +319,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       attendance.groupEnrollmentId =
           attendanceCreation!.attendances![index].groupEnrollmentId;
 
-      attendance.status = selectedStatusValues[index];
+      attendance.status = index < selectedStatusValues.length
+          ? selectedStatusValues[index]
+          : AttendanceStatus.absent.index;
 
       if (studentNotesControllers[index].value.text.isNotEmpty) {
         attendance.notesForStudent = studentNotesControllers[index].value.text;
@@ -316,7 +337,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
       attendance.groupSessionId = widget.attendanceQModel.groupSession!.id;
 
-      attendance.levelId = selectedLevelIds[index];
+      attendance.levelId =
+          index < selectedLevelIds.length ? selectedLevelIds[index] : null;
+
       att.attendances!.add(attendance);
     }
 

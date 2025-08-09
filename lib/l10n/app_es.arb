@@ -40,7 +40,15 @@
     "tempRegistrationPath": "Considere primero crear una cuenta en Demiks Admin.",
     "duplicateEmail": "Ya existe otro elemento con el mismo correo electrónico.",
     "breakTimeMinutesBreak": "value minutos de descanso",
+    "verificationCode": "Código de verificación",
+    "verificationCodeDescription": "Compruebe su correo electrónico e introduzca el código aquí",        
+    "verificationDoesNotMatch": "Este código no coincide. Por favor, inténtelo de nuevo.",
+    "continueCapital": "Continuar",
+    "beforeEmailValidation": "Introduzca su correo electrónico para crear una cuenta.",
+    "verificationCodeExpired": "Su código de verificación ha caducado. Por favor, inicie el proceso de nuevo.",    
+    "validationError": "Los datos proporcionados para esta operación no son válidos o están incompletos.",
     "chapters": "Capítulos",
     "bookNameAttendanceHint": "¿En qué capítulo de bookName has trabajado hoy?",
+    "noUserFound": "No se ha encontrado ningún usuario con este correo electrónico. Por favor, regístrese primero.",
     "save": "Ahorrar"
 }

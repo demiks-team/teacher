@@ -1,24 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:teacher/src/infrastructure/notification.dart';
-
+import 'package:teacher/src/authentication/models/login_model.dart';
 import 'package:teacher/src/shared/helpers/colors/hex_color.dart';
 import 'package:teacher/src/shared/models/enums.dart';
 import 'package:teacher/src/shared/theme/colors/app_colors.dart';
 import 'package:teacher/src/site/screens/verify_screen.dart';
+
 import '../../authentication/services/authentication_service.dart';
 import '../../teacher/shared-widgets/menu/bottom_navigation.dart';
 
-import 'signup_screen.dart';
+class PasswordScreen extends StatefulWidget {
+  final String identifier;
+  final VerificationRequestType? requestType;
+  final VerificationResultType? verificationResultType;
+  final String? verificationCode;
+  final String? password;
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const PasswordScreen(
+      {Key? key,
+      required this.identifier,
+      this.requestType = VerificationRequestType.signUp,
+      this.verificationResultType,
+      this.verificationCode,
+      this.password})
+      : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<PasswordScreen> createState() => _PasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _PasswordScreenState extends State<PasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final authenticationService = AuthenticationService();
@@ -30,11 +41,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool submitted = false;
 
-  NotificationService notificationService = NotificationService();
-
   @override
   void initState() {
     super.initState();
+    _userEmail = widget.identifier;
+    _emailController.text = widget.identifier;
     _emailController.addListener(() {
       setState(() {
         _formKey.currentState!.validate();
@@ -49,37 +60,60 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  void _submitSignin() async {
-    // final bool? isValid = _formKey.currentState?.validate();
-    // if (isValid == true) {
-    setState(() {
-      submitted = true;
-    });
+  void _submit() async {
+    final bool? isValid = _formKey.currentState?.validate();
 
-    var response = await authenticationService
-        .login(_userEmail, _password)
-        .whenComplete(() {
+    if (isValid == true) {
       setState(() {
-        submitted = false;
+        submitted = true;
       });
-    }).onError((error, stackTrace) {
-      setState(() {
-        submitted = false;
-      });
-      return;
-    });
 
-    if (response != null) {
-      // Navigator.push(
-      //     context, MaterialPageRoute(builder: (_) => const BottomNavigation()));
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (_) => VerifyScreen(
-                    identifier: _userEmail,
-                    tempToken: response.tempToken,
-                    requestType: VerificationRequestType.login,
-                  )));
+      var loginModel = LoginModel();
+      loginModel.email = _userEmail;
+      loginModel.password = _password;
+      loginModel.code = widget.verificationCode;
+
+      if (widget.requestType == VerificationRequestType.login) {
+        var response = await authenticationService
+            .login(_userEmail, _password)
+            .whenComplete(() {
+          setState(() {
+            submitted = false;
+          });
+        }).onError((error, stackTrace) {
+          setState(() {
+            submitted = false;
+          });
+          return;
+        });
+
+        if (response != null) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => VerifyScreen(
+                        identifier: _userEmail,
+                        tempToken: response.tempToken,
+                        requestType: VerificationRequestType.login,
+                      )));
+        }
+      } else if (widget.requestType == VerificationRequestType.signUp) {
+        var response = await authenticationService
+            .signUp(loginModel)
+            .whenComplete(() => setState(() {
+                  submitted = false;
+                }))
+            .onError((error, stackTrace) {
+          setState(() {
+            submitted = false;
+          });
+          return;
+        });
+        if (response != null) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const BottomNavigation()));
+        }
+      }
     }
   }
 
@@ -118,22 +152,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                     margin: const EdgeInsets.only(
                                         top: 5, left: 15, right: 15),
                                     child: Column(children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            margin: const EdgeInsets.only(
-                                                bottom: 25),
-                                            child: Text(
-                                              AppLocalizations.of(context)!
-                                                  .login,
-                                              style:
-                                                  const TextStyle(fontSize: 20),
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                                      // Row(
+                                      //   mainAxisAlignment:
+                                      //       MainAxisAlignment.start,
+                                      //   children: [
+                                      //     Expanded(
+                                      //         child: Container(
+                                      //       margin: const EdgeInsets.only(
+                                      //           bottom: 25),
+                                      //       child: Text(
+                                      //         AppLocalizations.of(context)!
+                                      //             .createAnAccount,
+                                      //         style:
+                                      //             const TextStyle(fontSize: 20),
+                                      //       ),
+                                      //     )),
+                                      //   ],
+                                      // ),
                                       TextFormField(
                                         decoration: InputDecoration(
                                           focusedBorder: OutlineInputBorder(
@@ -178,6 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                       TextFormField(
                                         decoration: InputDecoration(
+                                          errorMaxLines: 6,
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
                                                 color: HexColor.fromHex(
@@ -199,20 +235,37 @@ class _LoginScreenState extends State<LoginScreen> {
                                           hintText:
                                               AppLocalizations.of(context)!
                                                   .password,
-                                          suffixIcon: IconButton(
-                                            icon: Icon(
-                                              _passwordVisible
-                                                  ? Icons.visibility
-                                                  : Icons.visibility_off,
-                                              color: Theme.of(context)
-                                                  .primaryColorDark,
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                _passwordVisible =
-                                                    !_passwordVisible;
-                                              });
-                                            },
+                                          suffixIcon: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.info_outline,
+                                                  color: Theme.of(context)
+                                                      .primaryColorDark,
+                                                ),
+                                                onPressed: () {
+                                                  showAlertDialog(context);
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  _passwordVisible
+                                                      ? Icons.visibility
+                                                      : Icons.visibility_off,
+                                                  color: Theme.of(context)
+                                                      .primaryColorDark,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _passwordVisible =
+                                                        !_passwordVisible;
+                                                  });
+                                                },
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         autovalidateMode:
@@ -224,7 +277,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                               value.trim().isEmpty) {
                                             return '';
                                           }
-                                          if (value.trim().length < 2) {
+                                          if (!RegExp(
+                                                  r'^((?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])|(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[^a-zA-Z0-9])|(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])|(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])).{8,}$')
+                                              .hasMatch(value)) {
                                             return '';
                                           }
 
@@ -245,120 +300,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   ? _formKey.currentState!
                                                               .validate() &&
                                                           !submitted
-                                                      ? _submitSignin
+                                                      ? _submit
                                                       : null
                                                   : null,
                                           child: Text(
                                               AppLocalizations.of(context)!
-                                                  .login,
+                                                  .continueCapital,
                                               style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 20))),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.05),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            AppLocalizations.of(context)!
-                                                    .noAccount +
-                                                " ",
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w300),
-                                          ),
-                                          Container(
-                                              margin: const EdgeInsets.only(
-                                                  bottom: 3),
-                                              child: InkWell(
-                                                child: Text(
-                                                  AppLocalizations.of(context)!
-                                                      .signUp,
-                                                  style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 18),
-                                                ),
-                                                onTap: () {
-                                                  Navigator.of(context,
-                                                          rootNavigator: true)
-                                                      .push(MaterialPageRoute(
-                                                          builder: (_) =>
-                                                              const SignupScreen()));
-                                                },
-                                              ))
-                                        ],
-                                      ),
                                     ]),
                                   ),
-                                  // Container(
-                                  //     margin: const EdgeInsets.only(
-                                  //         top: 30, left: 15, right: 15),
-                                  //     child: Column(children: [
-                                  //       Row(
-                                  //         mainAxisAlignment:
-                                  //             MainAxisAlignment.center,
-                                  //         children: [
-                                  //           Expanded(
-                                  //               child: Center(
-                                  //             child: Text(
-                                  //               AppLocalizations.of(context)!
-                                  //                   .loginWithSocialNetworks,
-                                  //               style: const TextStyle(
-                                  //                   fontSize: 20),
-                                  //             ),
-                                  //           )),
-                                  //         ],
-                                  //       ),
-                                  //       Row(
-                                  //         mainAxisAlignment:
-                                  //             MainAxisAlignment.center,
-                                  //         children: [
-                                  //           Container(
-                                  //             margin: const EdgeInsets.only(
-                                  //                 top: 15),
-                                  //             child: ElevatedButton.icon(
-                                  //               icon: Container(
-                                  //                   margin:
-                                  //                       const EdgeInsets.all(2),
-                                  //                   width: 20,
-                                  //                   height: 20,
-                                  //                   child: Image.asset(
-                                  //                       'assets/images/google-login-icon.png')),
-                                  //               style: ButtonStyle(
-                                  //                 padding:
-                                  //                     MaterialStateProperty.all(
-                                  //                         const EdgeInsets.only(
-                                  //                             top: 10,
-                                  //                             bottom: 10,
-                                  //                             left: 5,
-                                  //                             right: 5)),
-                                  //               ),
-                                  //               label: Text(AppLocalizations.of(
-                                  //                       context)!
-                                  //                   .loginWithGoogle),
-                                  //               onPressed: () async {
-                                  //                 var response =
-                                  //                     await authenticationService
-                                  //                         .signInGoogle();
-                                  //                 if (response != null &&
-                                  //                     response) {
-                                  //                   Navigator.push(
-                                  //                       context,
-                                  //                       MaterialPageRoute(
-                                  //                           builder: (_) =>
-                                  //                               const BottomNavigation()));
-                                  //                 }
-                                  //               },
-                                  //             ),
-                                  //           )
-                                  //         ],
-                                  //       ),
-                                  //     ])),
                                 ]))),
                   ),
                 ),
@@ -379,7 +331,7 @@ class _LoginScreenState extends State<LoginScreen> {
             //           mainAxisAlignment: MainAxisAlignment.center,
             //           children: [
             //             Text(
-            //               AppLocalizations.of(context)!.noAccount + " ",
+            //               AppLocalizations.of(context)!.haveAccount + " ",
             //               style: const TextStyle(
             //                   color: Colors.black,
             //                   fontSize: 12,
@@ -389,14 +341,12 @@ class _LoginScreenState extends State<LoginScreen> {
             //                 margin: const EdgeInsets.only(bottom: 3),
             //                 child: InkWell(
             //                   child: Text(
-            //                     AppLocalizations.of(context)!.signUp,
+            //                     AppLocalizations.of(context)!.login,
             //                     style: const TextStyle(
             //                         color: Colors.black, fontSize: 18),
             //                   ),
             //                   onTap: () {
-            //                     Navigator.of(context, rootNavigator: true).push(
-            //                         MaterialPageRoute(
-            //                             builder: (_) => const SignupScreen()));
+            //                     Navigator.of(context).pop();
             //                   },
             //                 ))
             //           ],
@@ -406,4 +356,17 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
         ));
   }
+}
+
+showAlertDialog(BuildContext context) {
+  AlertDialog alert = AlertDialog(
+    content: Text(AppLocalizations.of(context)!.passwordComplexity),
+  );
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }

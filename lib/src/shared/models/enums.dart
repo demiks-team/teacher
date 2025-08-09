@@ -11,3 +11,17 @@ enum ClassDurationType {
   classEnd,
   rollingClass
 }
+
+enum VerificationResultType { zero_, existUser, existEmail, notExistEmail }
+
+enum VerificationRequestType {
+  zero_,
+  signUp,
+  login,
+}
+
+enum CommunicationMethod {
+    zero_,
+    email,
+    textMessage
+}
