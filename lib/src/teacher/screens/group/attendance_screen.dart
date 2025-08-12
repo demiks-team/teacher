@@ -381,15 +381,19 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         if (chapter.levelId != null) {
           if (chapter.levelId! > 0) {
             var level = levels.firstWhere((l) => l.id == chapter.levelId);
+
             for (var index = 0;
                 index < attendanceCreation!.attendances!.length;
                 index++) {
               selectedLevelIds[index] = level.id;
-              attendanceCreation!.attendances![index].levelId = level.id;
             }
+
+            changeAllLevels(level.id);
           }
         }
       }
+    } else {
+      changeAllLevels(null);
     }
   }
 
