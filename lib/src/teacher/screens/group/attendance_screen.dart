@@ -724,7 +724,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                                   .attendances![
                                                                       index]
                                                                   .levelId,
-                                                              items: getAllowedLevelsForStudent(mainAttendanceCreation!
+                                                              items: getAllowedLevelsForStudent(attendanceCreation!
                                                                       .attendances![
                                                                           index]
                                                                       .levelId)
