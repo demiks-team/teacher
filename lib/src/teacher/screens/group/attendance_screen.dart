@@ -877,18 +877,24 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                                           null ||
                                                                       value
                                                                           .isEmpty) {
-                                                                    return '';
+                                                                    return AppLocalizations.of(
+                                                                          context)!
+                                                                      .required;
                                                                   }
                                                                   final intValue =
                                                                       int.tryParse(
                                                                           value);
                                                                   if (intValue ==
                                                                       null) {
-                                                                    return '';
+                                                                    return AppLocalizations.of(
+                                                                          context)!
+                                                                      .invalid;
                                                                   }
                                                                   if (intValue >
                                                                       sessionDuration) {
-                                                                    return '';
+                                                                    return AppLocalizations.of(
+                                                                          context)!
+                                                                      .invalid;
                                                                   }
                                                                 }
                                                                 return null;
