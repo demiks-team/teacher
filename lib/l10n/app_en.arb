@@ -36,6 +36,7 @@
     "cancelled": "Cancelled",
     "requested": "Requested",
     "missedAttendances": "Missed Attendances",
+    "missedAttendancesEmptyList": "Good job! You've all done with the class attendance.",    
     "listOfTodaysClasses": "Today's Classes",
     "tempRegistrationPath": "Please consider creating an account on Demiks Admin first.",
     "duplicateEmail": "Another item with the same email already exists.",
@@ -50,5 +51,6 @@
     "chapters": "Chapters",
     "bookNameAttendanceHint": "Which chapter of bookName did you work on today?",
     "noUserFound": "No user found with this email. Please sign up first.",
+    "absenceInMinutes": "Absence in Minutes",
     "save": "Save"
 }

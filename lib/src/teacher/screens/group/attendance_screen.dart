@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:teacher/src/shared/models/attendance_creation_model.dart';
 import 'package:teacher/src/shared/models/attendance_model.dart';
@@ -56,6 +57,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   List<ChapterModel> chapters = [];
   List<ChapterModel> dropdownChapters = [];
+  int sessionDuration = 0;
+
+  List<TextEditingController> absenceInMinutesControllers = [];
 
   initializeTheData() async {
     await getSessionStudents();
@@ -67,6 +71,23 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         await getChapters();
       }
     }
+
+    final startStr = widget.attendanceQModel.groupSession!.startDate;
+    final endStr = widget.attendanceQModel.groupSession!.endDate;
+
+    // تبدیل به DateTime (پشتیبانی از ISO و فرمت‌های معمول)
+    final DateTime start = DateTime.parse(startStr.toString());
+    final DateTime end = DateTime.parse(endStr.toString());
+
+    final int breakTime =
+        widget.attendanceQModel.groupSession?.breakTimeInMinutes ?? 0;
+
+    // محاسبه مدت جلسه (به دقیقه)
+    sessionDuration =
+        ((end.millisecondsSinceEpoch - start.millisecondsSinceEpoch) ~/ 60000) -
+            breakTime;
+
+    if (sessionDuration < 0) sessionDuration = 0; // اطمینان از اینکه منفی نشه
   }
 
   getSessionStudents() async {
@@ -92,6 +113,16 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       internalNotesControllers
           .add(TextEditingController(text: element.internalNotes));
       selectedLevelIds.add(element.levelId);
+
+      final ctrl = TextEditingController(
+        text: element.absenceInMinutes != null
+            ? element.absenceInMinutes.toString()
+            : '',
+      );
+      ctrl.addListener(() {
+        setState(() {});
+      });
+      absenceInMinutesControllers.add(ctrl);
     }
   }
 
@@ -165,6 +196,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           .add(TextEditingController(text: attendance.internalNotes));
       selectedLevelIds.add(attendance.levelId);
 
+      absenceInMinutes.add(TextEditingController());
+
       attendanceCreation!.attendances!.add(attendance);
       groupStudentsExceptSessionStudents
           .removeWhere((s) => s.id == groupEnrollment.id);
@@ -175,9 +208,46 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     setState(() {
       if (index < selectedStatusValues.length) {
         selectedStatusValues[index] = value;
-      } else if (index == selectedStatusValues.length) {
+      } else {
         selectedStatusValues.add(value);
       }
+
+      while (absenceInMinutesControllers.length <= index) {
+        final ctrl = TextEditingController();
+        ctrl.addListener(() => setState(() {}));
+        absenceInMinutesControllers.add(ctrl);
+      }
+
+      final absenceCtrl = absenceInMinutesControllers[index];
+      final attendanceItem = attendanceCreation!.attendances![index];
+
+      switch (value) {
+        case 0: // onTime
+          absenceCtrl.text = '0';
+          break;
+
+        case 3:
+          if (sessionDuration != null) {
+            absenceCtrl.text = sessionDuration.toString();
+          }
+          break;
+
+        // case 1:
+        // case 2:
+        //   if (attendanceItem.id > 0 &&
+        //       attendanceItem.absenceInMinutes != null) {
+        //     absenceCtrl.text = attendanceItem.absenceInMinutes.toString();
+        //   } else {
+        //     absenceCtrl.clear();
+        //   }
+        //   break;
+
+        default:
+          absenceCtrl.clear();
+          break;
+      }
+
+      _formKey.currentState?.validate();
     });
   }
 
@@ -185,14 +255,53 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     setState(() {
       _selectedValue = value;
 
-      if (selectedStatusValues.length !=
-          attendanceCreation!.attendances!.length) {
-        selectedStatusValues =
-            List.filled(attendanceCreation!.attendances!.length, value);
+      final rows = attendanceCreation!.attendances!.length;
+
+      if (selectedStatusValues.length != rows) {
+        selectedStatusValues = List.filled(rows, value);
       } else {
-        for (int i = 0; i < selectedStatusValues.length; i++) {
+        for (int i = 0; i < rows; i++) {
           selectedStatusValues[i] = value;
         }
+      }
+
+      for (int i = 0; i < rows; i++) {
+        while (absenceInMinutesControllers.length <= i) {
+          final ctrl = TextEditingController();
+          ctrl.addListener(() => setState(() {}));
+          absenceInMinutesControllers.add(ctrl);
+        }
+
+        final absenceCtrl = absenceInMinutesControllers[i];
+        final attendanceItem = attendanceCreation!.attendances![i];
+
+        switch (value) {
+          case 0: // onTime
+            absenceCtrl.text = '0';
+            break;
+
+          case 3: // Absent
+            if (sessionDuration != null) {
+              absenceCtrl.text = sessionDuration.toString();
+            }
+            break;
+
+          // case 1: // Late
+          // case 2: // Partial
+          //   if (attendanceItem.id > 0 &&
+          //       attendanceItem.absenceInMinutes != null) {
+          //     absenceCtrl.text = attendanceItem.absenceInMinutes.toString();
+          //   } else {
+          //     absenceCtrl.clear();
+          //   }
+          //   break;
+
+          default:
+            absenceCtrl.clear();
+            break;
+        }
+
+        _formKey.currentState?.validate();
       }
     });
   }
@@ -316,6 +425,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       attendance.groupEnrollment =
           attendanceCreation!.attendances![index].groupEnrollment;
 
+      attendance.absenceInMinutes =
+          absenceInMinutesControllers[index].text.isNotEmpty
+              ? int.tryParse(absenceInMinutesControllers[index].text)
+              : null;
+
       attendance.groupEnrollmentId =
           attendanceCreation!.attendances![index].groupEnrollmentId;
 
@@ -339,6 +453,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
       attendance.levelId =
           index < selectedLevelIds.length ? selectedLevelIds[index] : null;
+
+      // NOTE: If you want to save absenceInMinutes to the model, add a field
+      // to AttendanceModel and assign it here, e.g.:
+      // attendance.absenceInMinutes = int.tryParse(absenceInMinutes[index].text);
 
       att.attendances!.add(attendance);
     }
@@ -365,6 +483,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   List<TextEditingController> studentNotesControllers = [];
   List<TextEditingController> internalNotesControllers = [];
   TextEditingController? notesController;
+
+  // <-- CHANGED VARIABLE: renamed from numberInputControllers to absenceInMinutes
+  List<TextEditingController> absenceInMinutes = [];
 
   int? _selectedChapterValue;
   void onChangedAttendanceChapterAll(int? value) {
@@ -395,6 +516,30 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     } else {
       changeAllLevels(null);
     }
+  }
+
+  bool isFormValid() {
+    if (attendanceCreation == null) return false;
+
+    final rows = attendanceCreation!.attendances!.length;
+
+    for (int i = 0; i < rows; i++) {
+      final status = (i < selectedStatusValues.length)
+          ? selectedStatusValues[i]
+          : AttendanceStatus.absent.index;
+
+      if (status == 1 || status == 2) {
+        final text = (i < absenceInMinutesControllers.length)
+            ? absenceInMinutesControllers[i].text.trim()
+            : '';
+        if (text.isEmpty) return false;
+        final parsed = int.tryParse(text);
+        if (parsed == null) return false;
+        if (sessionDuration != null && parsed > sessionDuration!) return false;
+      }
+    }
+
+    return true;
   }
 
   @override
@@ -693,6 +838,66 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                             },
                                                           ),
                                                         ),
+                                                        if (selectedStatusValues[
+                                                                    index] ==
+                                                                1 ||
+                                                            selectedStatusValues[
+                                                                    index] ==
+                                                                2)
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    top: 8.0,
+                                                                    bottom:
+                                                                        8.0),
+                                                            child:
+                                                                TextFormField(
+                                                              controller:
+                                                                  absenceInMinutesControllers[
+                                                                      index],
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .number,
+                                                              decoration: InputDecoration(
+                                                                  labelText: AppLocalizations.of(
+                                                                          context)!
+                                                                      .absenceInMinutes,
+                                                                  suffixText:
+                                                                      '/${sessionDuration ?? ""}'),
+                                                              validator:
+                                                                  (value) {
+                                                                if (selectedStatusValues[
+                                                                            index] ==
+                                                                        1 ||
+                                                                    selectedStatusValues[
+                                                                            index] ==
+                                                                        2) {
+                                                                  if (value ==
+                                                                          null ||
+                                                                      value
+                                                                          .isEmpty) {
+                                                                    return '';
+                                                                  }
+                                                                  final intValue =
+                                                                      int.tryParse(
+                                                                          value);
+                                                                  if (intValue ==
+                                                                      null) {
+                                                                    return '';
+                                                                  }
+                                                                  if (intValue >
+                                                                      sessionDuration) {
+                                                                    return '';
+                                                                  }
+                                                                }
+                                                                return null;
+                                                              },
+                                                              autovalidateMode:
+                                                                  AutovalidateMode
+                                                                      .always,
+                                                            ),
+                                                          ),
                                                         TextFormField(
                                                           controller:
                                                               studentNotesControllers[
@@ -828,11 +1033,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                           .primaryColor),
                                                   padding:
                                                       const EdgeInsets.all(20)),
-                                              onPressed: isSaving
-                                                  ? null
-                                                  : () async {
-                                                      await submit();
-                                                    },
+                                              onPressed:
+                                                  isSaving || !isFormValid()
+                                                      ? null
+                                                      : () async {
+                                                          await submit();
+                                                        },
                                               child: Text(
                                                   AppLocalizations.of(context)!
                                                       .save,
