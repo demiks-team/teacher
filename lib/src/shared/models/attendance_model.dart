@@ -17,6 +17,7 @@ class AttendanceModel {
     this.internalNotes,
     this.notesForStudent,
     this.levelId,
+    this.absenceInMinutes
   });
 
   int id;
@@ -27,6 +28,7 @@ class AttendanceModel {
   String? internalNotes;
   String? notesForStudent;
   int? levelId;
+  int? absenceInMinutes;
 
   factory AttendanceModel.fromJson(Map<String, dynamic> json) =>
       AttendanceModel(
@@ -40,16 +42,17 @@ class AttendanceModel {
         internalNotes: json["internalNotes"],
         notesForStudent: json["notesForStudent"],
         levelId: json["levelId"],
+        absenceInMinutes: json["absenceInMinutes"],
       );
   Map<String, dynamic> toJson() => {
         "id": id,
         "groupEnrollmentId": groupEnrollmentId,
-        "groupEnrollment":
-            groupEnrollment?.toJson(),
+        "groupEnrollment": groupEnrollment?.toJson(),
         "groupSessionId": groupSessionId,
         "status": status,
         "internalNotes": internalNotes,
         "notesForStudent": notesForStudent,
         "levelId": levelId,
+        "absenceInMinutes": absenceInMinutes,
       };
 }
