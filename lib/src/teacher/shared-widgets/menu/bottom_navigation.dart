@@ -30,14 +30,14 @@ class _BottomNavigationState extends State<BottomNavigation> {
             backgroundColor: HexColor.fromHex('#fafafa'),
             activeColor: HexColor.fromHex(AppColors.accentColor),
             inactiveColor: HexColor.fromHex(AppColors.backgroundColorGray),
-            items: <BottomNavigationBarItem>[
+            items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: const Icon(Icons.dashboard),
-                label: AppLocalizations.of(context)!.dashboard,
+                icon: Icon(Icons.dashboard),
+                // label: AppLocalizations.of(context)!.dashboard,
               ),
               BottomNavigationBarItem(
-                icon: const Icon(Icons.supervised_user_circle),
-                label: AppLocalizations.of(context)!.missedAttendances,
+                icon: Icon(Icons.assignment_late),
+                // label: AppLocalizations.of(context)!.missedAttendances,
               ),
               // BottomNavigationBarItem(
               //   icon: const Icon(Icons.assignment_ind),
@@ -52,8 +52,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
               //   label: AppLocalizations.of(context)!.availability,
               // ),
               BottomNavigationBarItem(
-                icon: const Icon(Icons.widgets),
-                label: AppLocalizations.of(context)!.more,
+                icon: Icon(Icons.widgets),
+                // label: AppLocalizations.of(context)!.more,
               ),
             ],
           ),
