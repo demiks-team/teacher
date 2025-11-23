@@ -228,7 +228,14 @@ class _PastGroupSessionsWithoutAttendance
           child: Stack(
             children: <Widget>[
               Center(
-                child: Text(AppLocalizations.of(context)!.noClass),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.10),
+                  child: Text(
+                    AppLocalizations.of(context)!.missedAttendancesEmptyList,
+                    textAlign: TextAlign.center, 
+                  ),
+                ),
               ),
               ListView()
             ],
