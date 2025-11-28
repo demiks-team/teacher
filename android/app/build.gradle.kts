@@ -22,11 +22,11 @@ android {
         }
     }
     signingConfigs {
-        release {
-            keyAlias keystoreProperties["keyAlias"]
-            keyPassword keystoreProperties["keyPassword"]
-            storeFile keystoreProperties["storeFile"] ? file(keystoreProperties["storeFile"]) : null
-            storePassword keystoreProperties["storePassword"]
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as string
+            keyPassword = keystoreProperties["keyPassword"] as string
+            storeFile = keystoreProperties["storeFile"] ? file(keystoreProperties["storeFile"] as string) : null
+            storePassword = keystoreProperties["storePassword"] as string
         }
     }
 
@@ -39,7 +39,7 @@ android {
     }
 
     buildTypes {
-        release {            
+        getByName("release") {            
             signingConfig = signingConfigs.getByName("release")
         }
     }
