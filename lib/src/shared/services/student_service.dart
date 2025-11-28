@@ -7,7 +7,7 @@ import '../models/student_model.dart';
 class StudentService {
   Future<List<StudentModel>> getStudents() async {
     var response =
-        await DioApi().dio.get(dotenv.env['api'].toString() + "student");
+        await DioApi().dio.get("${dotenv.env['api']}student");
 
     if (response.statusCode == 200) {
       Map<String, dynamic> decodedList = jsonDecode(json.encode(response.data));

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../shared/models/group_model.dart';
 
 class GroupDetailsTab extends StatelessWidget {
-  const GroupDetailsTab({Key? key, required this.groupModel}) : super(key: key);
+  const GroupDetailsTab({super.key, required this.groupModel});
 
   final GroupModel groupModel;
 

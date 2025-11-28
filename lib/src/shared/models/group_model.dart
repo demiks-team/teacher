@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:teacher/src/shared/models/book_model.dart';
-import 'package:teacher/src/shared/models/contact-model.dart';
+import 'package:teacher/src/shared/models/contact_model.dart';
 
 import 'course_model.dart';
 import 'room_model.dart';

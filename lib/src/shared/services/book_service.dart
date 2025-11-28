@@ -6,10 +6,7 @@ import '../../authentication/helpers/dio/dio_api.dart';
 
 class BookService {
   Future<List<ChapterModel>> getChapters(int bookId) async {
-    var response = await DioApi().dio.get(dotenv.env['api'].toString() +
-        "book/" +
-        bookId.toString() +
-        "/chapters");
+    var response = await DioApi().dio.get("${dotenv.env['api']}book/$bookId/chapters");
 
     if (response.statusCode == 200) {
       List decodedList = jsonDecode(json.encode(response.data));

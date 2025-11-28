@@ -59,7 +59,7 @@ class SchoolModel {
         "email": email,
         "website": website,
         "currencyId": currencyId,
-        "currency": currency != null ? currency!.toJson() : null,
+        "currency": currency?.toJson(),
         "terms": terms,
         "timeZoneId": timeZoneId,
         "isTutor": isTutor,

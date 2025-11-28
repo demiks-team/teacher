@@ -9,17 +9,18 @@ class JwtInterceptor extends Interceptor {
 
   JwtInterceptor(this.dio);
 
-  getCurrentUser() async {
+  Future<void> getCurrentUser() async {
     currentUser = await SecureStorage.getCurrentUser();
   }
 
   @override
   void onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) async {
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     await getCurrentUser();
     if (currentUser != null) {
-      options.headers['Authorization'] =
-          'Bearer ' + currentUser!.token.toString();
+      options.headers['Authorization'] = 'Bearer ${currentUser!.token}';
     }
     return handler.next(options);
   }

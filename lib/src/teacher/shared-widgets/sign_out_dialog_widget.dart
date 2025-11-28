@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:teacher/l10n/app_localizations.dart';
 import '../../shared/helpers/colors/hex_color.dart';
 import '../../shared/secure_storage.dart';
 import '../../shared/theme/colors/app_colors.dart';
 import '../../site/screens/login_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class SignOutDialogWidget extends StatelessWidget {
-  const SignOutDialogWidget({Key? key, required this.title}) : super(key: key);
+  const SignOutDialogWidget({super.key, required this.title});
 
   final String title;
   @override

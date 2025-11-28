@@ -1,7 +1,8 @@
+import 'package:teacher/l10n/app_localizations.dart';
 import 'package:teacher/src/infrastructure/notification.dart';
 import 'package:teacher/src/shared/helpers/navigation_service/navigation_service.dart';
 import 'package:teacher/src/shared/services/general_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+// import 'package:flutter/material.dart';
 
 class ErrorLogger {
   dynamic currentContext;
@@ -16,7 +17,7 @@ class ErrorLogger {
 
     try {
       var result =
-          "From Teacher Mobile App: " + errorMessage + stackTrace.toString();
+          "From Teacher Mobile App: $errorMessage$stackTrace";
       generalService.logError(result);
       notificationService
           .showError(AppLocalizations.of(currentContext)!.generalError);

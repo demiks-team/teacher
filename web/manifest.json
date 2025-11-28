@@ -1,6 +1,6 @@
 {
-    "name": "teacher",
-    "short_name": "teacher",
+    "name": "mobileteacherapp",
+    "short_name": "mobileteacherapp",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
