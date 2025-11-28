@@ -63,7 +63,7 @@ class GroupEnrollmentModel {
         "id": id,
         "groupId": groupId,
         "enrollmentId": enrollmentId,
-        "enrollment": enrollment != null ? enrollment!.toJson() : null,
+        "enrollment": enrollment?.toJson(),
         "startDate": startDate,
         "endDate": endDate,
         "estimatedEndDate": estimatedEndDate,

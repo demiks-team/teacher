@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:teacher/l10n/app_localizations.dart';
 import 'package:teacher/src/authentication/models/login_model.dart';
 import 'package:teacher/src/authentication/services/authentication_service.dart';
 import 'package:teacher/src/shared/helpers/colors/hex_color.dart';
@@ -7,7 +8,6 @@ import 'package:teacher/src/shared/helpers/colors/hex_color.dart';
 import 'package:teacher/src/shared/models/enums.dart';
 import 'package:teacher/src/shared/theme/colors/app_colors.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teacher/src/site/screens/password_screen.dart';
 import 'package:teacher/src/teacher/shared-widgets/menu/bottom_navigation.dart';
 
@@ -17,13 +17,13 @@ class VerifyScreen extends StatefulWidget {
   final VerificationRequestType requestType;
   final VerificationResultType? verificationResultType;
 
-  const VerifyScreen(
-      {Key? key,
-      required this.identifier,
-      this.tempToken,
-      required this.requestType,
-      this.verificationResultType})
-      : super(key: key);
+  const VerifyScreen({
+    super.key,
+    required this.identifier,
+    this.tempToken,
+    required this.requestType,
+    this.verificationResultType,
+  });
 
   @override
   State<VerifyScreen> createState() => _VerifyScreenState();
@@ -100,34 +100,42 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     await authenticationService
                         .verifyLoginIdentifier(loginModel)
                         .then((result) {
-                      if (result) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const BottomNavigation()));
-                      }
-                    }).onError((error, stackTrace) {
-                      return;
-                    });
+                          if (result) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const BottomNavigation(),
+                              ),
+                            );
+                          }
+                        })
+                        .onError((error, stackTrace) {
+                          return;
+                        });
                   } else {
                     await authenticationService
                         .verifySignupIdentifier(
-                            loginModel.email!, loginModel.code!)
+                          loginModel.email!,
+                          loginModel.code!,
+                        )
                         .then((result) {
-                      if (result) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
+                          if (result) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
                                 builder: (_) => PasswordScreen(
-                                      identifier: loginModel.email!,
-                                      verificationResultType:
-                                          widget.verificationResultType,
-                                      verificationCode: loginModel.code,
-                                    )));
-                      }
-                    }).onError((error, stackTrace) {
-                      return;
-                    });
+                                  identifier: loginModel.email!,
+                                  verificationResultType:
+                                      widget.verificationResultType,
+                                  verificationCode: loginModel.code,
+                                ),
+                              ),
+                            );
+                          }
+                        })
+                        .onError((error, stackTrace) {
+                          return;
+                        });
                   }
                 },
               ),

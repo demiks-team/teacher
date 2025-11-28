@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'package:teacher/l10n/app_localizations.dart';
 
 import '../../../shared/helpers/colors/hex_color.dart';
 import '../../../shared/models/student_model.dart';
@@ -9,7 +10,7 @@ import '../../../shared/services/student_service.dart';
 import '../../../shared/theme/colors/app_colors.dart';
 
 class StudentListScreen extends StatefulWidget {
-  const StudentListScreen({Key? key}) : super(key: key);
+  const StudentListScreen({super.key});
 
   @override
   State<StudentListScreen> createState() => _StudentListScreenState();

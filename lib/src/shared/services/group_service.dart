@@ -13,7 +13,7 @@ import '../models/group_model.dart';
 class GroupService {
   Future<List<GroupModel>> getGroups() async {
     var response =
-        await DioApi().dio.get(dotenv.env['api'].toString() + "groups/list");
+        await DioApi().dio.get("${dotenv.env['api']}groups/list");
 
     if (response.statusCode == 200) {
       Map<String, dynamic> decodedList = jsonDecode(json.encode(response.data));
@@ -33,7 +33,7 @@ class GroupService {
   Future<GroupModel> getGroup(int id) async {
     var response = await DioApi()
         .dio
-        .get(dotenv.env['api'].toString() + "groups/group/" + id.toString());
+        .get("${dotenv.env['api']}groups/group/$id");
 
     Map<String, dynamic> decodedList = jsonDecode(json.encode(response.data));
 
@@ -47,7 +47,7 @@ class GroupService {
   Future<List<DashboardGroupModel>> getListOfTodaysGroups() async {
     var response = await DioApi()
         .dio
-        .get(dotenv.env['api'].toString() + "groups/group/listoftodaysgroups");
+        .get("${dotenv.env['api']}groups/group/listoftodaysgroups");
 
     if (response.statusCode == 200) {
       List decodedList = jsonDecode(json.encode(response.data));
@@ -64,8 +64,7 @@ class GroupService {
 
   Future<List<GroupSessionModel>>
       getPastSessionsGroupsWithoutAttendances() async {
-    var response = await DioApi().dio.get(dotenv.env['api'].toString() +
-        "groups/group/pastsessionsgroupswithoutattendances");
+    var response = await DioApi().dio.get("${dotenv.env['api']}groups/group/pastsessionsgroupswithoutattendances");
 
     if (response.statusCode == 200) {
       List decodedList = jsonDecode(json.encode(response.data));
@@ -82,10 +81,7 @@ class GroupService {
   }
 
   Future<AttendanceCreationModel> getSessionStudents(int groupSessionId) async {
-    var response = await DioApi().dio.get(dotenv.env['api'].toString() +
-        "groups/sessions/" +
-        groupSessionId.toString() +
-        "/students");
+    var response = await DioApi().dio.get("${dotenv.env['api']}groups/sessions/$groupSessionId/students");
 
     Map<String, dynamic> decodedList = jsonDecode(json.encode(response.data));
 
@@ -97,9 +93,7 @@ class GroupService {
   }
 
   Future<List<GroupEnrollmentModel>> getGroupEnrollments(int groupId) async {
-    var response = await DioApi().dio.get(dotenv.env['api'].toString() +
-        "groups/group/enrollments/" +
-        groupId.toString());
+    var response = await DioApi().dio.get("${dotenv.env['api']}groups/group/enrollments/$groupId");
 
     if (response.statusCode == 200) {
       List decodedList = jsonDecode(json.encode(response.data));
@@ -118,7 +112,7 @@ class GroupService {
   Future<bool> saveAttendance(AttendanceCreationModel attendances) async {
     Response response = await DioApi()
         .dio
-        .post(dotenv.env['api'].toString() + 'groups/attendance',
+        .post('${dotenv.env['api']}groups/attendance',
             options: Options(headers: {
               HttpHeaders.contentTypeHeader: "application/json",
             }),

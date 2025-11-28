@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:teacher/l10n/app_localizations.dart';
 import 'package:teacher/src/infrastructure/notification.dart';
 import 'package:teacher/src/shared/helpers/navigation_service/navigation_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../shared/secure_storage.dart';
 import '../../../site/screens/login_screen.dart';
@@ -122,7 +123,9 @@ class ErrorsInterceptor extends Interceptor {
       case DioExceptionType.cancel:
         break;
       case DioExceptionType.unknown:
-        print('Other workssss');
+        if (kDebugMode) {
+          print('Other workssss');
+        }
       // throw NoInternetConnectionException(err.requestOptions);
     }
 

@@ -8,7 +8,7 @@ class SchoolService {
   Future<AttendanceSettingsModel?> getAttendanceSettings() async {
     var response = await DioApi()
         .dio
-        .get(dotenv.env['api'].toString() + "school/attendance-settings");
+        .get("${dotenv.env['api']}school/attendance-settings");
 
     if (response.data.toString().isNotEmpty) {
       Map<String, dynamic> decodedList = jsonDecode(json.encode(response.data));

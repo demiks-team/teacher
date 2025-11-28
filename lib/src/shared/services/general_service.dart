@@ -9,7 +9,7 @@ class GeneralService {
   Future<List<LevelModel>> getSchoolLevels() async {
     var response = await DioApi()
         .dio
-        .get(dotenv.env['api'].toString() + "general/school-levels");
+        .get("${dotenv.env['api']}general/school-levels");
 
     if (response.statusCode == 200) {
       List decodedList = jsonDecode(json.encode(response.data));
@@ -28,7 +28,7 @@ class GeneralService {
   Future<String> logError(String errorMessage) async {
     try {
       final response = await DioApi().dio.post(
-            dotenv.env['api'].toString() + 'general/log-error',
+            '${dotenv.env['api']}general/log-error',
             data: json.encode(errorMessage),
             options: Options(
               headers: {

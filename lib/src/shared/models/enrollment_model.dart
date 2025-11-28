@@ -29,6 +29,6 @@ class EnrollmentModel {
   Map<String, dynamic> toJson() => {
         "id": id,
         "studentId": studentId,
-        "student": student != null ? student!.toJson() : null,
+        "student": student?.toJson(),
       };
 }

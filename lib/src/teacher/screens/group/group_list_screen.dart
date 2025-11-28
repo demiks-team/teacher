@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:teacher/l10n/app_localizations.dart';
 
 import '../../../shared/helpers/colors/hex_color.dart';
 import '../../../shared/models/group_model.dart';
@@ -10,7 +10,7 @@ import '../../../shared/theme/colors/app_colors.dart';
 import 'group_details_screen.dart';
 
 class GroupListScreen extends StatefulWidget {
-  const GroupListScreen({Key? key}) : super(key: key);
+  const GroupListScreen({super.key});
 
   @override
   State<GroupListScreen> createState() => _GroupListScreenState();

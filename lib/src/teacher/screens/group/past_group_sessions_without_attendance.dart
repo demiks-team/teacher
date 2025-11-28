@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:teacher/l10n/app_localizations.dart';
 import 'package:teacher/src/shared/helpers/general_helpers.dart';
 import 'package:teacher/src/shared/models/attendance_settings_model.dart';
 import 'package:teacher/src/shared/models/enums.dart';
@@ -16,7 +16,7 @@ import '../../../shared/services/group_service.dart';
 import '../../../shared/theme/colors/app_colors.dart';
 
 class PastGroupSessionsWithoutAttendance extends StatefulWidget {
-  const PastGroupSessionsWithoutAttendance({Key? key}) : super(key: key);
+  const PastGroupSessionsWithoutAttendance({super.key});
 
   @override
   State<PastGroupSessionsWithoutAttendance> createState() =>
@@ -43,9 +43,8 @@ class _PastGroupSessionsWithoutAttendance
     var result = "";
     if (groupSession.breakTimeInMinutes != null &&
         groupSession.breakTimeInMinutes! > 0) {
-      result = AppLocalizations.of(context)!.breakTimeMinutesBreak.replaceAll(
-              'value', groupSession.breakTimeInMinutes!.toString()) +
-          "\n";
+      result = "${AppLocalizations.of(context)!.breakTimeMinutesBreak.replaceAll(
+              'value', groupSession.breakTimeInMinutes!.toString())}\n";
     }
     return result;
   }
@@ -60,13 +59,13 @@ class _PastGroupSessionsWithoutAttendance
     super.initState();
   }
 
-  initializeTheData() async {
+  Future<void> initializeTheData() async {
     completedTasks = false;
     await getAttendanceSettings();
     await getClasses();
   }
 
-  getAttendanceSettings() async {
+  Future<void> getAttendanceSettings() async {
     var attendanceSettingsFuture = schoolService.getAttendanceSettings();
     await attendanceSettingsFuture.then((a) {
       setState(() {
@@ -75,7 +74,7 @@ class _PastGroupSessionsWithoutAttendance
     });
   }
 
-  getClasses() async {
+  Future<void> getClasses() async {
     var classesFuture = groupService.getPastSessionsGroupsWithoutAttendances();
     await classesFuture.then((a) {
       setState(() {
@@ -144,7 +143,7 @@ class _PastGroupSessionsWithoutAttendance
     String formattedEndTime = formatDateTime(endDate, 'jm');
 
     var result =
-        formattedStartDate + ", " + formattedStartTime + "-" + formattedEndTime;
+        "$formattedStartDate, $formattedStartTime-$formattedEndTime";
     return result;
   }
 
@@ -193,15 +192,14 @@ class _PastGroupSessionsWithoutAttendance
       result += groupSession.sessionNumber.toString();
       if (groupSession.group!.classDurationType !=
           ClassDurationType.rollingClass) {
-        result += "/" +
-            GeneralHelpers.formatNumber(groupSession.group!.numberOfSessions!);
+        result += "/${GeneralHelpers.formatNumber(groupSession.group!.numberOfSessions!)}";
       }
       result += ")";
     }
     return result;
   }
 
-  canOpenAttendanceScreen(GroupSessionModel groupSession) {
+  bool canOpenAttendanceScreen(GroupSessionModel groupSession) {
     var result = false;
     if ((groupSession.sessionStatus != GroupSessionStatus.cancelled &&
             groupSession.sessionStatus != GroupSessionStatus.requested) &&
@@ -211,7 +209,7 @@ class _PastGroupSessionsWithoutAttendance
     return result;
   }
 
-  getColorCard(GroupSessionModel groupSession) {
+  Color getColorCard(GroupSessionModel groupSession) {
     if (canOpenAttendanceScreen(groupSession)) {
       return HexColor.fromHex(AppColors.backgroundColorMintTulip);
     } else {

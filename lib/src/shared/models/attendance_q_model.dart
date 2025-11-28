@@ -22,7 +22,7 @@ class AttendanceQModel {
             : null,
       );
   Map<String, dynamic> toJson() => {
-        "group": group != null ? group!.toJson() : null,
-        "groupSession": groupSession != null ? groupSession!.toJson() : null,
+        "group": group?.toJson(),
+        "groupSession": groupSession?.toJson(),
       };
 }

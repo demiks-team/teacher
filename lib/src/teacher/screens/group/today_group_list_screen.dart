@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:intl/intl.dart';
+import 'package:teacher/l10n/app_localizations.dart';
 import 'package:teacher/src/shared/helpers/general_helpers.dart';
 import 'package:teacher/src/shared/models/attendance_settings_model.dart';
 import 'package:teacher/src/shared/models/dashboard_group_model.dart';
@@ -17,7 +18,7 @@ import '../../../shared/services/group_service.dart';
 import '../../../shared/theme/colors/app_colors.dart';
 
 class TodayGroupListScreen extends StatefulWidget {
-  const TodayGroupListScreen({Key? key}) : super(key: key);
+  const TodayGroupListScreen({super.key});
 
   @override
   State<TodayGroupListScreen> createState() => _TodayGroupListScreenState();
@@ -48,13 +49,13 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
     super.initState();
   }
 
-  initializeTheData() async {
+  Future<void> initializeTheData() async {
     completedTasks = false;
     await getAttendanceSettings();
     await getClasses();
   }
 
-  getAttendanceSettings() async {
+  Future<void> getAttendanceSettings() async {
     var attendanceSettingsFuture = schoolService.getAttendanceSettings();
     await attendanceSettingsFuture.then((a) {
       setState(() {
@@ -63,7 +64,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
     });
   }
 
-  getClasses() async {
+  Future<void> getClasses() async {
     var classesFuture = groupService.getListOfTodaysGroups();
     await classesFuture.then((a) {
       setState(() {
@@ -96,7 +97,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
     return true;
   }
 
-  canOpenAttendanceScreen(GroupSessionModel groupSession) {
+  bool canOpenAttendanceScreen(GroupSessionModel groupSession) {
     var result = false;
     if ((groupSession.sessionStatus != GroupSessionStatus.cancelled &&
             groupSession.sessionStatus != GroupSessionStatus.requested) &&
@@ -106,7 +107,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
     return result;
   }
 
-  getColorCard(GroupSessionModel groupSession) {
+  Color getColorCard(GroupSessionModel groupSession) {
     if (canOpenAttendanceScreen(groupSession)) {
       return HexColor.fromHex(AppColors.backgroundColorMintTulip);
     } else {
@@ -148,7 +149,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
     String formattedStartTime = formatDateTime(startDate, 'jm');
     String formattedEndTime = formatDateTime(endDate, 'jm');
 
-    var result = formattedStartTime + "-" + formattedEndTime;
+    var result = "$formattedStartTime-$formattedEndTime";
     return result;
   }
 
@@ -197,8 +198,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
       result += groupSession.sessionNumber.toString();
       if (groupSession.group!.classDurationType !=
           ClassDurationType.rollingClass) {
-        result += "/" +
-            GeneralHelpers.formatNumber(groupSession.group!.numberOfSessions!);
+        result += "/${GeneralHelpers.formatNumber(groupSession.group!.numberOfSessions!)}";
       }
       result += ")";
     }
@@ -209,9 +209,8 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
     var result = "";
     if (groupSession.breakTimeInMinutes != null &&
         groupSession.breakTimeInMinutes! > 0) {
-      result = AppLocalizations.of(context)!.breakTimeMinutesBreak.replaceAll(
-              'value', groupSession.breakTimeInMinutes!.toString()) +
-          "\n";
+      result = "${AppLocalizations.of(context)!.breakTimeMinutesBreak.replaceAll(
+              'value', groupSession.breakTimeInMinutes!.toString())}\n";
     }
     return result;
   }

@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.demiks" "\0"
-            VALUE "FileDescription", "teacher" "\0"
+            VALUE "FileDescription", "mobileteacherapp" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "teacher" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "teacher.exe" "\0"
-            VALUE "ProductName", "teacher" "\0"
+            VALUE "InternalName", "mobileteacherapp" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 com.demiks. All rights reserved." "\0"
+            VALUE "OriginalFilename", "mobileteacherapp.exe" "\0"
+            VALUE "ProductName", "mobileteacherapp" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

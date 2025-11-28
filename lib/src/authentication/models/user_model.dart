@@ -50,6 +50,6 @@ class UserModel {
         "refresh": refresh,
         "languageId": languageId,
         "schoolId": schoolId,
-        "school": school != null ? school!.toJson() : null,
+        "school": school?.toJson(),
       };
 }

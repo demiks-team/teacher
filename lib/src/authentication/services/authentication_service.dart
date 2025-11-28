@@ -18,7 +18,7 @@ class AuthenticationService {
   Future<ConfirmIdentityVerificationModel?> login(
       String email, String password) async {
     var response = await DioApi().dio.post(
-          dotenv.env['api'].toString() + "security/login",
+          "${dotenv.env['api']}security/login",
           data: json.encode(
               {"email": email, "password": password, "studentLanguage": 1}),
         );
@@ -38,7 +38,7 @@ class AuthenticationService {
 
   Future<bool> verifyLoginIdentifier(LoginModel loginModel) async {
     var response = await DioApi().dio.post(
-          dotenv.env['api'].toString() + "security/login/verify-code",
+          "${dotenv.env['api']}security/login/verify-code",
           data: jsonEncode(loginModel.toJson()),
         );
 
@@ -51,7 +51,7 @@ class AuthenticationService {
 
   Future<String?> signUp(LoginModel loginModel) async {
     var response = await DioApi().dio.post(
-          dotenv.env['api'].toString() + "security/sign-up",
+          "${dotenv.env['api']}security/sign-up",
           data: jsonEncode(loginModel.toJson()),
         );
     if (response.statusCode == 200 && response.data != null) {
@@ -62,7 +62,7 @@ class AuthenticationService {
 
   Future<void> refreshToken(String token) async {
     var response = await DioApi().dio.post(
-          dotenv.env['api'].toString() + "security/refresh",
+          "${dotenv.env['api']}security/refresh",
           data: json.encode({"token": token, "userId": 0}),
         );
     if (response.statusCode == 200 && response.data != null) {
@@ -75,8 +75,7 @@ class AuthenticationService {
   Future<ConfirmIdentityVerificationModel> sendVerificationMessage(
       IdentityVerificationModel identityVerification) async {
     var response = await DioApi().dio.post(
-          dotenv.env['api'].toString() +
-              "security/sign-up/verification-code/send",
+          "${dotenv.env['api']}security/sign-up/verification-code/send",
           data: json.encode(identityVerification.toJson()),
         );
 
@@ -97,12 +96,7 @@ class AuthenticationService {
 
   Future<bool> verifySignupIdentifier(String identifier, String code) async {
     var response = await DioApi().dio.get(
-          dotenv.env['api'].toString() +
-              'security/sign-up/identifier/' +
-              identifier +
-              '/code/' +
-              code +
-              '/verify'
+          '${dotenv.env['api']}security/sign-up/identifier/$identifier/code/$code/verify'
         );
 
     if (response.statusCode == 200) {

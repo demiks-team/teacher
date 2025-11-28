@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+// import 'package:flutter/material.dart';
+import 'package:teacher/l10n/app_localizations.dart';
 
 import '../shared/helpers/navigation_service/navigation_service.dart';
 
@@ -11,9 +12,7 @@ class NotificationService {
   }
 
   void showSuccess(String message) {
-    var snackBar = SnackBar(
-      content: Text(message),
-    );
+    var snackBar = SnackBar(content: Text(message));
 
     ScaffoldMessenger.of(currentContext).showSnackBar(snackBar);
   }
@@ -21,10 +20,7 @@ class NotificationService {
   void showMessage(String message, String action) {
     var snackBar = SnackBar(
       content: Text(message),
-      action: SnackBarAction(
-        label: action,
-        onPressed: () {},
-      ),
+      action: SnackBarAction(label: action, onPressed: () {}),
       duration: const Duration(microseconds: 5000),
     );
     ScaffoldMessenger.of(currentContext).showSnackBar(snackBar);
@@ -32,8 +28,10 @@ class NotificationService {
 
   void showError(String message) {
     var snackBar = SnackBar(
-      content: Text(message,
-          style: const TextStyle(color: Color.fromARGB(255, 239, 233, 240))),
+      content: Text(
+        message,
+        style: const TextStyle(color: Color.fromARGB(255, 239, 233, 240)),
+      ),
       action: SnackBarAction(
         label: AppLocalizations.of(currentContext)!.notificationDismiss,
         onPressed: () {},
