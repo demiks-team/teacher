@@ -8,7 +8,7 @@
 PRODUCT_NAME = mobileteacherapp
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.mobileteacherapp
+PRODUCT_BUNDLE_IDENTIFIER = com.demiks.teacher
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.
