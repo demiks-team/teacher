@@ -1,6 +1,6 @@
 {
-    "name": "mobileteacherapp",
-    "short_name": "mobileteacherapp",
+    "name": "Demiks Teacher",
+    "short_name": "Demiks Teacher",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
