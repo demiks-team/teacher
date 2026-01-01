@@ -1,19 +1,19 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:pinput/pinput.dart';
 import 'package:teacher/l10n/app_localizations.dart';
 import 'package:teacher/src/shared/models/attendance_creation_model.dart';
 import 'package:teacher/src/shared/models/attendance_model.dart';
 import 'package:teacher/src/shared/models/chapter_model.dart';
 import 'package:teacher/src/shared/models/group_enrollment_model.dart';
+import 'package:teacher/src/shared/models/topic_model.dart';
 import 'package:teacher/src/shared/services/book_service.dart';
 
 import '../../../shared/helpers/colors/hex_color.dart';
 import '../../../shared/helpers/colors/material_color.dart';
 import '../../../shared/models/attendance_q_model.dart';
-// import 'package:flutter/material.dart';
 
 import '../../../shared/models/enums.dart';
 import '../../../shared/models/level_model.dart';
@@ -67,6 +67,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   List<TextEditingController> absenceInMinutesControllers = [];
 
+  List<TopicModel> topics = [];
+  List<TopicModel> filteredTopics = [];
+
+  List<int> selectedTopicIds = [];
+
+  TopicModel? selectedTopic;
+  TextEditingController topicSearchController = TextEditingController();
+
   Future<void> initializeTheData() async {
     await getSessionStudents();
     await getGroupEnrollments();
@@ -75,6 +83,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     if (widget.attendanceQModel.group!.bookId != null) {
       if (widget.attendanceQModel.group!.bookId! > 0) {
         await getChapters();
+      }
+    }
+
+    if (widget.attendanceQModel.group!.canTeacherSpecifyTopics != null) {
+      if (widget.attendanceQModel.group!.canTeacherSpecifyTopics == true) {
+        await getTopics();
       }
     }
 
@@ -180,6 +194,40 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     filteredChapters = List.from(sortedChapters);
   }
 
+  Future<void> getTopics() async {
+    final getTopics = _generalService.getTopics();
+
+    await getTopics.then((result) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        setState(() {
+          topics = result;
+
+          if (attendanceCreation?.topicIds != null &&
+              attendanceCreation!.topicIds!.isNotEmpty &&
+              attendanceCreation?.topics != null) {
+            for (var topicId in attendanceCreation!.topicIds!) {
+              final exists = topics.any((t) => t.id == topicId);
+              if (!exists) {
+                final topicFromCreation = attendanceCreation!.topics!
+                    .where((t) => t.id == topicId)
+                    .firstOrNull;
+                if (topicFromCreation != null) {
+                  topics.add(topicFromCreation);
+                }
+              }
+            }
+          }
+
+          if (attendanceCreation?.topicIds != null &&
+              attendanceCreation!.topicIds!.isNotEmpty) {
+            selectedTopicIds = List<int>.from(attendanceCreation!.topicIds!);
+          }
+        });
+      });
+    });
+  }
+
   bool hasAnyChapter = false;
   Future<void> getChapters() async {
     final getChapters = _bookService.getChapters(
@@ -187,20 +235,34 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     );
 
     await getChapters.then((result) {
-      setState(() {
-        chapters = result;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        setState(() {
+          chapters = result;
 
-        buildSortedChapterList();
-        hasAnyChapter = chapters.isNotEmpty;
+          if (attendanceCreation?.chapterId != null) {
+            if (attendanceCreation!.chapter != null) {
+              final exists = chapters.any(
+                (c) => c.id == attendanceCreation!.chapterId,
+              );
+              if (!exists) {
+                chapters.add(attendanceCreation!.chapter!);
+              }
+            }
+          }
 
-        if (attendanceCreation?.chapterId != null) {
-          _selectedChapterValue = attendanceCreation!.chapterId;
-          _selectedChapter = chapters.firstWhere(
-            (c) => c.id == _selectedChapterValue,
-            orElse: () => ChapterModel(id: null),
-          );
-          chapterSearchController.text = _selectedChapter?.title ?? '';
-        }
+          buildSortedChapterList();
+          hasAnyChapter = chapters.isNotEmpty;
+
+          if (attendanceCreation?.chapterId != null) {
+            _selectedChapterValue = attendanceCreation!.chapterId;
+            _selectedChapter = chapters.firstWhere(
+              (c) => c.id == _selectedChapterValue,
+              orElse: () => ChapterModel(id: null),
+            );
+            chapterSearchController.text = _selectedChapter?.title ?? '';
+          }
+        });
       });
     });
   }
@@ -261,13 +323,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     if (chapter == null) return;
     setState(() {
       if (chapter.id == 0) {
-        chapter.title = null;
+        chapter.title = '';
       }
       _selectedChapter = chapter;
       _selectedChapterValue = chapter.id == 0 ? null : chapter.id;
       chapterSearchController.text = chapter.title ?? '';
       onChangedAttendanceChapterAll(_selectedChapterValue);
     });
+
+    FocusScope.of(context).unfocus();
   }
 
   void setGroupStudentsExceptSessionStudents(
@@ -358,7 +422,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       }
 
       final absenceCtrl = absenceInMinutesControllers[index];
-      // final attendanceItem = attendanceCreation!.attendances![index];
 
       switch (value) {
         case 0: // onTime
@@ -366,20 +429,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           break;
 
         case 3:
-          // if (sessionDuration != null) {
           absenceCtrl.text = sessionDuration.toString();
-          // }
           break;
-
-        // case 1:
-        // case 2:
-        //   if (attendanceItem.id > 0 &&
-        //       attendanceItem.absenceInMinutes != null) {
-        //     absenceCtrl.text = attendanceItem.absenceInMinutes.toString();
-        //   } else {
-        //     absenceCtrl.clear();
-        //   }
-        //   break;
 
         default:
           absenceCtrl.clear();
@@ -524,6 +575,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
     att.notes = notesController!.value.text;
 
+    att.topicIds = selectedTopicIds;
+
     for (
       int index = 0;
       index < attendanceCreation!.attendances!.length;
@@ -633,6 +686,48 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         changeAllLevels(level.id);
       }
     }
+  }
+
+  void filterTopics(String query) {
+    if (query.isEmpty) {
+      filteredTopics = List.from(topics);
+      return;
+    }
+
+    final lower = query.toLowerCase();
+    filteredTopics = topics
+        .where((t) => (t.title ?? '').toLowerCase().contains(lower))
+        .toList();
+  }
+
+  void onTopicSelected(TopicModel topic) {
+    if (!selectedTopicIds.contains(topic.id)) {
+      setState(() {
+        selectedTopicIds.add(topic.id);
+        topicSearchController.text = '';
+      });
+    }
+
+    selectedTopic = null;
+
+    // topicSearchController.clear();
+    FocusScope.of(context).unfocus();
+  }
+
+  void removeTopic(int topicId) {
+    setState(() {
+      selectedTopicIds.remove(topicId);
+    });
+  }
+
+  String getTopicTitle(int id) {
+    return topics
+            .firstWhere(
+              (t) => t.id == id,
+              orElse: () => TopicModel(id: id, title: ''),
+            )
+            .title ??
+        '';
   }
 
   bool isFormValid() {
@@ -819,6 +914,70 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                     onSelected: (ChapterModel selection) {
                                       onChapterSelected(selection);
                                     },
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                          if (widget
+                                  .attendanceQModel
+                                  .group!
+                                  .canTeacherSpecifyTopics ==
+                              true)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.90,
+                                  child: Autocomplete<TopicModel>(
+                                    optionsBuilder:
+                                        (TextEditingValue textEditingValue) {
+                                          filterTopics(textEditingValue.text);
+                                          return filteredTopics;
+                                        },
+                                    displayStringForOption:
+                                        (TopicModel option) =>
+                                            option.title ?? '',
+                                    fieldViewBuilder:
+                                        (
+                                          context,
+                                          controller,
+                                          focusNode,
+                                          onEditingComplete,
+                                        ) {
+                                          topicSearchController = controller;
+                                          return TextFormField(
+                                            controller: controller,
+                                            focusNode: focusNode,
+                                            decoration: const InputDecoration(
+                                              labelText: 'Topics',
+                                              border: OutlineInputBorder(),
+                                            ),
+                                          );
+                                        },
+                                    onSelected: (TopicModel selection) {
+                                      onTopicSelected(selection);
+                                    },
+                                  ),
+                                ),
+
+                                const SizedBox(height: 8),
+
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.90,
+                                  child: Wrap(
+                                    spacing: 8,
+                                    runSpacing: 4,
+                                    children: selectedTopicIds.map((topicId) {
+                                      return InputChip(
+                                        label: Text(getTopicTitle(topicId)),
+                                        onDeleted: () {
+                                          removeTopic(topicId);
+                                        },
+                                      );
+                                    }).toList(),
                                   ),
                                 ),
                               ],
