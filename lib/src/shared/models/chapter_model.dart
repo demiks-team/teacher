@@ -15,6 +15,7 @@ class ChapterModel {
     this.bookId,
     this.book,
     this.levelId,
+    this.parentChapterId,
   });
 
   int? id;
@@ -23,6 +24,7 @@ class ChapterModel {
   int? bookId;
   BookModel? book;
   int? levelId;
+  int? parentChapterId;
 
   factory ChapterModel.fromJson(Map<String, dynamic> json) => ChapterModel(
         id: json["id"],
@@ -31,6 +33,7 @@ class ChapterModel {
         bookId: json["bookId"],
         book: json["book"] != null ? BookModel.fromJson(json["book"]) : null,
         levelId: json["levelId"],
+        parentChapterId: json["parentChapterId"],
       );
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -39,5 +42,6 @@ class ChapterModel {
         "bookId": bookId,
         "book": book?.toJson(),
         "levelId": levelId,
+        "parentChapterId": parentChapterId,
       };
 }
