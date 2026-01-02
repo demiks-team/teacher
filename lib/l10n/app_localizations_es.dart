@@ -187,5 +187,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get invalid => 'Inválido';
 
   @override
+  String get topics => 'Temas';
+
+  @override
+  String get chapter => 'Capítulo';
+
+  @override
   String get save => 'Ahorrar';
 }

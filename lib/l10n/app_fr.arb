@@ -54,5 +54,7 @@
     "absenceInMinutes": "Absence en minutes", 
     "required": "Requis",
     "invalid": "Invalide",    
+    "topics": "Les sujets",
+    "chapter": "Chapitre",    
     "save": "Sauvegarder"
 }

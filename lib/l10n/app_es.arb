@@ -54,5 +54,7 @@
     "absenceInMinutes": "Ausencia en minutos",    
     "required": "Obligatorio",
     "invalid": "Inválido",
+    "topics": "Temas",
+    "chapter": "Capítulo",
     "save": "Ahorrar"
 }

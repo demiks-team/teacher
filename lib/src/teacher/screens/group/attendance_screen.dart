@@ -476,16 +476,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             // }
             break;
 
-          // case 1: // Late
-          // case 2: // Partial
-          //   if (attendanceItem.id > 0 &&
-          //       attendanceItem.absenceInMinutes != null) {
-          //     absenceCtrl.text = attendanceItem.absenceInMinutes.toString();
-          //   } else {
-          //     absenceCtrl.clear();
-          //   }
-          //   break;
-
           default:
             absenceCtrl.clear();
             break;
@@ -862,7 +852,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                             decoration: InputDecoration(
                                               labelText: AppLocalizations.of(
                                                 context,
-                                              )!.chapters,
+                                              )!.chapter,
                                               border:
                                                   const OutlineInputBorder(),
                                             ),
@@ -950,8 +940,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                           return TextFormField(
                                             controller: controller,
                                             focusNode: focusNode,
-                                            decoration: const InputDecoration(
-                                              labelText: 'Topics',
+                                            decoration: InputDecoration(
+                                              labelText: AppLocalizations.of(
+                                                context,
+                                              )!.topics,
                                               border: OutlineInputBorder(),
                                             ),
                                           );
