@@ -32,7 +32,8 @@ class GroupModel {
       this.address,
       this.classDurationType,
       this.bookId,
-      this.book});
+      this.book,
+      this.canTeacherSpecifyTopics});
   int id;
   String? title;
   int? schoolId;
@@ -50,6 +51,7 @@ class GroupModel {
   ClassDurationType? classDurationType;
   int? bookId;
   BookModel? book;
+  bool? canTeacherSpecifyTopics;
 
   factory GroupModel.fromJson(Map<String, dynamic> json) => GroupModel(
         id: json["id"],
@@ -79,6 +81,7 @@ class GroupModel {
             : null,
         bookId: json["bookId"],
         book: json["book"] != null ? BookModel.fromJson(json["book"]) : null,
+        canTeacherSpecifyTopics: json["canTeacherSpecifyTopics"],
       );
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -98,5 +101,6 @@ class GroupModel {
         "classDurationType": classDurationType,
         "bookId": bookId,
         "book": book?.toJson(),
+        "canTeacherSpecifyTopics": canTeacherSpecifyTopics,
       };
 }
