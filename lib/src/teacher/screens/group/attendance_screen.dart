@@ -1351,16 +1351,32 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                             AppColors.primaryColor,
                                           ), // Set icon color to white
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 5,
-                                            bottom: 5,
-                                          ),
-                                          child: Text(
-                                            groupEnrollment
-                                                .enrollment!
-                                                .student!
-                                                .nameIdentification!,
+
+                                        // Padding(
+                                        //   padding: const EdgeInsets.only(
+                                        //     top: 5,
+                                        //     bottom: 5,
+                                        //   ),
+                                        //   child: Text(
+                                        //     groupEnrollment
+                                        //         .enrollment!
+                                        //         .student!
+                                        //         .nameIdentification!,
+                                        //   ),
+                                        // ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 5,
+                                            ),
+                                            child: Text(
+                                              groupEnrollment
+                                                  .enrollment!
+                                                  .student!
+                                                  .nameIdentification!,
+                                              softWrap: true,
+                                              overflow: TextOverflow.visible,
+                                            ),
                                           ),
                                         ),
                                       ],
