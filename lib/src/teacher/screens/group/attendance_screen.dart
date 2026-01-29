@@ -125,7 +125,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   void initializedTheForm() {
     notesController = TextEditingController(text: attendanceCreation!.notes);
     for (var element in attendanceCreation!.attendances!) {
-      selectedStatusValues.add(element.status ?? 3);
+      selectedStatusValues.add(
+        element.status ?? int.parse(AttendanceStatus.notSet.toString()),
+      );
       studentNotesControllers.add(
         TextEditingController(text: element.notesForStudent),
       );
@@ -352,10 +354,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       attendance.groupEnrollmentId = groupEnrollment.id;
       attendance.groupEnrollment = groupEnrollment;
       attendance.groupSessionId = widget.attendanceQModel.groupSession!.id;
-      attendance.status = AttendanceStatus.absent.index;
+      attendance.status = AttendanceStatus.notSet.index;
       attendance.levelId = groupEnrollment.enrollment?.student?.levelId;
 
-      selectedStatusValues.add(AttendanceStatus.absent.index);
+      selectedStatusValues.add(AttendanceStatus.notSet.index);
       studentNotesControllers.add(
         TextEditingController(text: attendance.notesForStudent),
       );
@@ -587,9 +589,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       attendance.groupEnrollmentId =
           attendanceCreation!.attendances![index].groupEnrollmentId;
 
-      attendance.status = index < selectedStatusValues.length
-          ? selectedStatusValues[index]
-          : AttendanceStatus.absent.index;
+      attendance.status = selectedStatusValues[index];
 
       if (studentNotesControllers[index].value.text.isNotEmpty) {
         attendance.notesForStudent = studentNotesControllers[index].value.text;
@@ -721,14 +721,26 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   }
 
   bool isFormValid() {
-    if (attendanceCreation == null) return false;
+    if (attendanceCreation == null) {
+      return false;
+    }
 
     final rows = attendanceCreation!.attendances!.length;
 
+    if (rows == 0) {
+      return false;
+    }
+
     for (int i = 0; i < rows; i++) {
-      final status = (i < selectedStatusValues.length)
-          ? selectedStatusValues[i]
-          : AttendanceStatus.absent.index;
+      final status = selectedStatusValues[i];
+
+      if (status == AttendanceStatus.notSet.index) {
+        return false;
+      }
+
+      // final status = (i < selectedStatusValues.length)
+      //     ? selectedStatusValues[i]
+      //     : AttendanceStatus.absent.index;
 
       if (status == 1 || status == 2) {
         final text = (i < absenceInMinutesControllers.length)
@@ -1339,16 +1351,32 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                             AppColors.primaryColor,
                                           ), // Set icon color to white
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 5,
-                                            bottom: 5,
-                                          ),
-                                          child: Text(
-                                            groupEnrollment
-                                                .enrollment!
-                                                .student!
-                                                .nameIdentification!,
+
+                                        // Padding(
+                                        //   padding: const EdgeInsets.only(
+                                        //     top: 5,
+                                        //     bottom: 5,
+                                        //   ),
+                                        //   child: Text(
+                                        //     groupEnrollment
+                                        //         .enrollment!
+                                        //         .student!
+                                        //         .nameIdentification!,
+                                        //   ),
+                                        // ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 5,
+                                            ),
+                                            child: Text(
+                                              groupEnrollment
+                                                  .enrollment!
+                                                  .student!
+                                                  .nameIdentification!,
+                                              softWrap: true,
+                                              overflow: TextOverflow.visible,
+                                            ),
                                           ),
                                         ),
                                       ],
