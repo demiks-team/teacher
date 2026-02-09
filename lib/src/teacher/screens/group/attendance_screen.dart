@@ -756,6 +756,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         final parsed = int.tryParse(text);
         if (parsed == null) return false;
         if (parsed > sessionDuration) return false;
+        if (parsed < 0) return false;
       }
     }
 
@@ -1249,6 +1250,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                   return AppLocalizations.of(
                                                     context,
                                                   )!.invalid;
+                                                }
+
+                                                if (intValue < 0) {
+                                                  return AppLocalizations.of(
+                                                    context,
+                                                  )!.invalid;                                                  
                                                 }
                                               }
                                               return null;
