@@ -380,7 +380,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     GroupEnrollmentModel groupEnrollment,
   ) {
     setState(() {
+      attendanceCreation!.attendances!.removeAt(index);
+
       groupStudentsExceptSessionStudents.add(groupEnrollment);
+
+      if (index < absenceInMinutesControllers.length) {
+        absenceInMinutesControllers.removeAt(index);
+      }
 
       if (attendanceCreation?.attendances != null &&
           index < attendanceCreation!.attendances!.length) {
@@ -1220,10 +1226,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                               suffixText: '/$sessionDuration',
                                             ),
                                             validator: (value) {
-                                              if (selectedStatusValues[index] ==
+                                              if (index < selectedStatusValues.length && (selectedStatusValues[index] ==
                                                       1 ||
                                                   selectedStatusValues[index] ==
-                                                      2) {
+                                                      2)) {
                                                 if (value == null ||
                                                     value.isEmpty) {
                                                   return AppLocalizations.of(
@@ -1251,6 +1257,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                 AutovalidateMode.always,
                                           ),
                                         ),
+
                                       TextFormField(
                                         controller:
                                             studentNotesControllers[index],
