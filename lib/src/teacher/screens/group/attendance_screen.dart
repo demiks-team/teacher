@@ -753,10 +753,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             ? absenceInMinutesControllers[i].text.trim()
             : '';
         if (text.isEmpty) return false;
-        final parsed = int.tryParse(text);
-        if (parsed == null) return false;
-        if (parsed > sessionDuration) return false;
-        if (parsed < 0) return false;
+        final absenceInMinutes = int.tryParse(text);
+        if (absenceInMinutes == null) return false;
+        if (absenceInMinutes > sessionDuration) return false;
+        if (absenceInMinutes < 0) return false;
       }
     }
 
