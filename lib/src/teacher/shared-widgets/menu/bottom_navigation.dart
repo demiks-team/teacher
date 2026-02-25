@@ -51,7 +51,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
               //   label: AppLocalizations.of(context)!.availability,
               // ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.widgets),
+                icon: Icon(Icons.account_circle),
                 // label: AppLocalizations.of(context)!.more,
               ),
             ],

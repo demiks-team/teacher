@@ -56,5 +56,8 @@
     "invalid": "Inválido",
     "topics": "Temas",
     "chapter": "Capítulo",
+    "switchAccount": "Cambiar cuentas",
+    "joinSchool": "Únete a la Escuela",
+    "pickOption": "Elija una opción",         
     "save": "Ahorrar"
 }

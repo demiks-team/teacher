@@ -55,6 +55,9 @@
     "required": "Requis",
     "invalid": "Invalide",    
     "topics": "Les sujets",
-    "chapter": "Chapitre",    
+    "chapter": "Chapitre",   
+    "switchAccount": "Changer de compte",
+    "joinSchool": "Rejoindre l'école",
+    "pickOption": "Choisir une option",    
     "save": "Sauvegarder"
 }

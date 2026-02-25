@@ -15,6 +15,7 @@ class PasswordScreen extends StatefulWidget {
   final VerificationResultType? verificationResultType;
   final String? verificationCode;
   final String? password;
+  final bool? shouldRedirectToConfiguration;
 
   const PasswordScreen({
     super.key,
@@ -23,6 +24,7 @@ class PasswordScreen extends StatefulWidget {
     this.verificationResultType,
     this.verificationCode,
     this.password,
+    this.shouldRedirectToConfiguration = false,
   });
 
   @override
@@ -35,6 +37,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
   final authenticationService = AuthenticationService();
   final _formKey = GlobalKey<FormState>();
   bool _passwordVisible = false;
+
+
+
 
   String _userEmail = '';
   String _password = '';
@@ -97,6 +102,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                 identifier: _userEmail,
                 tempToken: response.tempToken,
                 requestType: VerificationRequestType.login,
+                shouldRedirectToConfiguration: widget.shouldRedirectToConfiguration,
               ),
             ),
           );

@@ -442,6 +442,24 @@ abstract class AppLocalizations {
   /// **'Chapter'**
   String get chapter;
 
+  /// No description provided for @switchAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch accounts'**
+  String get switchAccount;
+
+  /// No description provided for @joinSchool.
+  ///
+  /// In en, this message translates to:
+  /// **'Join School'**
+  String get joinSchool;
+
+  /// No description provided for @pickOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick an Option'**
+  String get pickOption;
+
   /// No description provided for @save.
   ///
   /// In en, this message translates to:
