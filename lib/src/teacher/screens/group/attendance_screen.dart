@@ -379,7 +379,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     GroupEnrollmentModel groupEnrollment,
   ) {
     setState(() {
-      attendanceCreation!.attendances!.removeAt(index);
 
       groupStudentsExceptSessionStudents.add(groupEnrollment);
 
