@@ -9,9 +9,11 @@ class ConfigurationScreen extends StatelessWidget {
   final bool? canSelectOnCurrentSchool;
 
   const ConfigurationScreen({super.key, this.canSelectOnCurrentSchool = false});
-
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -19,6 +21,7 @@ class ConfigurationScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+
               Center(
                 child: Text(
                   AppLocalizations.of(context)!.pickOption,
@@ -31,37 +34,42 @@ class ConfigurationScreen extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.7,
-                ),
+              Expanded(
                 child: SwitchAccountWidget(canSelectOnCurrentSchool: true),
               ),
 
               const SizedBox(height: 20),
 
-              Center(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.logout, color: Colors.white),
-                    label: Text(
-                      AppLocalizations.of(context)!.signOut,
-                      style: const TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size.fromHeight(
-                        MediaQuery.of(context).size.height * 0.1,
+              Padding(
+                padding: EdgeInsets.only(
+                  bottom: screenHeight * 0.04,
+                ),
+                child: Center(
+                  child: SizedBox(
+                    width: screenWidth * 0.6, 
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.logout, color: Colors.white),
+                      label: Text(
+                        AppLocalizations.of(context)!.signOut,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
                       ),
-                      backgroundColor: HexColor.fromHex(
-                        AppColors.backgroundColorGray,
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size.fromHeight(
+                          screenHeight * 0.09,
+                        ),
+                        backgroundColor: HexColor.fromHex(
+                          AppColors.backgroundColorGray,
+                        ),
+                        padding: const EdgeInsets.all(20),
                       ),
-                      padding: const EdgeInsets.all(20),
-                    ),
-                    onPressed: () => showDialog(
-                      context: context,
-                      builder: (context) => SignOutDialogWidget(
-                        title: AppLocalizations.of(context)!.signOut,
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) => SignOutDialogWidget(
+                          title: AppLocalizations.of(context)!.signOut,
+                        ),
                       ),
                     ),
                   ),

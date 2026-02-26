@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:teacher/l10n/app_localizations.dart';
-import 'package:teacher/src/authentication/models/user_model.dart';
 import 'package:teacher/src/site/screens/configuration_screen.dart';
 // import 'package:flutter_localizations/flutter_localizations.dart';
 

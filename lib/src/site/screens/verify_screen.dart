@@ -107,7 +107,9 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           if (result) {
                             await SecureStorage.getCurrentUser().then(
                               (currentUser) => setState(() {
-                                if (currentUser!.hasCurrentSchool != true || widget.shouldRedirectToConfiguration == true) {
+                                if (currentUser!.hasCurrentSchool != true ||
+                                    widget.shouldRedirectToConfiguration ==
+                                        true) {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -135,17 +137,19 @@ class _VerifyScreenState extends State<VerifyScreen> {
                         .verifySignupIdentifier(loginModel)
                         .then((result) {
                           if (result) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => PasswordScreen(
-                                  identifier: loginModel.email!,
-                                  verificationResultType:
-                                      widget.verificationResultType,
-                                  verificationCode: loginModel.code,
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => PasswordScreen(
+                                    identifier: loginModel.email!,
+                                    verificationResultType:
+                                        widget.verificationResultType,
+                                    verificationCode: loginModel.code,
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            });
                           }
                         })
                         .onError((error, stackTrace) {

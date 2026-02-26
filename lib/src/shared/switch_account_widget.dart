@@ -34,7 +34,6 @@ class _SwitchAccountWidgetState extends State<SwitchAccountWidget> {
 
   Future<void> loadSchools() async {
     schools = await userService.getUserSchools();
-
     if (!mounted) return;
     setState(() => loading = false);
   }
@@ -60,7 +59,6 @@ class _SwitchAccountWidgetState extends State<SwitchAccountWidget> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     if (loading) {
       return const Center(child: CircularProgressIndicator());
@@ -71,8 +69,6 @@ class _SwitchAccountWidgetState extends State<SwitchAccountWidget> {
     }
 
     return ListView.builder(
-      shrinkWrap: true,
-      physics: const AlwaysScrollableScrollPhysics(),
       itemCount: schools.length,
       itemBuilder: (_, i) {
         final school = schools[i];
@@ -81,7 +77,6 @@ class _SwitchAccountWidgetState extends State<SwitchAccountWidget> {
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-
             leading: CircleAvatar(
               radius: 28,
               backgroundColor: Colors.grey.shade300,
@@ -92,17 +87,19 @@ class _SwitchAccountWidgetState extends State<SwitchAccountWidget> {
                   ? const Icon(Icons.school, size: 30, color: Colors.white)
                   : null,
             ),
-
-            title: Text("${AppLocalizations.of(context)!.joinSchool} ${school.name!}"),
-
+            title: Text(
+              "${AppLocalizations.of(context)!.joinSchool} ${school.name!}",
+            ),
             trailing: school.isCurrentSchool == true
                 ? Icon(
                     Icons.check_circle,
                     color: HexColor.fromHex(AppColors.primaryColor),
                   )
                 : null,
-
-            onTap: (widget.canSelectOnCurrentSchool != true && school.isCurrentSchool == true) || switching
+            onTap:
+                (widget.canSelectOnCurrentSchool != true &&
+                        school.isCurrentSchool == true) ||
+                    switching
                 ? null
                 : () => switchAccount(school.id),
           ),
