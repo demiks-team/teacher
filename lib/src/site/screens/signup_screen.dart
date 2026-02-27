@@ -62,7 +62,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     builder: (_) => PasswordScreen(
                       identifier: _userEmail,
                       requestType: VerificationRequestType.login,
-                      shouldRedirectToConfiguration: true,
+                      shouldRedirectToConfiguration: false,
                     ),
                   ),
                 );
