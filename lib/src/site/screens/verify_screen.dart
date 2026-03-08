@@ -6,7 +6,9 @@ import 'package:teacher/src/authentication/services/authentication_service.dart'
 import 'package:teacher/src/shared/helpers/colors/hex_color.dart';
 
 import 'package:teacher/src/shared/models/enums.dart';
+import 'package:teacher/src/shared/secure_storage.dart';
 import 'package:teacher/src/shared/theme/colors/app_colors.dart';
+import 'package:teacher/src/site/screens/configuration_screen.dart';
 
 import 'package:teacher/src/site/screens/password_screen.dart';
 import 'package:teacher/src/teacher/shared-widgets/menu/bottom_navigation.dart';
@@ -16,6 +18,7 @@ class VerifyScreen extends StatefulWidget {
   final String? tempToken;
   final VerificationRequestType requestType;
   final VerificationResultType? verificationResultType;
+  final bool? shouldRedirectToConfiguration;
 
   const VerifyScreen({
     super.key,
@@ -23,6 +26,7 @@ class VerifyScreen extends StatefulWidget {
     this.tempToken,
     required this.requestType,
     this.verificationResultType,
+    this.shouldRedirectToConfiguration = false,
   });
 
   @override
@@ -99,13 +103,29 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   if (widget.requestType == VerificationRequestType.login) {
                     await authenticationService
                         .verifyLoginIdentifier(loginModel)
-                        .then((result) {
+                        .then((result) async {
                           if (result) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const BottomNavigation(),
-                              ),
+                            await SecureStorage.getCurrentUser().then(
+                              (currentUser) => setState(() {
+                                if (currentUser!.hasCurrentSchool != true ||
+                                    widget.shouldRedirectToConfiguration ==
+                                        true) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const ConfigurationScreen(),
+                                    ),
+                                  );
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const BottomNavigation(),
+                                    ),
+                                  );
+                                }
+                              }),
                             );
                           }
                         })
@@ -114,23 +134,22 @@ class _VerifyScreenState extends State<VerifyScreen> {
                         });
                   } else {
                     await authenticationService
-                        .verifySignupIdentifier(
-                          loginModel.email!,
-                          loginModel.code!,
-                        )
+                        .verifySignupIdentifier(loginModel)
                         .then((result) {
                           if (result) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => PasswordScreen(
-                                  identifier: loginModel.email!,
-                                  verificationResultType:
-                                      widget.verificationResultType,
-                                  verificationCode: loginModel.code,
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => PasswordScreen(
+                                    identifier: loginModel.email!,
+                                    verificationResultType:
+                                        widget.verificationResultType,
+                                    verificationCode: loginModel.code,
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            });
                           }
                         })
                         .onError((error, stackTrace) {

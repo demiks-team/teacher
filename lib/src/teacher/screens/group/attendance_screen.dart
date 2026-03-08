@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:pinput/pinput.dart';
 import 'package:teacher/l10n/app_localizations.dart';
 import 'package:teacher/src/shared/models/attendance_creation_model.dart';
 import 'package:teacher/src/shared/models/attendance_model.dart';
@@ -380,7 +379,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     GroupEnrollmentModel groupEnrollment,
   ) {
     setState(() {
+
       groupStudentsExceptSessionStudents.add(groupEnrollment);
+
+      if (index < absenceInMinutesControllers.length) {
+        absenceInMinutesControllers.removeAt(index);
+      }
 
       if (attendanceCreation?.attendances != null &&
           index < attendanceCreation!.attendances!.length) {
@@ -747,9 +751,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             ? absenceInMinutesControllers[i].text.trim()
             : '';
         if (text.isEmpty) return false;
-        final parsed = int.tryParse(text);
-        if (parsed == null) return false;
-        if (parsed > sessionDuration) return false;
+        final absenceInMinutes = int.tryParse(text);
+        if (absenceInMinutes == null) return false;
+        if (absenceInMinutes > sessionDuration) return false;
+        if (absenceInMinutes < 0) return false;
       }
     }
 
@@ -1220,10 +1225,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                               suffixText: '/$sessionDuration',
                                             ),
                                             validator: (value) {
-                                              if (selectedStatusValues[index] ==
+                                              if (index < selectedStatusValues.length && (selectedStatusValues[index] ==
                                                       1 ||
                                                   selectedStatusValues[index] ==
-                                                      2) {
+                                                      2)) {
                                                 if (value == null ||
                                                     value.isEmpty) {
                                                   return AppLocalizations.of(
@@ -1244,6 +1249,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                     context,
                                                   )!.invalid;
                                                 }
+
+                                                if (intValue < 0) {
+                                                  return AppLocalizations.of(
+                                                    context,
+                                                  )!.invalid;                                                  
+                                                }
                                               }
                                               return null;
                                             },
@@ -1251,6 +1262,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                 AutovalidateMode.always,
                                           ),
                                         ),
+
                                       TextFormField(
                                         controller:
                                             studentNotesControllers[index],

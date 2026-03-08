@@ -5,7 +5,6 @@ import '../../shared/secure_storage.dart';
 import '../../shared/theme/colors/app_colors.dart';
 import '../../site/screens/login_screen.dart';
 
-
 class SignOutDialogWidget extends StatelessWidget {
   const SignOutDialogWidget({super.key, required this.title});
 
@@ -13,19 +12,19 @@ class SignOutDialogWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
       content: Text(AppLocalizations.of(context)!.areYouSure),
       actions: <Widget>[
         TextButton(
           style: TextButton.styleFrom(
-              backgroundColor: HexColor.fromHex(AppColors.accentColor)),
+            backgroundColor: HexColor.fromHex(AppColors.accentColor),
+          ),
           onPressed: () {
             SecureStorage.removeCurrentUser();
-            Navigator.of(context, rootNavigator: true)
-                .push(MaterialPageRoute(builder: (_) => const LoginScreen()));
+            Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const LoginScreen()),
+              (route) => false,
+            );
           },
           child: Text(AppLocalizations.of(context)!.yes),
         ),

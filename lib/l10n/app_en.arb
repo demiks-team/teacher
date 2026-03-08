@@ -56,5 +56,8 @@
     "invalid": "Invalid",
     "topics": "Topics",
     "chapter": "Chapter",
+    "switchAccount": "Switch accounts",    
+    "joinSchool": "Join School",
+    "pickOption": "Pick an Option",    
     "save": "Save"
 }

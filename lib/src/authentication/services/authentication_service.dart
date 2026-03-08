@@ -16,12 +16,17 @@ class AuthenticationService {
   //         "913000033507-geun2f6l7vbg29udkbi1gmlhhoeph6ld.apps.googleusercontent.com");
 
   Future<ConfirmIdentityVerificationModel?> login(
-      String email, String password) async {
+    String email,
+    String password,
+  ) async {
     var response = await DioApi().dio.post(
-          "${dotenv.env['api']}security/login",
-          data: json.encode(
-              {"email": email, "password": password, "studentLanguage": 1}),
-        );
+      "${dotenv.env['api']}security/login",
+      data: json.encode({
+        "email": email,
+        "password": password,
+        "studentLanguage": 1,
+      }),
+    );
 
     Map<String, dynamic> decodedList = jsonDecode(json.encode(response.data));
 
@@ -38,9 +43,9 @@ class AuthenticationService {
 
   Future<bool> verifyLoginIdentifier(LoginModel loginModel) async {
     var response = await DioApi().dio.post(
-          "${dotenv.env['api']}security/login/verify-code",
-          data: jsonEncode(loginModel.toJson()),
-        );
+      "${dotenv.env['api']}security/login/verify-code",
+      data: jsonEncode(loginModel.toJson()),
+    );
 
     if (response.statusCode == 200 && response.data != null) {
       await SecureStorage.setCurrentUser(json.encode(response.data).toString());
@@ -51,9 +56,9 @@ class AuthenticationService {
 
   Future<String?> signUp(LoginModel loginModel) async {
     var response = await DioApi().dio.post(
-          "${dotenv.env['api']}security/sign-up",
-          data: jsonEncode(loginModel.toJson()),
-        );
+      "${dotenv.env['api']}security/sign-up",
+      data: jsonEncode(loginModel.toJson()),
+    );
     if (response.statusCode == 200 && response.data != null) {
       await SecureStorage.setCurrentUser(json.encode(response.data).toString());
     }
@@ -62,9 +67,9 @@ class AuthenticationService {
 
   Future<void> refreshToken(String token) async {
     var response = await DioApi().dio.post(
-          "${dotenv.env['api']}security/refresh",
-          data: json.encode({"token": token, "userId": 0}),
-        );
+      "${dotenv.env['api']}security/refresh",
+      data: json.encode({"token": token, "userId": 0}),
+    );
     if (response.statusCode == 200 && response.data != null) {
       await SecureStorage.setCurrentUser(json.encode(response.data).toString());
     } else {
@@ -73,11 +78,12 @@ class AuthenticationService {
   }
 
   Future<ConfirmIdentityVerificationModel> sendVerificationMessage(
-      IdentityVerificationModel identityVerification) async {
+    IdentityVerificationModel identityVerification,
+  ) async {
     var response = await DioApi().dio.post(
-          "${dotenv.env['api']}security/sign-up/verification-code/send",
-          data: json.encode(identityVerification.toJson()),
-        );
+      "${dotenv.env['api']}security/sign-up/verification-code/send",
+      data: json.encode(identityVerification.toJson()),
+    );
 
     Map<String, dynamic> decodedList = jsonDecode(json.encode(response.data));
 
@@ -94,16 +100,28 @@ class AuthenticationService {
     // return false;
   }
 
-  Future<bool> verifySignupIdentifier(String identifier, String code) async {
-    var response = await DioApi().dio.get(
-          '${dotenv.env['api']}security/sign-up/identifier/$identifier/code/$code/verify'
-        );
+  Future<bool> verifySignupIdentifier(LoginModel loginModel) async {
+    var response = await DioApi().dio.post(
+      '${dotenv.env['api']}security/sign-up/verify',
+      data: jsonEncode(loginModel.toJson()),
+    );
 
     if (response.statusCode == 200) {
       return true;
     } else {
       return false;
     }
+  }
+
+  Future<String?> switchAccount(int schoolId) async {
+    var response = await DioApi().dio.put(
+      "${dotenv.env['api']}security/switch-account",
+      data: jsonEncode(schoolId)
+    );
+    if (response.statusCode == 200 && response.data != null) {
+      await SecureStorage.setCurrentUser(json.encode(response.data).toString());
+    }
+    return json.encode(response.data).toString();
   }
 
   // Future<bool?> signInGoogle() async {

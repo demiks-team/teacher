@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:teacher/l10n/app_localizations.dart';
+import 'package:teacher/src/site/screens/configuration_screen.dart';
 // import 'package:flutter_localizations/flutter_localizations.dart';
-
 
 import 'shared/helpers/colors/material_color.dart';
 import 'shared/helpers/navigation_service/navigation_service.dart';
@@ -19,6 +19,7 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   bool? isUserLoggedIn;
+  bool? hasCurrentSchool;
 
   @override
   void initState() {
@@ -31,11 +32,26 @@ class _AppState extends State<App> {
     if (currentUser != null) {
       setState(() {
         isUserLoggedIn = true;
+        hasCurrentSchool = currentUser.hasCurrentSchool;
       });
     } else {
       setState(() {
         isUserLoggedIn = false;
       });
+    }
+  }
+
+  Widget getDefaultScreen() {
+    if (isUserLoggedIn == null) {
+      return const LoginScreen();
+    } else if (isUserLoggedIn == true) {
+      if (hasCurrentSchool == true) {
+        return const BottomNavigation();
+      } else {
+        return const ConfigurationScreen();
+      }
+    } else {
+      return const LoginScreen();
     }
   }
 
@@ -57,11 +73,7 @@ class _AppState extends State<App> {
       theme: ThemeData(
         primarySwatch: buildMaterialColor(const Color(0xffffffff)),
       ),
-      home: isUserLoggedIn == null
-          ? const LoginScreen()
-          : isUserLoggedIn!
-          ? const BottomNavigation()
-          : const LoginScreen(),
+      home: getDefaultScreen(),
       navigatorKey: NavigationService.navigatorKey,
     );
   }

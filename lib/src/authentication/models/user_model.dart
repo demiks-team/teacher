@@ -8,15 +8,17 @@ String userToJson(List<UserModel> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class UserModel {
-  UserModel(
-      {required this.id,
-      this.fullName,
-      this.image,
-      this.token,
-      this.refresh,
-      this.languageId,
-      this.school,
-      this.schoolId});
+  UserModel({
+    required this.id,
+    this.fullName,
+    this.image,
+    this.token,
+    this.refresh,
+    this.languageId,
+    this.school,
+    this.schoolId,
+    this.hasCurrentSchool,
+  });
 
   int id;
   String? fullName;
@@ -26,30 +28,33 @@ class UserModel {
   String? refresh;
   int? schoolId;
   SchoolModel? school;
+  bool? hasCurrentSchool;
   // int? subscriptionPlan;
   // String? imageName;
   // bool? hasPassword;
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        id: json["id"],
-        fullName: json["fullName"],
-        image: json["image"],
-        token: json["token"],
-        refresh: json["refresh"],
-        languageId: json["languageId"],
-        schoolId: json["schoolId"],
-        school: json["school"] != null
-            ? SchoolModel.fromJson(json["school"])
-            : null,
-      );
+    id: json["id"],
+    fullName: json["fullName"],
+    image: json["image"],
+    token: json["token"],
+    refresh: json["refresh"],
+    languageId: json["languageId"],
+    schoolId: json["schoolId"],
+    school: json["school"] != null
+        ? SchoolModel.fromJson(json["school"])
+        : null,
+    hasCurrentSchool: json["hasCurrentSchool"],
+  );
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "fullName": fullName,
-        "image": image,
-        "token": token,
-        "refresh": refresh,
-        "languageId": languageId,
-        "schoolId": schoolId,
-        "school": school?.toJson(),
-      };
+    "id": id,
+    "fullName": fullName,
+    "image": image,
+    "token": token,
+    "refresh": refresh,
+    "languageId": languageId,
+    "schoolId": schoolId,
+    "school": school?.toJson(),
+    "hasCurrentSchool": hasCurrentSchool,
+  };
 }
