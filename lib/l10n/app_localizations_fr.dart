@@ -189,6 +189,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get invalid => 'Invalide';
 
   @override
+  String get save => 'Sauvegarder';
+
+  @override
+  String get studentProgressArea => 'Zone de Progrès de l\'Étudiant';
+
+  @override
+  String get studentProgressAreas => 'Zones de Progrès de l\'Étudiant';
+
+  @override
   String get topics => 'Les sujets';
 
   @override
@@ -202,13 +211,4 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get pickOption => 'Choisir une option';
-
-  @override
-  String get save => 'Sauvegarder';
-
-  @override
-  String get studentProgressArea => 'Zone de Progrès de l\'Étudiant';
-
-  @override
-  String get studentProgressAreas => 'Zones de Progrès de l\'Étudiant';
 }
