@@ -430,6 +430,24 @@ abstract class AppLocalizations {
   /// **'Invalid'**
   String get invalid;
 
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @studentProgressArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Progress Area'**
+  String get studentProgressArea;
+
+  /// No description provided for @studentProgressAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Progress Areas'**
+  String get studentProgressAreas;
+
   /// No description provided for @topics.
   ///
   /// In en, this message translates to:
@@ -459,24 +477,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pick an Option'**
   String get pickOption;
-
-  /// No description provided for @save.
-  ///
-  /// In en, this message translates to:
-  /// **'Save'**
-  String get save;
-
-  /// No description provided for @studentProgressArea.
-  ///
-  /// In en, this message translates to:
-  /// **'Student Progress Area'**
-  String get studentProgressArea;
-
-  /// No description provided for @studentProgressAreas.
-  ///
-  /// In en, this message translates to:
-  /// **'Student Progress Areas'**
-  String get studentProgressAreas;
 }
 
 class _AppLocalizationsDelegate
