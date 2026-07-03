@@ -54,10 +54,12 @@
     "absenceInMinutes": "Absence en minutes", 
     "required": "Requis",
     "invalid": "Invalide",    
+    "save": "Sauvegarder",
+    "studentProgressArea": "Zone de Progrès de l'Étudiant",
+    "studentProgressAreas": "Zones de Progrès de l'Étudiant"
     "topics": "Les sujets",
     "chapter": "Chapitre",   
     "switchAccount": "Changer de compte",
     "joinSchool": "Rejoindre l'école",
-    "pickOption": "Choisir une option",    
-    "save": "Sauvegarder"
+    "pickOption": "Choisir une option"
 }

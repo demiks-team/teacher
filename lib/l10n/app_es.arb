@@ -54,10 +54,12 @@
     "absenceInMinutes": "Ausencia en minutos",    
     "required": "Obligatorio",
     "invalid": "Inválido",
+    "save": "Ahorrar",
+    "studentProgressArea": "Área de Progreso del Estudiante",
+    "studentProgressAreas": "Áreas de Progreso del Estudiante"
     "topics": "Temas",
     "chapter": "Capítulo",
     "switchAccount": "Cambiar cuentas",
     "joinSchool": "Únete a la Escuela",
-    "pickOption": "Elija una opción",         
-    "save": "Ahorrar"
+    "pickOption": "Elija una opción"
 }

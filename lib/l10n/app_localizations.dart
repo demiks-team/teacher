@@ -465,6 +465,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get save;
+
+  /// No description provided for @studentProgressArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Progress Area'**
+  String get studentProgressArea;
+
+  /// No description provided for @studentProgressAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Progress Areas'**
+  String get studentProgressAreas;
 }
 
 class _AppLocalizationsDelegate
