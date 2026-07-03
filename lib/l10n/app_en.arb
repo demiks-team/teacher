@@ -57,4 +57,9 @@
     "save": "Save",
     "studentProgressArea": "Student Progress Area",
     "studentProgressAreas": "Student Progress Areas"
+    "topics": "Topics",
+    "chapter": "Chapter",
+    "switchAccount": "Switch accounts",    
+    "joinSchool": "Join School",
+    "pickOption": "Pick an Option"
 }

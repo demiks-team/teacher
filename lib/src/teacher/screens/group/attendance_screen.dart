@@ -1,19 +1,18 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:teacher/l10n/app_localizations.dart';
 import 'package:teacher/src/shared/models/attendance_creation_model.dart';
 import 'package:teacher/src/shared/models/attendance_model.dart';
 import 'package:teacher/src/shared/models/chapter_model.dart';
 import 'package:teacher/src/shared/models/group_enrollment_model.dart';
+import 'package:teacher/src/shared/models/topic_model.dart';
 import 'package:teacher/src/shared/services/book_service.dart';
 
 import '../../../shared/helpers/colors/hex_color.dart';
 import '../../../shared/helpers/colors/material_color.dart';
 import '../../../shared/models/attendance_q_model.dart';
-// import 'package:flutter/material.dart';
 
 import '../../../shared/models/enums.dart';
 import '../../../shared/models/level_model.dart';
@@ -63,7 +62,21 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   List<ChapterModel> dropdownChapters = [];
   int sessionDuration = 0;
 
+  ChapterModel? _selectedChapter;
+  TextEditingController chapterSearchController = TextEditingController();
+
+  List<ChapterModel> sortedChapters = [];
+  List<ChapterModel> filteredChapters = [];
+
   List<TextEditingController> absenceInMinutesControllers = [];
+
+  List<TopicModel> topics = [];
+  List<TopicModel> filteredTopics = [];
+
+  List<int> selectedTopicIds = [];
+
+  TopicModel? selectedTopic;
+  TextEditingController topicSearchController = TextEditingController();
 
   Future<void> initializeTheData() async {
     await getSessionStudents();
@@ -73,6 +86,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     if (widget.attendanceQModel.group!.bookId != null) {
       if (widget.attendanceQModel.group!.bookId! > 0) {
         await getChapters();
+      }
+    }
+
+    if (widget.attendanceQModel.group!.canTeacherSpecifyTopics != null) {
+      if (widget.attendanceQModel.group!.canTeacherSpecifyTopics == true) {
+        await getTopics();
       }
     }
 
@@ -89,7 +108,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         ((end.millisecondsSinceEpoch - start.millisecondsSinceEpoch) ~/ 60000) -
         breakTime;
 
-    if (sessionDuration < 0) sessionDuration = 0; 
+    if (sessionDuration < 0) sessionDuration = 0;
   }
 
   Future<void> getSessionStudents() async {
@@ -109,7 +128,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   void initializedTheForm() {
     notesController = TextEditingController(text: attendanceCreation!.notes);
     for (var element in attendanceCreation!.attendances!) {
-      selectedStatusValues.add(element.status ?? 3);
+      selectedStatusValues.add(
+        element.status ?? int.parse(AttendanceStatus.notSet.toString()),
+      );
       studentNotesControllers.add(
         TextEditingController(text: element.notesForStudent),
       );
@@ -153,29 +174,169 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     });
   }
 
-  bool hasAnyChapter = false;
-  Future<void> getChapters() async {
-    Future<List<ChapterModel>> getChapters = _bookService.getChapters(
-      widget.attendanceQModel.group!.bookId!,
+  void buildSortedChapterList() {
+    if (chapters.isEmpty) {
+      sortedChapters = [];
+      filteredChapters = [];
+      return;
+    }
+    final parents = chapters.where((c) => c.parentChapterId == null).toList();
+    parents.sort(
+      (a, b) => (a.displayOrder ?? 0).compareTo(b.displayOrder ?? 0),
     );
-    await getChapters.then((result) {
-      setState(() {
-        chapters = result;
-        ChapterModel newChapter = ChapterModel(id: null);
-        newChapter.title = "---";
-        dropdownChapters.add(newChapter);
-        dropdownChapters.addAll(chapters);
-        if (chapters.isNotEmpty) {
-          hasAnyChapter = true;
-        }
-        if (widget.attendanceQModel.groupSession!.chapterId != null) {
-          if (widget.attendanceQModel.groupSession!.chapterId! > 0) {
-            _selectedChapterValue =
-                widget.attendanceQModel.groupSession!.chapterId;
+    final List<ChapterModel> result = [];
+    for (final parent in parents) {
+      result.add(parent);
+      final children = chapters
+          .where((c) => c.parentChapterId == parent.id)
+          .toList();
+      children.sort(
+        (a, b) => (a.displayOrder ?? 0).compareTo(b.displayOrder ?? 0),
+      );
+      result.addAll(children);
+    }
+    sortedChapters = result;
+    filteredChapters = List.from(sortedChapters);
+  }
+
+  Future<void> getTopics() async {
+    final getTopics = _generalService.getTopics();
+
+    await getTopics.then((result) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        setState(() {
+          topics = result;
+
+          if (attendanceCreation?.topicIds != null &&
+              attendanceCreation!.topicIds!.isNotEmpty &&
+              attendanceCreation?.topics != null) {
+            for (var topicId in attendanceCreation!.topicIds!) {
+              final exists = topics.any((t) => t.id == topicId);
+              if (!exists) {
+                final topicFromCreation = attendanceCreation!.topics!
+                    .where((t) => t.id == topicId)
+                    .firstOrNull;
+                if (topicFromCreation != null) {
+                  topics.add(topicFromCreation);
+                }
+              }
+            }
           }
-        }
+
+          if (attendanceCreation?.topicIds != null &&
+              attendanceCreation!.topicIds!.isNotEmpty) {
+            selectedTopicIds = List<int>.from(attendanceCreation!.topicIds!);
+          }
+        });
       });
     });
+  }
+
+  bool hasAnyChapter = false;
+  Future<void> getChapters() async {
+    final getChapters = _bookService.getChapters(
+      widget.attendanceQModel.group!.bookId!,
+    );
+
+    await getChapters.then((result) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        setState(() {
+          chapters = result;
+
+          if (attendanceCreation?.chapterId != null) {
+            if (attendanceCreation!.chapter != null) {
+              final exists = chapters.any(
+                (c) => c.id == attendanceCreation!.chapterId,
+              );
+              if (!exists) {
+                chapters.add(attendanceCreation!.chapter!);
+              }
+            }
+          }
+
+          buildSortedChapterList();
+          hasAnyChapter = chapters.isNotEmpty;
+
+          if (attendanceCreation?.chapterId != null) {
+            _selectedChapterValue = attendanceCreation!.chapterId;
+            _selectedChapter = chapters.firstWhere(
+              (c) => c.id == _selectedChapterValue,
+              orElse: () => ChapterModel(id: null),
+            );
+            chapterSearchController.text = _selectedChapter?.title ?? '';
+          }
+        });
+      });
+    });
+  }
+
+  void filterChapters(String query) {
+    if (sortedChapters.isEmpty) {
+      filteredChapters = [];
+      return;
+    }
+
+    final lower = query.toLowerCase();
+    final Set<int> addedIds = {};
+    filteredChapters = [];
+
+    // placeholder
+    final placeholder = sortedChapters.firstWhere(
+      (c) => c.id == 0,
+      orElse: () => ChapterModel(id: 0, title: "---"),
+    );
+    filteredChapters.add(placeholder);
+    addedIds.add(placeholder.id!);
+
+    for (var chapter in sortedChapters) {
+      if (chapter.id == 0) continue;
+      if (chapter.title == null) continue;
+      if (addedIds.contains(chapter.id!)) continue;
+
+      final selfMatch = chapter.title!.toLowerCase().contains(lower);
+      final isParent = chapter.parentChapterId == null;
+
+      if (isParent && selfMatch) {
+        filteredChapters.add(chapter);
+        addedIds.add(chapter.id!);
+
+        final children = sortedChapters.where(
+          (c) => c.parentChapterId == chapter.id && !addedIds.contains(c.id!),
+        );
+        for (final child in children) {
+          filteredChapters.add(child);
+          addedIds.add(child.id!);
+        }
+      } else if (!isParent && selfMatch) {
+        final parent = sortedChapters.firstWhere(
+          (p) => p.id == chapter.parentChapterId,
+          orElse: () => ChapterModel(id: null),
+        );
+        if (parent.id != null && !addedIds.contains(parent.id!)) {
+          filteredChapters.add(parent);
+          addedIds.add(parent.id!);
+        }
+        filteredChapters.add(chapter);
+        addedIds.add(chapter.id!);
+      }
+    }
+  }
+
+  void onChapterSelected(ChapterModel? chapter) {
+    if (chapter == null) return;
+    setState(() {
+      if (chapter.id == 0) {
+        chapter.title = '';
+      }
+      _selectedChapter = chapter;
+      _selectedChapterValue = chapter.id == 0 ? null : chapter.id;
+      chapterSearchController.text = chapter.title ?? '';
+      onChangedAttendanceChapterAll(_selectedChapterValue);
+    });
+
+    FocusScope.of(context).unfocus();
   }
 
   void setGroupStudentsExceptSessionStudents(
@@ -196,10 +357,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       attendance.groupEnrollmentId = groupEnrollment.id;
       attendance.groupEnrollment = groupEnrollment;
       attendance.groupSessionId = widget.attendanceQModel.groupSession!.id;
-      attendance.status = AttendanceStatus.absent.index;
+      attendance.status = AttendanceStatus.notSet.index;
       attendance.levelId = groupEnrollment.enrollment?.student?.levelId;
 
-      selectedStatusValues.add(AttendanceStatus.absent.index);
+      selectedStatusValues.add(AttendanceStatus.notSet.index);
       studentNotesControllers.add(
         TextEditingController(text: attendance.notesForStudent),
       );
@@ -222,7 +383,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     GroupEnrollmentModel groupEnrollment,
   ) {
     setState(() {
+
       groupStudentsExceptSessionStudents.add(groupEnrollment);
+
+      if (index < absenceInMinutesControllers.length) {
+        absenceInMinutesControllers.removeAt(index);
+      }
 
       if (attendanceCreation?.attendances != null &&
           index < attendanceCreation!.attendances!.length) {
@@ -266,7 +432,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       }
 
       final absenceCtrl = absenceInMinutesControllers[index];
-      // final attendanceItem = attendanceCreation!.attendances![index];
 
       switch (value) {
         case 0: // onTime
@@ -274,20 +439,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           break;
 
         case 3:
-          // if (sessionDuration != null) {
           absenceCtrl.text = sessionDuration.toString();
-          // }
           break;
-
-        // case 1:
-        // case 2:
-        //   if (attendanceItem.id > 0 &&
-        //       attendanceItem.absenceInMinutes != null) {
-        //     absenceCtrl.text = attendanceItem.absenceInMinutes.toString();
-        //   } else {
-        //     absenceCtrl.clear();
-        //   }
-        //   break;
 
         default:
           absenceCtrl.clear();
@@ -333,16 +486,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             // }
             break;
 
-          // case 1: // Late
-          // case 2: // Partial
-          //   if (attendanceItem.id > 0 &&
-          //       attendanceItem.absenceInMinutes != null) {
-          //     absenceCtrl.text = attendanceItem.absenceInMinutes.toString();
-          //   } else {
-          //     absenceCtrl.clear();
-          //   }
-          //   break;
-
           default:
             absenceCtrl.clear();
             break;
@@ -386,51 +529,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     if (selectedLevel == 0) {
       selectedLevel = null;
     }
-    for (int i = 0; i <= mainAttendanceCreation!.attendances!.length - 1; i++) {
-      int? currentLevelId = mainAttendanceCreation!.attendances![i].levelId;
 
-      if (currentLevelId != null && selectedLevel == null) {
-        continue;
-      }
+    if (attendanceCreation == null || attendanceCreation!.attendances == null) {
+      return;
+    }
 
-      int? result = selectedLevel;
-      if (selectedLevel != null &&
-          selectedLevel > 0 &&
-          currentLevelId != null &&
-          currentLevelId > 0) {
-        List<LevelModel> allowedLevels = getAllowedLevelsForStudent(
-          currentLevelId,
-        );
-
-        if (!allowedLevels.any((level) => level.id == selectedLevel)) {
-          result = currentLevelId;
-        }
-      }
-
-      if (currentLevelId != null &&
-          mainAttendanceCreation!.attendances![i].levelId != null) {
-        if (mainAttendanceCreation!.attendances![i].levelId != null) {
-          LevelModel? oldLevel = levels.firstWhere(
-            (l) => l.id == mainAttendanceCreation!.attendances![i].levelId,
-          );
-          LevelModel? newLevel = levels.firstWhere(
-            (l) => l.id == currentLevelId,
-          );
-
-          if (oldLevel.displayOrder == null ||
-              (oldLevel.displayOrder! <= newLevel.displayOrder!)) {
-            if (i < selectedLevelIds.length) {
-              selectedLevelIds[i] = result;
-              attendanceCreation!.attendances![i].levelId = result;
-            }
-          }
-        }
-      } else {
-        if (i < selectedLevelIds.length) {
-          selectedLevelIds[i] = result;
-          attendanceCreation!.attendances![i].levelId = result;
-        }
-      }
+    for (int i = 0; i < attendanceCreation!.attendances!.length; i++) {
+      selectedLevelIds[i] = selectedLevel;
+      attendanceCreation!.attendances![i].levelId = selectedLevel;
     }
   }
 
@@ -469,6 +575,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
     att.notes = notesController!.value.text;
 
+    att.topicIds = selectedTopicIds;
+
     for (
       int index = 0;
       index < attendanceCreation!.attendances!.length;
@@ -489,9 +597,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       attendance.groupEnrollmentId =
           attendanceCreation!.attendances![index].groupEnrollmentId;
 
-      attendance.status = index < selectedStatusValues.length
-          ? selectedStatusValues[index]
-          : AttendanceStatus.absent.index;
+      attendance.status = selectedStatusValues[index];
 
       if (studentNotesControllers[index].value.text.isNotEmpty) {
         attendance.notesForStudent = studentNotesControllers[index].value.text;
@@ -593,60 +699,117 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   List<TextEditingController> internalNotesControllers = [];
   TextEditingController? notesController;
 
-  // <-- CHANGED VARIABLE: renamed from numberInputControllers to absenceInMinutes
   List<TextEditingController> absenceInMinutes = [];
 
   int? _selectedChapterValue;
   void onChangedAttendanceChapterAll(int? value) {
     setState(() {
+      if (value == 0) {
+        _selectedChapterValue = null;
+
+        return;
+      }
       _selectedChapterValue = value;
       changeAllChapters(value);
     });
   }
 
   void changeAllChapters(int? value) {
-    if (value != null) {
-      if (value > 0) {
-        var chapter = chapters.firstWhere((c) => c.id == value);
-        if (chapter.levelId != null) {
-          if (chapter.levelId! > 0) {
-            var level = levels.firstWhere((l) => l.id == chapter.levelId);
+    if (attendanceCreation == null || attendanceCreation!.attendances == null) {
+      return;
+    }
 
-            for (
-              var index = 0;
-              index < attendanceCreation!.attendances!.length;
-              index++
-            ) {
-              selectedLevelIds[index] = level.id;
-            }
+    if (value != null && value > 0) {
+      var chapter = chapters.firstWhere((c) => c.id == value);
+      if (chapter.levelId != null && chapter.levelId! > 0) {
+        var level = levels.firstWhere((l) => l.id == chapter.levelId);
 
-            changeAllLevels(level.id);
-          }
+        for (
+          var index = 0;
+          index < attendanceCreation!.attendances!.length;
+          index++
+        ) {
+          selectedLevelIds[index] = level.id;
         }
+
+        changeAllLevels(level.id);
       }
-    } else {
-      changeAllLevels(null);
     }
   }
 
+  void filterTopics(String query) {
+    if (query.isEmpty) {
+      filteredTopics = List.from(topics);
+      return;
+    }
+
+    final lower = query.toLowerCase();
+    filteredTopics = topics
+        .where((t) => (t.title ?? '').toLowerCase().contains(lower))
+        .toList();
+  }
+
+  void onTopicSelected(TopicModel topic) {
+    if (!selectedTopicIds.contains(topic.id)) {
+      setState(() {
+        selectedTopicIds.add(topic.id);
+        topicSearchController.text = '';
+      });
+    }
+
+    selectedTopic = null;
+
+    // topicSearchController.clear();
+    FocusScope.of(context).unfocus();
+  }
+
+  void removeTopic(int topicId) {
+    setState(() {
+      selectedTopicIds.remove(topicId);
+    });
+  }
+
+  String getTopicTitle(int id) {
+    return topics
+            .firstWhere(
+              (t) => t.id == id,
+              orElse: () => TopicModel(id: id, title: ''),
+            )
+            .title ??
+        '';
+  }
+
   bool isFormValid() {
-    if (attendanceCreation == null) return false;
+    if (attendanceCreation == null) {
+      return false;
+    }
 
     final rows = attendanceCreation!.attendances!.length;
 
+    if (rows == 0) {
+      return false;
+    }
+
     for (int i = 0; i < rows; i++) {
-      final status = (i < selectedStatusValues.length)
-          ? selectedStatusValues[i]
-          : AttendanceStatus.absent.index;
+      final status = selectedStatusValues[i];
+
+      if (status == AttendanceStatus.notSet.index) {
+        return false;
+      }
+
+      // final status = (i < selectedStatusValues.length)
+      //     ? selectedStatusValues[i]
+      //     : AttendanceStatus.absent.index;
 
       if (status == 1 || status == 2) {
         final text = (i < absenceInMinutesControllers.length)
             ? absenceInMinutesControllers[i].text.trim()
             : '';
         if (text.isEmpty) return false;
-        final parsed = int.tryParse(text);
-        if (parsed == null) return false;
-        if (parsed > sessionDuration) return false;
+        final absenceInMinutes = int.tryParse(text);
+        if (absenceInMinutes == null) return false;
+        if (absenceInMinutes > sessionDuration) return false;
+        if (absenceInMinutes < 0) return false;
       }
     }
 
@@ -731,31 +894,159 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                   width:
                                       MediaQuery.of(context).size.width * 0.90,
                                   margin: const EdgeInsets.only(bottom: 10),
-                                  child: DropdownButtonFormField<int>(
-                                    isExpanded: false,
-                                    initialValue: _selectedChapterValue,
-                                    items: dropdownChapters.map((chapter) {
-                                      return DropdownMenuItem<int>(
-                                        value: chapter.id,
-                                        child: Text(chapter.title!.toString()),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      setState(
-                                        () => onChangedAttendanceChapterAll(
-                                          value,
-                                        ),
-                                      );
+                                  child: Autocomplete<ChapterModel>(
+                                    optionsBuilder:
+                                        (TextEditingValue textEditingValue) {
+                                          if (sortedChapters.isEmpty) {
+                                            return const Iterable<
+                                              ChapterModel
+                                            >.empty();
+                                          }
+                                          filterChapters(textEditingValue.text);
+                                          return filteredChapters;
+                                        },
+                                    displayStringForOption:
+                                        (ChapterModel option) =>
+                                            option.title ?? '',
+                                    fieldViewBuilder:
+                                        (
+                                          context,
+                                          controller,
+                                          focusNode,
+                                          onEditingComplete,
+                                        ) {
+                                          chapterSearchController = controller;
+                                          controller.text =
+                                              _selectedChapter?.title ?? '';
+                                          return TextFormField(
+                                            controller: controller,
+                                            focusNode: focusNode,
+                                            decoration: InputDecoration(
+                                              labelText: AppLocalizations.of(
+                                                context,
+                                              )!.chapter,
+                                              border:
+                                                  const OutlineInputBorder(),
+                                            ),
+                                          );
+                                        },
+                                    optionsViewBuilder:
+                                        (context, onSelected, options) {
+                                          return Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Material(
+                                              child: Container(
+                                                width:
+                                                    MediaQuery.of(
+                                                      context,
+                                                    ).size.width *
+                                                    0.90,
+                                                color: Colors.white,
+                                                child: ListView.builder(
+                                                  padding: EdgeInsets.zero,
+                                                  itemCount: options.length,
+                                                  itemBuilder: (context, index) {
+                                                    final ChapterModel option =
+                                                        options.elementAt(
+                                                          index,
+                                                        );
+                                                    return ListTile(
+                                                      title: Padding(
+                                                        padding: EdgeInsets.only(
+                                                          left:
+                                                              option.parentChapterId !=
+                                                                  null
+                                                              ? 16.0
+                                                              : 0,
+                                                        ),
+                                                        child: Text(
+                                                          option.title ?? '',
+                                                        ),
+                                                      ),
+                                                      onTap: () {
+                                                        onSelected(option);
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                    onSelected: (ChapterModel selection) {
+                                      onChapterSelected(selection);
                                     },
-                                    decoration: InputDecoration(
-                                      labelText: AppLocalizations.of(
-                                        context,
-                                      )!.chapters,
-                                    ),
                                   ),
                                 ),
                               ],
                             ),
+
+                          if (widget
+                                  .attendanceQModel
+                                  .group!
+                                  .canTeacherSpecifyTopics ==
+                              true)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.90,
+                                  child: Autocomplete<TopicModel>(
+                                    optionsBuilder:
+                                        (TextEditingValue textEditingValue) {
+                                          filterTopics(textEditingValue.text);
+                                          return filteredTopics;
+                                        },
+                                    displayStringForOption:
+                                        (TopicModel option) =>
+                                            option.title ?? '',
+                                    fieldViewBuilder:
+                                        (
+                                          context,
+                                          controller,
+                                          focusNode,
+                                          onEditingComplete,
+                                        ) {
+                                          topicSearchController = controller;
+                                          return TextFormField(
+                                            controller: controller,
+                                            focusNode: focusNode,
+                                            decoration: InputDecoration(
+                                              labelText: AppLocalizations.of(
+                                                context,
+                                              )!.topics,
+                                              border: OutlineInputBorder(),
+                                            ),
+                                          );
+                                        },
+                                    onSelected: (TopicModel selection) {
+                                      onTopicSelected(selection);
+                                    },
+                                  ),
+                                ),
+
+                                const SizedBox(height: 8),
+
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.90,
+                                  child: Wrap(
+                                    spacing: 8,
+                                    runSpacing: 4,
+                                    children: selectedTopicIds.map((topicId) {
+                                      return InputChip(
+                                        label: Text(getTopicTitle(topicId)),
+                                        onDeleted: () {
+                                          removeTopic(topicId);
+                                        },
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ],
+                            ),
+
                           if (attendanceCreation!.attendances!.length > 1)
                             Builder(builder: (context) {
                               final showLate = widget.attendanceQModel.showLateAttendance != false;
@@ -873,6 +1164,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                         ),
                                       ),
                                       Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           IconButton(
                                             onPressed: () {
@@ -883,26 +1176,28 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                     .groupEnrollment!,
                                               );
                                             },
-                                            icon: const Icon(
-                                              Icons.remove,
-                                            ), // Add icon to the button
+                                            icon: const Icon(Icons.remove),
                                             color: HexColor.fromHex(
                                               AppColors.primaryColor,
-                                            ), // Set icon color to white
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 5,
-                                              bottom: 5,
                                             ),
-                                            child: Text(
-                                              attendanceCreation!
-                                                  .attendances![index]
-                                                  .groupEnrollment!
-                                                  .enrollment!
-                                                  .student!
-                                                  .nameIdentification
-                                                  .toString(),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 5,
+                                                  ),
+                                              child: Text(
+                                                attendanceCreation!
+                                                    .attendances![index]
+                                                    .groupEnrollment!
+                                                    .enrollment!
+                                                    .student!
+                                                    .nameIdentification
+                                                    .toString(),
+                                                softWrap: true,
+                                                overflow: TextOverflow.visible,
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -994,10 +1289,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                               suffixText: '/$sessionDuration',
                                             ),
                                             validator: (value) {
-                                              if (selectedStatusValues[index] ==
+                                              if (index < selectedStatusValues.length && (selectedStatusValues[index] ==
                                                       1 ||
                                                   selectedStatusValues[index] ==
-                                                      2) {
+                                                      2)) {
                                                 if (value == null ||
                                                     value.isEmpty) {
                                                   return AppLocalizations.of(
@@ -1018,6 +1313,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                     context,
                                                   )!.invalid;
                                                 }
+
+                                                if (intValue < 0) {
+                                                  return AppLocalizations.of(
+                                                    context,
+                                                  )!.invalid;                                                  
+                                                }
                                               }
                                               return null;
                                             },
@@ -1025,6 +1326,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                 AutovalidateMode.always,
                                           ),
                                         ),
+
                                       TextFormField(
                                         controller:
                                             studentNotesControllers[index],
@@ -1125,16 +1427,32 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                             AppColors.primaryColor,
                                           ), // Set icon color to white
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 5,
-                                            bottom: 5,
-                                          ),
-                                          child: Text(
-                                            groupEnrollment
-                                                .enrollment!
-                                                .student!
-                                                .nameIdentification!,
+
+                                        // Padding(
+                                        //   padding: const EdgeInsets.only(
+                                        //     top: 5,
+                                        //     bottom: 5,
+                                        //   ),
+                                        //   child: Text(
+                                        //     groupEnrollment
+                                        //         .enrollment!
+                                        //         .student!
+                                        //         .nameIdentification!,
+                                        //   ),
+                                        // ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 5,
+                                            ),
+                                            child: Text(
+                                              groupEnrollment
+                                                  .enrollment!
+                                                  .student!
+                                                  .nameIdentification!,
+                                              softWrap: true,
+                                              overflow: TextOverflow.visible,
+                                            ),
                                           ),
                                         ),
                                       ],

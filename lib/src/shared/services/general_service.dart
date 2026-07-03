@@ -1,23 +1,22 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:teacher/src/shared/models/topic_model.dart';
 
 import '../../authentication/helpers/dio/dio_api.dart';
 import '../models/level_model.dart';
 
 class GeneralService {
   Future<List<LevelModel>> getSchoolLevels() async {
-    var response = await DioApi()
-        .dio
-        .get("${dotenv.env['api']}general/school-levels");
+    var response = await DioApi().dio.get(
+      "${dotenv.env['api']}general/school-levels",
+    );
 
     if (response.statusCode == 200) {
       List decodedList = jsonDecode(json.encode(response.data));
 
       List<LevelModel> levels = decodedList
-          .map(
-            (dynamic item) => LevelModel.fromJson(item),
-          )
+          .map((dynamic item) => LevelModel.fromJson(item))
           .toList();
       return levels;
     } else {
@@ -25,17 +24,27 @@ class GeneralService {
     }
   }
 
+  Future<List<TopicModel>> getTopics({bool includeArchive = false}) async {
+    final response = await DioApi().dio.get(
+      "${dotenv.env['api']}general/topics",
+      queryParameters: {'includeArchive': includeArchive.toString()},
+    );
+
+    if (response.statusCode == 200) {
+      final List decodedList = response.data;
+      return decodedList.map((item) => TopicModel.fromJson(item)).toList();
+    } else {
+      throw Exception("Unable to retrieve topics");
+    }
+  }
+
   Future<String> logError(String errorMessage) async {
     try {
       final response = await DioApi().dio.post(
-            '${dotenv.env['api']}general/log-error',
-            data: json.encode(errorMessage),
-            options: Options(
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            ),
-          );
+        '${dotenv.env['api']}general/log-error',
+        data: json.encode(errorMessage),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
 
       return response.data; // Assuming the API returns a string.
     } catch (e) {

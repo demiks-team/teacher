@@ -187,6 +187,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalid => 'Invalid';
 
   @override
+  String get topics => 'Topics';
+
+  @override
+  String get chapter => 'Chapter';
+
+  @override
+  String get switchAccount => 'Switch accounts';
+
+  @override
+  String get joinSchool => 'Join School';
+
+  @override
+  String get pickOption => 'Pick an Option';
+
+  @override
   String get save => 'Save';
 
   @override

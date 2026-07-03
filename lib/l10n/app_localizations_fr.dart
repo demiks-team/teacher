@@ -189,6 +189,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get invalid => 'Invalide';
 
   @override
+  String get topics => 'Les sujets';
+
+  @override
+  String get chapter => 'Chapitre';
+
+  @override
+  String get switchAccount => 'Changer de compte';
+
+  @override
+  String get joinSchool => 'Rejoindre l\'école';
+
+  @override
+  String get pickOption => 'Choisir une option';
+
+  @override
   String get save => 'Sauvegarder';
 
   @override
