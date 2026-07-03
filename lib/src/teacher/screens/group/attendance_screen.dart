@@ -17,9 +17,12 @@ import '../../../shared/models/attendance_q_model.dart';
 
 import '../../../shared/models/enums.dart';
 import '../../../shared/models/level_model.dart';
+import '../../../shared/models/progress_area_group_filter_model.dart';
 import '../../../shared/services/general_service.dart';
 import '../../../shared/services/group_service.dart';
+import '../../../shared/services/student_progress_area_service.dart';
 import '../../../shared/theme/colors/app_colors.dart';
+import 'student_progress_area_screen.dart';
 
 class AttendanceScreen extends StatefulWidget {
   final AttendanceQModel attendanceQModel;
@@ -35,6 +38,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   final GroupService _groupService = GroupService();
   final GeneralService _generalService = GeneralService();
   final BookService _bookService = BookService();
+  final StudentProgressAreaService _progressAreaService = StudentProgressAreaService();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -517,17 +521,68 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     setState(() {
       isSaving = true;
     });
-    await _groupService.saveAttendance(att).then((result) {
-      if (result) {
-        // Navigator.pop(context, true);
-      } else {
-        setState(() {
-          isSaving = false;
-        });
-      }
+    try {
+      await _groupService.saveAttendance(att);
       if (!mounted) return;
+
+      bool hasProgressAreas = false;
+      try {
+        hasProgressAreas = await _progressAreaService.hasAnyProgressArea(
+            widget.attendanceQModel.group!.courseId);
+      } catch (e) {
+        debugPrint('hasAnyProgressArea error: $e');
+        hasProgressAreas = false;
+      }
+
+      if (!mounted) return;
+
+      if (hasProgressAreas) {
+        try {
+          final groupEnrollmentIds = att.attendances!
+              .where((a) => a.groupEnrollmentId != null)
+              .map((a) => a.groupEnrollmentId!)
+              .toList();
+
+          final filter = ProgressAreaGroupFilterModel(
+            groupSessionId: widget.attendanceQModel.groupSession!.id,
+            groupEnrollmentIds: groupEnrollmentIds,
+          );
+
+          final progressAreaData =
+              await _progressAreaService.getAttendanceStudentProgressAreas(filter);
+
+          if (!mounted) return;
+
+          final hasStudents =
+              progressAreaData.progressAreaGroupSessionStudents?.isNotEmpty ==
+                  true;
+
+          if (hasStudents) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => StudentProgressAreaScreen(
+                  groupTitle:
+                      widget.attendanceQModel.group!.title ?? '',
+                  progressAreaGroupSession: progressAreaData,
+                ),
+              ),
+            );
+            return;
+          }
+        } catch (e) {
+          debugPrint('getAttendanceStudentProgressAreas error: $e');
+          // fall through to normal pop
+        }
+      }
+
       Navigator.pop(context, true);
-    });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        isSaving = false;
+      });
+    }
   }
 
   List<int> selectedStatusValues = [];
@@ -702,7 +757,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                               ],
                             ),
                           if (attendanceCreation!.attendances!.length > 1)
-                            Column(
+                            Builder(builder: (context) {
+                              final showLate = widget.attendanceQModel.showLateAttendance != false;
+                              final showLeftEarly = widget.attendanceQModel.showLeftEarlyAttendance != false;
+                              final visibleStatuses = [0, if (showLate) 1, if (showLeftEarly) 2, 3];
+                              return Column(
                               children: [
                                 Container(
                                   padding: const EdgeInsets.only(
@@ -712,14 +771,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                   margin: const EdgeInsets.only(top: 10),
                                   child: ToggleButtons(
                                     fillColor: Colors.grey.shade200,
-                                    isSelected: List.generate(
-                                      4,
-                                      (index) => index == _selectedValue,
-                                    ),
+                                    isSelected: [
+                                      _selectedValue == 0,
+                                      if (showLate) _selectedValue == 1,
+                                      if (showLeftEarly) _selectedValue == 2,
+                                      _selectedValue == 3,
+                                    ],
                                     onPressed: (int index) {
-                                      onChangedAttendanceStatusAll(
-                                        _selectedValue,
-                                      );
+                                      onChangedAttendanceStatusAll(visibleStatuses[index]);
                                     },
                                     children: [
                                       IconButton(
@@ -730,7 +789,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                         onPressed: () =>
                                             onChangedAttendanceStatusAll(0),
                                       ),
-                                      IconButton(
+                                      if (showLate) IconButton(
                                         icon: const Icon(
                                           Icons.snooze,
                                           color: Colors.orange,
@@ -738,7 +797,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                         onPressed: () =>
                                             onChangedAttendanceStatusAll(1),
                                       ),
-                                      IconButton(
+                                      if (showLeftEarly) IconButton(
                                         icon: const Icon(
                                           Icons.alarm,
                                           color: Colors.orange,
@@ -784,7 +843,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                   ),
                                 ),
                               ],
-                            ),
+                            );
+                          }),
                           for (
                             int index = 0;
                             index < attendanceCreation!.attendances!.length;
@@ -847,21 +907,26 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                           ),
                                         ],
                                       ),
-                                      Padding(
+                                      Builder(builder: (context) {
+                                        final currentStatus = selectedStatusValues[index];
+                                        final showLate = widget.attendanceQModel.showLateAttendance != false || currentStatus == 1;
+                                        final showLeftEarly = widget.attendanceQModel.showLeftEarlyAttendance != false || currentStatus == 2;
+                                        final visibleStatuses = [0, if (showLate) 1, if (showLeftEarly) 2, 3];
+                                        return Padding(
                                         padding: const EdgeInsets.only(
                                           top: 5,
                                           bottom: 5,
                                         ),
                                         child: ToggleButtons(
                                           fillColor: Colors.grey.shade200,
-                                          isSelected: List.generate(
-                                            4,
-                                            (i) =>
-                                                selectedStatusValues[index] ==
-                                                i,
-                                          ),
+                                          isSelected: [
+                                            selectedStatusValues[index] == 0,
+                                            if (showLate) selectedStatusValues[index] == 1,
+                                            if (showLeftEarly) selectedStatusValues[index] == 2,
+                                            selectedStatusValues[index] == 3,
+                                          ],
                                           onPressed: (int i) {
-                                            onChangedAttendanceStatus(i, index);
+                                            onChangedAttendanceStatus(visibleStatuses[i], index);
                                           },
                                           children: [
                                             IconButton(
@@ -875,7 +940,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                     index,
                                                   ),
                                             ),
-                                            IconButton(
+                                            if (showLate) IconButton(
                                               icon: const Icon(
                                                 Icons.snooze,
                                                 color: Colors.orange,
@@ -886,7 +951,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                     index,
                                                   ),
                                             ),
-                                            IconButton(
+                                            if (showLeftEarly) IconButton(
                                               icon: const Icon(
                                                 Icons.alarm,
                                                 color: Colors.orange,
@@ -910,7 +975,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                             ),
                                           ],
                                         ),
-                                      ),
+                                      );}),
                                       if (selectedStatusValues[index] == 1 ||
                                           selectedStatusValues[index] == 2)
                                         Padding(

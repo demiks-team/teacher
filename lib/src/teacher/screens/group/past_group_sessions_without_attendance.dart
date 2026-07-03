@@ -5,6 +5,7 @@ import 'package:teacher/l10n/app_localizations.dart';
 import 'package:teacher/src/shared/helpers/general_helpers.dart';
 import 'package:teacher/src/shared/models/attendance_settings_model.dart';
 import 'package:teacher/src/shared/models/enums.dart';
+import 'package:teacher/src/shared/models/school_attendance_settings_model.dart';
 import 'package:teacher/src/shared/services/school_service.dart';
 import 'package:teacher/src/teacher/screens/group/attendance_screen.dart';
 
@@ -27,6 +28,7 @@ class _PastGroupSessionsWithoutAttendance
     extends State<PastGroupSessionsWithoutAttendance>
     with AutomaticKeepAliveClientMixin {
   AttendanceSettingsModel? attendanceSettings;
+  SchoolAttendanceSettingsModel? classAttendanceSettings;
   List<GroupSessionModel>? groupSessionList;
   final SchoolService schoolService = SchoolService();
   final GroupService groupService = GroupService();
@@ -36,6 +38,8 @@ class _PastGroupSessionsWithoutAttendance
     var attendanceQModel = AttendanceQModel();
     attendanceQModel.group = groupSession.group;
     attendanceQModel.groupSession = groupSession;
+    attendanceQModel.showLateAttendance = classAttendanceSettings?.showLateAttendance;
+    attendanceQModel.showLeftEarlyAttendance = classAttendanceSettings?.showLeftEarlyAttendance;
     return attendanceQModel;
   }
 
@@ -62,6 +66,7 @@ class _PastGroupSessionsWithoutAttendance
   Future<void> initializeTheData() async {
     completedTasks = false;
     await getAttendanceSettings();
+    await getClassAttendanceSettings();
     await getClasses();
   }
 
@@ -70,6 +75,14 @@ class _PastGroupSessionsWithoutAttendance
     await attendanceSettingsFuture.then((a) {
       setState(() {
         attendanceSettings = a;
+      });
+    });
+  }
+
+  Future<void> getClassAttendanceSettings() async {
+    await schoolService.getClassAttendanceSettings().then((a) {
+      setState(() {
+        classAttendanceSettings = a;
       });
     });
   }

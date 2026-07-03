@@ -54,5 +54,7 @@
     "absenceInMinutes": "Absence in Minutes",
     "required": "Required",
     "invalid": "Invalid",
-    "save": "Save"
+    "save": "Save",
+    "studentProgressArea": "Student Progress Area",
+    "studentProgressAreas": "Student Progress Areas"
 }

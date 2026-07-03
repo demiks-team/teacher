@@ -190,4 +190,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get save => 'Sauvegarder';
+
+  @override
+  String get studentProgressArea => 'Zone de Progrès de l\'Étudiant';
+
+  @override
+  String get studentProgressAreas => 'Zones de Progrès de l\'Étudiant';
 }

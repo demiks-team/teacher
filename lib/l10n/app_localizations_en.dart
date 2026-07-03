@@ -188,4 +188,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get save => 'Save';
+
+  @override
+  String get studentProgressArea => 'Student Progress Area';
+
+  @override
+  String get studentProgressAreas => 'Student Progress Areas';
 }
