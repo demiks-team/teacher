@@ -2,7 +2,7 @@ enum GroupSessionStatus { zero_, cancelled, requested, postponed }
 
 enum GroupEnrollmentStatus { zero_, open, finished }
 
-enum AttendanceStatus { onTime, late, leftEarly, absent, notSet }
+enum AttendanceStatus { onTime, late, leftEarly, absent, notSet, cancelled }
 
 enum ClassDurationType {
   zero_,
