@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teacher/l10n/app_localizations.dart';
+import '../../authentication/services/authentication_service.dart';
 import '../../shared/helpers/colors/hex_color.dart';
-import '../../shared/secure_storage.dart';
 import '../../shared/theme/colors/app_colors.dart';
 import '../../site/screens/login_screen.dart';
 
@@ -19,8 +19,9 @@ class SignOutDialogWidget extends StatelessWidget {
           style: TextButton.styleFrom(
             backgroundColor: HexColor.fromHex(AppColors.accentColor),
           ),
-          onPressed: () {
-            SecureStorage.removeCurrentUser();
+          onPressed: () async {
+            await AuthenticationService().logout();
+            if (!context.mounted) return;
             Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
               MaterialPageRoute(builder: (_) => const LoginScreen()),
               (route) => false,

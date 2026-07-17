@@ -65,6 +65,21 @@ class AuthenticationService {
     return json.encode(response.data).toString();
   }
 
+  Future<void> logout() async {
+    var user = await SecureStorage.getCurrentUser();
+    if (user != null && user.refresh != null) {
+      try {
+        await DioApi().dio.post(
+          "${dotenv.env['api']}security/logout",
+          data: json.encode({"token": user.refresh}),
+        );
+      } catch (_) {
+        // Ignore failures so logout is never blocked.
+      }
+    }
+    SecureStorage.removeCurrentUser();
+  }
+
   Future<void> refreshToken(String token) async {
     var response = await DioApi().dio.post(
       "${dotenv.env['api']}security/refresh",
