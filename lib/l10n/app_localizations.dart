@@ -286,6 +286,12 @@ abstract class AppLocalizations {
   /// **'Notes, record of work, ...'**
   String get recordOfWork;
 
+  /// No description provided for @sessionMaterialLink.
+  ///
+  /// In en, this message translates to:
+  /// **'External link (supporting material, recording, etc.)'**
+  String get sessionMaterialLink;
+
   /// No description provided for @internalNote.
   ///
   /// In en, this message translates to:

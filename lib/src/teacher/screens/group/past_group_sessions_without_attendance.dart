@@ -40,6 +40,7 @@ class _PastGroupSessionsWithoutAttendance
     attendanceQModel.groupSession = groupSession;
     attendanceQModel.showLateAttendance = classAttendanceSettings?.showLateAttendance;
     attendanceQModel.showLeftEarlyAttendance = classAttendanceSettings?.showLeftEarlyAttendance;
+    attendanceQModel.allowSessionMaterialLink = classAttendanceSettings?.allowSessionMaterialLink;
     return attendanceQModel;
   }
 

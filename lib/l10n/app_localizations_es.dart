@@ -104,6 +104,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get recordOfWork => 'Notas, registro de trabajo, ...';
 
   @override
+  String get sessionMaterialLink =>
+      'Enlace externo (material de apoyo, grabación, etc.)';
+
+  @override
   String get internalNote => 'Notas internas';
 
   @override

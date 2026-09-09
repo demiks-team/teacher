@@ -108,6 +108,11 @@ class ErrorsInterceptor extends Interceptor {
                   .push(MaterialPageRoute(builder: (_) => const LoginScreen()));
               return handler.next(UnauthorizedException(err.requestOptions));
             }
+          // A feature the school has not enabled for its teachers, or a
+          // permission the account lacks. Nothing the teacher can act on, so no
+          // message is shown; callers get a typed exception to react to.
+          case 403:
+            return handler.next(ForbiddenException(err.requestOptions));
           case 498:
             SecureStorage.removeCurrentUser();
             Navigator.of(currentContext, rootNavigator: true)
@@ -135,6 +140,15 @@ class ErrorsInterceptor extends Interceptor {
 
 class UnauthorizedException extends DioException {
   UnauthorizedException(RequestOptions r) : super(requestOptions: r);
+
+  @override
+  String toString() {
+    return 'Access denied';
+  }
+}
+
+class ForbiddenException extends DioException {
+  ForbiddenException(RequestOptions r) : super(requestOptions: r);
 
   @override
   String toString() {

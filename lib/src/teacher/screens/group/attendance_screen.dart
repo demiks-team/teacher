@@ -127,6 +127,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   void initializedTheForm() {
     notesController = TextEditingController(text: attendanceCreation!.notes);
+    materialLinkController = TextEditingController(
+      text: attendanceCreation!.materialLink,
+    );
     for (var element in attendanceCreation!.attendances!) {
       selectedStatusValues.add(
         element.status ?? int.parse(AttendanceStatus.notSet.toString()),
@@ -575,6 +578,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
     att.notes = notesController!.value.text;
 
+    final materialLink = materialLinkController!.value.text.trim();
+    att.materialLink = materialLink.isNotEmpty ? materialLink : null;
+
     att.topicIds = selectedTopicIds;
 
     for (
@@ -698,6 +704,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   List<TextEditingController> studentNotesControllers = [];
   List<TextEditingController> internalNotesControllers = [];
   TextEditingController? notesController;
+  TextEditingController? materialLinkController;
 
   List<TextEditingController> absenceInMinutes = [];
 
@@ -876,6 +883,22 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                               ),
                             ),
                           ),
+                          if (widget.attendanceQModel.allowSessionMaterialLink ==
+                              true)
+                            Container(
+                              padding: const EdgeInsets.only(top: 5, bottom: 5),
+                              width: MediaQuery.of(context).size.width * 0.90,
+                              child: TextFormField(
+                                controller: materialLinkController,
+                                keyboardType: TextInputType.url,
+                                decoration: InputDecoration(
+                                  labelText: AppLocalizations.of(
+                                    context,
+                                  )!.sessionMaterialLink,
+                                  border: const OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
                           if (hasAnyChapter)
                             Column(
                               children: [

@@ -18,6 +18,7 @@ class AttendanceCreationModel {
     this.chapterId,
     this.chapter,
     this.notes,
+    this.materialLink,
     this.attendances,
     this.topicIds,
     this.topics,
@@ -27,6 +28,7 @@ class AttendanceCreationModel {
   int? chapterId;
   ChapterModel? chapter;
   String? notes;
+  String? materialLink;
   List<AttendanceModel>? attendances;
   List<int>? topicIds;
   List<TopicModel>? topics;
@@ -39,6 +41,7 @@ class AttendanceCreationModel {
             ? ChapterModel.fromJson(json["chapter"])
             : null,
         notes: json["notes"],
+        materialLink: json["materialLink"],
         attendances: json["attendances"] != null
             ? (json["attendances"] as List)
                   .map((dynamic item) => AttendanceModel.fromJson(item))
@@ -62,6 +65,7 @@ class AttendanceCreationModel {
       "chapterId": chapterId,
       "chapter": chapter?.toJson(),
       "notes": notes,
+      "materialLink": materialLink,
       'attendances': attendancesJsonList,
       'topicIds': topicIds,
     };

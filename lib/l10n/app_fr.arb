@@ -30,6 +30,7 @@
     "login": "Se connecter",
     "studentNote": "Notes pour les étudiants",   
     "recordOfWork": "Notes, compte rendu de travail, ...",
+    "sessionMaterialLink": "Lien externe (matériel de soutien, enregistrement, etc.)",
     "internalNote": "Notes internes",
     "level": "Niveau",
     "addOtherStudentsToAttendanceList": "Souhaitez-vous ajouter d’autres étudiants à la liste de présence ?",   

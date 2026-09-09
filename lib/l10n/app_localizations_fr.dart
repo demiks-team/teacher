@@ -106,6 +106,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recordOfWork => 'Notes, compte rendu de travail, ...';
 
   @override
+  String get sessionMaterialLink =>
+      'Lien externe (matériel de soutien, enregistrement, etc.)';
+
+  @override
   String get internalNote => 'Notes internes';
 
   @override

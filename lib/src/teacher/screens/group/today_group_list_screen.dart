@@ -40,6 +40,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
     attendanceQModel.groupSession = groupSession;
     attendanceQModel.showLateAttendance = classAttendanceSettings?.showLateAttendance;
     attendanceQModel.showLeftEarlyAttendance = classAttendanceSettings?.showLeftEarlyAttendance;
+    attendanceQModel.allowSessionMaterialLink = classAttendanceSettings?.allowSessionMaterialLink;
     return attendanceQModel;
   }
 
@@ -47,17 +48,36 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
   initState() {
     Future.delayed(Duration.zero, () async {
       await initializeTheData();
-      completedTasks = true;
     });
 
     super.initState();
   }
 
+  // Each call is awaited on its own so that one failure - a school that has not
+  // enabled the classes feature for its teachers answers 403 on all three -
+  // does not stop the others, and the body is shown either way instead of
+  // leaving the screen on its progress indicator for good.
   Future<void> initializeTheData() async {
     completedTasks = false;
-    await getAttendanceSettings();
-    await getClassAttendanceSettings();
-    await getClasses();
+    try {
+      await runQuietly(getAttendanceSettings);
+      await runQuietly(getClassAttendanceSettings);
+      await runQuietly(getClasses);
+    } finally {
+      if (mounted) {
+        setState(() {
+          completedTasks = true;
+        });
+      }
+    }
+  }
+
+  Future<void> runQuietly(Future<void> Function() task) async {
+    try {
+      await task();
+    } catch (_) {
+      // The interceptor has already reported or surfaced what it needed to.
+    }
   }
 
   Future<void> getAttendanceSettings() async {
@@ -144,10 +164,12 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
             setState(() {
               completedTasks = false;
             });
-            await getClasses();
-            setState(() {
-              completedTasks = true;
-            });
+            await runQuietly(getClasses);
+            if (mounted) {
+              setState(() {
+                completedTasks = true;
+              });
+            }
           },
           child: completedTasks
               ? _buildBody(context)
@@ -293,7 +315,6 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
                   if (result == true) {
                     Future.delayed(Duration.zero, () async {
                       await initializeTheData();
-                      completedTasks = true;
                     });
                   }
                 }
