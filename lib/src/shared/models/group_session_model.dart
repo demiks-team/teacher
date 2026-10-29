@@ -28,6 +28,7 @@ class GroupSessionModel {
     this.privateNote,
     this.note,
     this.vcReferenceCode,
+    this.platformType,
     this.slug,
     this.meetingId,
     this.breakTimeInMinutes,
@@ -49,6 +50,8 @@ class GroupSessionModel {
   String? privateNote;
   String? note;
   String? vcReferenceCode;
+  // PlatformType on the API: 1 Zoom, 2 LearnCube, 3 Teams, 4 manual link, 5 my.inlingua.
+  int? platformType;
   String? slug;
   int? meetingId;
   int? breakTimeInMinutes;
@@ -75,6 +78,7 @@ class GroupSessionModel {
         privateNote: json["privateNote"],
         note: json["note"],
         vcReferenceCode: json["vcReferenceCode"],
+        platformType: json["platformType"],
         slug: json["slug"],
         meetingId: json["meetingId"],
         breakTimeInMinutes: json["breakTimeInMinutes"],
@@ -97,6 +101,7 @@ class GroupSessionModel {
         "privateNote": privateNote,
         "note": note,
         "vcReferenceCode": vcReferenceCode,
+        "platformType": platformType,
         "slug": slug,
         "meetingId": meetingId,
         "breakTimeInMinutes": breakTimeInMinutes,

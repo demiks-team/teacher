@@ -211,4 +211,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get pickOption => 'Choisir une option';
+
+  @override
+  String get joinMyInlingua => 'Rejoindre sur my.inlingua';
+
+  @override
+  String get myInlinguaUnavailable =>
+      'Impossible d\'ouvrir my.inlingua. Réessayez dans un instant.';
 }

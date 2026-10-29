@@ -61,5 +61,7 @@
     "chapter": "Chapter",
     "switchAccount": "Switch accounts",    
     "joinSchool": "Join School",
-    "pickOption": "Pick an Option"
+    "pickOption": "Pick an Option",
+    "joinMyInlingua": "Join on my.inlingua",
+    "myInlinguaUnavailable": "my.inlingua could not be opened. Try again in a moment."
 }

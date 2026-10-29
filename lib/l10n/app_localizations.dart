@@ -477,6 +477,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pick an Option'**
   String get pickOption;
+
+  /// No description provided for @joinMyInlingua.
+  ///
+  /// In en, this message translates to:
+  /// **'Join on my.inlingua'**
+  String get joinMyInlingua;
+
+  /// No description provided for @myInlinguaUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'my.inlingua could not be opened. Try again in a moment.'**
+  String get myInlinguaUnavailable;
 }
 
 class _AppLocalizationsDelegate

@@ -10,12 +10,14 @@ import 'package:teacher/src/shared/models/enums.dart';
 import 'package:teacher/src/shared/models/school_attendance_settings_model.dart';
 import 'package:teacher/src/shared/services/school_service.dart';
 import 'package:teacher/src/teacher/screens/group/attendance_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../shared/helpers/colors/hex_color.dart';
 import '../../../shared/models/attendance_q_model.dart';
 import '../../../shared/models/group_session_model.dart';
 import '../../../shared/no_data.dart';
 import '../../../shared/services/group_service.dart';
+import '../../../shared/services/my_inlingua_service.dart';
 import '../../../shared/theme/colors/app_colors.dart';
 
 class TodayGroupListScreen extends StatefulWidget {
@@ -32,6 +34,7 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
   List<DashboardGroupModel>? classList;
   final SchoolService schoolService = SchoolService();
   final GroupService groupService = GroupService();
+  final MyInlinguaService myInlinguaService = MyInlinguaService();
   bool completedTasks = false;
 
   AttendanceQModel createAttendanceQModel(GroupSessionModel groupSession) {
@@ -108,6 +111,29 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
       }
     }
     return true;
+  }
+
+  // PlatformType.MyInlingua on the API: the session is a my.inlingua virtual lesson.
+  static const int myInlinguaPlatform = 5;
+
+  bool isMyInlinguaLesson(GroupSessionModel groupSession) =>
+      groupSession.platformType == myInlinguaPlatform &&
+      groupSession.vcReferenceCode != null &&
+      groupSession.sessionStatus != GroupSessionStatus.cancelled;
+
+  // Signs the teacher into my.inlingua in the browser; the link expires, so it is asked for on every tap.
+  Future<void> joinMyInlingua() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final unavailable = AppLocalizations.of(context)!.myInlinguaUnavailable;
+    try {
+      final url = await myInlinguaService.signIn();
+      final opened = await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      if (!opened) {
+        messenger.showSnackBar(SnackBar(content: Text(unavailable)));
+      }
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(unavailable)));
+    }
   }
 
   bool canOpenAttendanceScreen(GroupSessionModel groupSession) {
@@ -387,6 +413,21 @@ class _TodayGroupListScreenState extends State<TodayGroupListScreen>
                                           .groupSession!
                                           .group!
                                           .address!))),
+                            ]),
+                      if (isMyInlinguaLesson(groupSessions[index].groupSession!))
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 5, bottom: 5),
+                                child: OutlinedButton.icon(
+                                  onPressed: joinMyInlingua,
+                                  icon: const Icon(Icons.videocam),
+                                  label: Text(AppLocalizations.of(context)!
+                                      .joinMyInlingua),
+                                ),
+                              ),
                             ]),
                       if (groupSessions[index].groupSession!.teacherNotes !=
                               null ||

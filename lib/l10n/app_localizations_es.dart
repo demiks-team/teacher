@@ -209,4 +209,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get pickOption => 'Elija una opción';
+
+  @override
+  String get joinMyInlingua => 'Unirse en my.inlingua';
+
+  @override
+  String get myInlinguaUnavailable =>
+      'No se pudo abrir my.inlingua. Inténtelo de nuevo en un momento.';
 }
